@@ -137,6 +137,12 @@
     <ClCompile Include="program\game\mapScene_map.cpp">
       <Filter>program\[003] game</Filter>
     </ClCompile>
+    <ClCompile Include="program\game\mapScene_character.cpp">
+      <Filter>program\[003] game</Filter>
+    </ClCompile>
+    <ClCompile Include="program\game\mapScene_battle.cpp">
+      <Filter>program\[003] game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ManagedDxlGame.rc">
@@ -240,6 +246,12 @@
       <Filter>program\[000] library</Filter>
     </ClInclude>
     <ClInclude Include="program\game\mapScene_map.h">
+      <Filter>program\[003] game</Filter>
+    </ClInclude>
+    <ClInclude Include="program\game\mapScene_character.h">
+      <Filter>program\[003] game</Filter>
+    </ClInclude>
+    <ClInclude Include="program\game\mapScene_battle.h">
       <Filter>program\[003] game</Filter>
     </ClInclude>
   </ItemGroup>
