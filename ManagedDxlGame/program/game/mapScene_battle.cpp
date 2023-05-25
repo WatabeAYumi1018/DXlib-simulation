@@ -23,10 +23,10 @@ float g_animAlly_timeCount = 0;	//íáä‘ï`âÊë¨Ç≥ÇÃêßå‰
 float g_animEnemy_timeCount = 0;//ìGï`âÊë¨Ç≥ÇÃêßå‰
 
 //êÌì¨íÜÇÃçUåÇÉGÉtÉFÉNÉg
-int g_battle_effect_sword[1][5];
-int g_battle_effect_snip[1][9];
+int g_battle_effect_sword[1][14];
+int g_battle_effect_snip[1][14];
 int g_battle_effect_magic[1][14];
-int g_battle_effect_leader[1][5];
+int g_battle_effect_leader[1][14];
 
 //çUåÇÉGÉtÉFÉNÉgÇÃÉAÉjÉÅÅ[ÉVÉáÉìÉnÉìÉhÉã
 float g_effectTimeCount = 0;
@@ -74,7 +74,7 @@ void battleInfo(int attack, int defence) {
 	SetFontSize(30);
 
 	//attackë§ÇÃï`âÊ
-	DrawStringEx(1100, 530, -1, character[attack].name.c_str());
+	DrawStringEx(1100, 530, TEXT_COLOR_WHITE, character[attack].name.c_str());
 
 	if (character[attack].job == JOB_SWORDMASTER) {
 		DrawExtendGraph(1100, 630, 1150, 680, icon_sword, true);//ägëÂèkè¨drawä÷êî
@@ -87,7 +87,7 @@ void battleInfo(int attack, int defence) {
 	}
 
 	//defenceë§ÇÃï`âÊ
-	DrawStringEx(100, 530, -1, character[defence].name.c_str());
+	DrawStringEx(100, 530, TEXT_COLOR_WHITE, character[defence].name.c_str());
 
 	if (character[defence].job == JOB_SWORDMASTER) {
 		DrawExtendGraph(100, 630, 150, 680, icon_sword, true);
@@ -101,16 +101,26 @@ void battleInfo(int attack, int defence) {
 	else if (character[defence].job == JOB_LEADER) {
 		DrawExtendGraph(100, 630, 150, 680, icon_boss, true);
 	}
+}
 
+void battleHp(int attack, int defence) {
+	
 	SetFontSize(60);
 
-	//attackë§ÇÃHPï`âÊ
-	std::string attack_StartHp = std::to_string(character[attack].hp);
-	DrawStringEx(800, 500, -1, attack_StartHp.c_str());
+	if (character[attack].hp > 0) {
+		//attackë§ÇÃHPï`âÊ
+		std::string attack_Hp = std::to_string(character[attack].hp);
+		DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, attack_Hp.c_str());
+	}
 
-	//defenceë§ÇÃHPï`âÊ
-	std::string defence_StartHp = std::to_string(character[defence].hp);
-	DrawStringEx(400, 500, -1, defence_StartHp.c_str());
+	if (character[defence].hp > 0) {
+		//defenceë§ÇÃHPï`âÊ
+		std::string defence_Hp = std::to_string(character[defence].hp);
+		DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, defence_Hp.c_str());
+	}
+
+	if (character[attack].hp <= 0) {DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE,"0");}
+	if (character[defence].hp <= 0) { DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, "0"); }
 }
 
 //êÌì¨âÊñ ÇÃÉLÉÉÉâÉAÉjÉÅ
@@ -134,7 +144,7 @@ void battleCharaGraphic(float delta_time, int attack, int defence) {
 			g_animAlly_timeCount = 0;
 
 		}
-		DrawExtendGraph(750, 250, 850, 350, character_chips[attack][g_charaAlly_vector], true);
+		DrawExtendGraph(CHARA_ALLAY_X_START, CHARA_Y_START, CHARA_ALLAY_X_END, CHARA_Y_END, character_chips[attack][g_charaAlly_vector], true);
 	}
 
 	if (character[defence].team == TEAM_ENEMY) {
@@ -148,7 +158,7 @@ void battleCharaGraphic(float delta_time, int attack, int defence) {
 
 			g_animEnemy_timeCount = 0;
 		}
-		DrawExtendGraph(350, 250, 450, 350, character_chips[defence][g_charaEnemy_vector], true);
+		DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[defence][g_charaEnemy_vector], true);
 	}
 }
 
@@ -163,7 +173,7 @@ void battleEffectGraphic(float delta_time, int chara) {
 			g_effectFrame++;
 			g_effectTimeCount = 0;
 
-			if (g_effectFrame >= MAX_ANIM_FRAM) {
+			if (g_effectFrame >= MAX_EFFECT_FRAM) {
 				g_effectFrame = 0;
 				g_flagBattleAnime = false;
 			}
@@ -172,37 +182,37 @@ void battleEffectGraphic(float delta_time, int chara) {
 		//ñ°ï˚Å{åï
 		if (character[chara].team == TEAM_ALLY && character[chara].job == JOB_SWORDMASTER) {
 
-			DrawGraph(350, 250, g_battle_effect_sword[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ALLAY_X_START, EFFECT_Y_START, EFFECT_ALLAY_X_END, EFFECT_Y_END, g_battle_effect_sword[0][g_effectFrame], true);
 		}
 		//ñ°ï˚Å{ã|
 		if (character[chara].team == TEAM_ALLY && character[chara].job == JOB_SNIPER) {
 
-			DrawGraph(350, 250, g_battle_effect_snip[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ALLAY_X_START, EFFECT_Y_START, EFFECT_ALLAY_X_END, EFFECT_Y_END, g_battle_effect_snip[0][g_effectFrame], true);
 		}
 		//ñ°ï˚Å{ñÇ
 		if (character[chara].team == TEAM_ALLY && character[chara].job == JOB_MAGICIAN) {
 
-			DrawGraph(350, 250, g_battle_effect_magic[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ALLAY_X_START, EFFECT_Y_START, EFFECT_ALLAY_X_END, EFFECT_Y_END, g_battle_effect_magic[0][g_effectFrame], true);
 		}
 		//ìGÅ{åï
 		if (character[chara].team == TEAM_ENEMY && character[chara].job == JOB_SWORDMASTER) {
 
-			DrawGraph(750, 250, g_battle_effect_sword[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ENEMY_X_START, EFFECT_Y_START, EFFECT_ENEMY_X_END, EFFECT_Y_END, g_battle_effect_sword[0][g_effectFrame], true);
 		}
 		//ìGÅ{ã|
 		if (character[chara].team == TEAM_ENEMY && character[chara].job == JOB_SNIPER) {
 
-			DrawGraph(750, 250, g_battle_effect_snip[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ENEMY_X_START, EFFECT_Y_START, EFFECT_ENEMY_X_END, EFFECT_Y_END, g_battle_effect_snip[0][g_effectFrame], true);
 		}
 		//ìGÅ{ñÇ
 		if (character[chara].team == TEAM_ENEMY && character[chara].job == JOB_MAGICIAN) {
 
-			DrawGraph(750, 250, g_battle_effect_magic[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ENEMY_X_START, EFFECT_Y_START, EFFECT_ENEMY_X_END, EFFECT_Y_END, g_battle_effect_magic[0][g_effectFrame], true);
 		}
 		//ìGÅ{í∑
 		if (character[chara].team == TEAM_ENEMY && character[chara].job == JOB_LEADER) {
 
-			DrawGraph(750, 250, g_battle_effect_leader[0][g_effectFrame], TRUE);
+			DrawExtendGraph(EFFECT_ENEMY_X_START, EFFECT_Y_START, EFFECT_ENEMY_X_END, EFFECT_Y_END, g_battle_effect_leader[0][g_effectFrame], true);
 		}
 	}
 }
@@ -210,15 +220,17 @@ void battleEffectGraphic(float delta_time, int chara) {
 //ÉçÉXÉgèàóù
 void battleLost(int chara) {
 
-	if (charaData[character[0].y][character[0].x] == -1 &&
-		charaData[character[1].y][character[1].x] == -1 &&
-		charaData[character[2].y][character[2].x] == -1) {
+	for(int i=0;i< CHARACTER_ALLAY_MAX;i++){
+		
+		if(charaData[character[i].y][character[i].x] == -1){
+			
+			//ÉQÅ[ÉÄÉIÅ[ÉoÅ[ï∂éöï`âÊ
+			//DrawGraph(400, 100, g_map_turn[0][4], TRUE);
 
-		//ÉQÅ[ÉÄÉIÅ[ÉoÅ[ï∂éöï`âÊ
-		DrawGraph(400, 100, g_map_turn[0][4], TRUE);
 
-		//É^ÉCÉgÉãÉVÅ[ÉìÇ÷Åiç°ìxèëÇ≠ÇÊÅj
+			//É^ÉCÉgÉãÉVÅ[ÉìÇ÷Åiç°ìxèëÇ≠ÇÊÅj
 
+		}
 	}
 }
 
@@ -262,24 +274,16 @@ void battleMove(float delta_time, int attack, int defence) {
 		//HP0Ç…Ç»Ç¡ÇΩÇÁèIóπ
 		if (character[attack].hp <= 0) {
 
-			character[attack].hp == 0;
+			//character[attack].hp = 0;
 
-			g_phase = PHASE_SELECT_CHARACTER;
-
-			g_flagEnter = false;
-			g_flagCursor = true;
-			g_CanAttackMove = 0;
+			battleExit();
 		}
 
 		else if (character[defence].hp <= 0) {
 
-			character[defence].hp == 0;
+			//character[defence].hp = 0;
 
-			g_phase = PHASE_SELECT_CHARACTER;
-
-			g_flagEnter = false;
-			g_flagCursor = true;
-			g_CanAttackMove = 0;
+			battleExit();
 		}
 
 		//ñàÉtÉåÅ[ÉÄë´ÇµÇƒÇ¢Ç≠èàóù
@@ -296,21 +300,36 @@ void battleMove(float delta_time, int attack, int defence) {
 	}
 }
 
-//ÉXÉsÅ[Éhî‰är
-bool battleSpeed(float delta_time, int attack, int defence) {
+//êÌì¨èàóùèIóπ
+void battleExit() {
 
-	//attackÇ™ÇTà»è„ëÅÇ¢èÍçá
-	if (character[attack].speed - character[defence].speed >= 5) {
-		battleMove(delta_time, attack, defence);
+	character[g_selectedChara].done = true;
+	g_phase = PHASE_SELECT_CHARACTER;
 
-		return true;
-	}
-
-	//defenceÇ™ÇTà»è„ëÅÇ¢èÍçá
-	else if (character[defence].speed - character[attack].speed >= 5) {
-		battleMove(delta_time, defence, attack);
-
-		return true;
-	}
-	return false;
+	g_flagEnter = false;
+	g_flagCursor = true;
+	g_CanAttackMove = 0;
 }
+
+//ÉXÉsÅ[Éhî‰är
+//bool battleSpeed(float delta_time, int attack, int defence) {
+//
+//	//attackÇ™ÇTà»è„ëÅÇ¢èÍçá
+//
+//	if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+//
+//		battleEffectGraphic(delta_time, attack);
+//
+//		return true;
+//	}
+//
+//	//defenceÇ™ÇTà»è„ëÅÇ¢èÍçá
+//	else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
+//		
+//		battleEffectGraphic(delta_time, defence);
+//
+//
+//		return true;
+//	}
+//	return false;
+//}

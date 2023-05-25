@@ -1,5 +1,8 @@
 #pragma once
 
+//文字の色
+const int TEXT_COLOR_WHITE = -1;
+
 //現在の状況が分かるようにフェーズ分け
 enum {
 	PHASE_SELECT_CHARACTER,

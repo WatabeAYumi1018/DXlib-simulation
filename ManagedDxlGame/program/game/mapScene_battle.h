@@ -4,7 +4,30 @@
 const int EFFECT_SIZE = 120;	
 
 //アニメーションのMAXフレーム
-const int MAX_ANIM_FRAM = 14;
+const int MAX_EFFECT_FRAM = 10;
+
+//バトル中のキャラアニメーション座標
+const int CHARA_ALLAY_X_START = 750;	//味方X始点
+const int CHARA_ALLAY_X_END = 850;		//味方X終点
+const int CHARA_ENEMY_X_START = 350;	//敵X始点
+const int CHARA_ENEMY_X_END = 450;		//敵X終点
+const int CHARA_Y_START = 250;			//共通Y始点
+const int CHARA_Y_END = 350;			//共通Y終点
+
+//戦闘エフェクトアニメーション座標
+const int EFFECT_ALLAY_X_START = 200;	//味方X始点
+const int EFFECT_ALLAY_X_END = 600;		//味方X終点
+const int EFFECT_ENEMY_X_START = 580;	//敵X始点
+const int EFFECT_ENEMY_X_END = 980;	//敵X終点
+const int EFFECT_Y_START = 150;			//共通Y始点
+const int EFFECT_Y_END = 450;			//共通Y終点
+
+const int HP_ALLAY_X = 800;
+const int HP_ENEMY_X = 400;
+const int HP_Y = 500;
+
+//速さ判定
+const int SPEED_DIFFERENCE = 5;
 
 //戦闘中の画面ハンドル
 extern int g_battleGround ;
@@ -24,10 +47,10 @@ extern float g_animAlly_timeCount;	//仲間描画速さの制御
 extern float g_animEnemy_timeCount;	//敵描画速さの制御
 
 //戦闘中の攻撃エフェクト
-extern int g_battle_effect_sword[1][5];
-extern int g_battle_effect_snip[1][9];
+extern int g_battle_effect_sword[1][14];
+extern int g_battle_effect_snip[1][14];
 extern int g_battle_effect_magic[1][14];
-extern int g_battle_effect_leader[1][5];
+extern int g_battle_effect_leader[1][14];
 
 //攻撃エフェクトのアニメーションハンドル
 extern float g_effectTimeCount ;
@@ -51,6 +74,9 @@ void battleGraph();
 //戦闘中の情報描画(攻撃/防御)
 void battleInfo(int attack, int defence);
 
+//開始時のHP描画
+void battleHp(int attack, int defence);
+
 //戦闘画面のキャラアニメ
 void battleCharaGraphic(float delta_time, int attack, int defence);
 
@@ -65,3 +91,9 @@ int battleCalculate(int attack, int defence);
 
 //戦闘によるダメージ変化の流れ
 void battleMove(float delta_time, int attack, int defence);
+
+//戦闘処理終了
+void battleExit();
+
+//スピード比較
+//bool battleSpeed(float delta_time, int attack, int defence);

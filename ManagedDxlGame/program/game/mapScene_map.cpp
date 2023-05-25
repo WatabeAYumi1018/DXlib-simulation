@@ -68,7 +68,7 @@ int g_relation = 0;
 int g_relation_back = 0;
 
 //マップ画面でのターン文字
-int g_map_turn[1][15];
+//int g_map_turn[1][15];
 
 //----------------------------------------------------------------------------
 //マップ全般に関わる関数
@@ -130,17 +130,17 @@ void instructions() {
 
 	case PHASE_SELECT_CHARACTER:
 		SetFontSize(30);
-		DrawString(700, 10, "キャラクターを選んでください\n", -1);
+		DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "キャラクターを選んでください\n", TEXT_COLOR_WHITE);
 		break;
 
 	case PHASE_SET_MOVE_POSITION:
 		SetFontSize(30);
-		DrawString(700, 10, "移動先を選んでください\n", -1);
+		DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "移動先を選んでください\n", TEXT_COLOR_WHITE);
 		break;
 
 	case PHASE_SELECT_ATTACK:
 		SetFontSize(30);
-		DrawString(700, 10, "攻撃対象を選んでください\n", -1);
+		DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "攻撃対象を選んでください\n", TEXT_COLOR_WHITE);
 		break;
 	}
 }
@@ -177,8 +177,8 @@ void mapPosition() {
 			else if (mapData[i][j] == 7) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][41], TRUE); }
 			else if (mapData[i][j] == 8) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][51], TRUE); }
 			else if (mapData[i][j] == 9) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][52], TRUE); }
-			else if (mapData[i][j] == 10) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][59], TRUE); }
-			else if (mapData[i][j] == 11) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][60], TRUE); }
+			else if (mapData[i][j] == 10){ DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][59], TRUE);}
+			else if (mapData[i][j] == 11){ DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, map_chips[graphic_cell_ground][60], TRUE);}
 
 			//キャラチップ描画
 			if (charaData[i][j] >= 0) {

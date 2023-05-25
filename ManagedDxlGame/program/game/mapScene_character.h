@@ -30,6 +30,8 @@ extern JOB jobData[];
 
 //キャラ総数
 const int CHARACTER_MAX = 16;
+const int CHARACTER_ALLAY_MAX = 3;
+
 
 //選択されたキャラクター
 extern int g_selectedChara ;
@@ -49,7 +51,6 @@ struct Character {
 	int job;
 	int hp;
 	int maxHp;
-	int decreaseHp;
 	int attack;
 	int defence;
 	int speed;

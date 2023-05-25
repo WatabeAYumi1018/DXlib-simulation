@@ -12,19 +12,6 @@
 //マップ上での指示出しコード(実装予定処理一覧)
 //
 // -----------------------------------------------------------
-//キャラクターの配置決定ok
-//UIで敵のステータスを表示ok
-//メニュー画面を開く(メニュー画面の作成)→本データが終わった後で
-//プレイヤーターンと敵のターン
-//動くマスの数を決定 OK
-//キャラクターの現在地を把握する関数必要　先輩さまさま
-//動いた後の選択(攻撃か待機)　攻撃を作ろう！！
-//戦闘処理	下書きOK（バグ直し）
-//ダメージ計算と描画	（下書きOK）
-//敵味方のロスト処理	（下書きOK）
-//敵からの攻撃仕掛け	（下書きOK）
-// 
-// 赤本！！！！
 // 
 //★味方全員動いたらターン終了
 //★敵のターン
@@ -49,6 +36,8 @@
 //-------------------------------------------------------------------------------------------
 //進行フェーズのフラグ変数
 //
+
+
 
 //サウンド鳴らし方（wav.mp3もおっけ）
 //一回だけ再生命令を出す（毎フレーム命令出すと使えない）
@@ -173,12 +162,15 @@ void phaseMove(float delta_time) {
 					//戦闘画面下グラフィック描画
 					battleGraph();
 					
+					//HP描画
+					battleHp(g_selectedChara, g_standbyChara);
+
 					//戦闘画面下情報描画
 					battleInfo(g_selectedChara, g_standbyChara);
 
 					//戦闘画面のキャラアニメーション
-					battleCharaGraphic(delta_time, g_selectedChara, g_standbyChara);
-								
+					battleCharaGraphic(delta_time, g_selectedChara, g_standbyChara);			
+
 					if (g_CanAttackMove == 1) {
 
 						//attack側の攻撃エフェクト描画
@@ -190,9 +182,7 @@ void phaseMove(float delta_time) {
 						//HP計算
 						battleMove(delta_time, g_selectedChara, g_standbyChara);
 
-						//defence側
-						std::string defence_StartHp = std::to_string(character[g_standbyChara].hp);
-						DrawStringEx(400, 500, -1, defence_StartHp.c_str());
+						 if (character[g_standbyChara].hp <= 0) {battleExit();}
 					}
 					
 					else if (g_CanAttackMove == 3) {
@@ -206,32 +196,40 @@ void phaseMove(float delta_time) {
 						//HP計算
 						battleMove(delta_time, g_standbyChara, g_selectedChara);
 
-						//defence側
-						std::string attack_StartHp = std::to_string(character[g_selectedChara].hp);
-						DrawStringEx(800, 500, -1, attack_StartHp.c_str());
-
+						if(character[g_selectedChara].hp <= 0){battleExit();}
 					}
+
 					else if (g_CanAttackMove == 5) {
-					
-						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= 5) {
-							
+
+						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
+
+							battleEffectGraphic(delta_time, g_selectedChara);
+						}
+
+						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
+
+							battleEffectGraphic(delta_time, g_standbyChara);
+						}
+
+						else {battleExit();}
+					}
+
+					else if (g_CanAttackMove == 6) {
+
+						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
+
+							//HP計算
 							battleMove(delta_time, g_selectedChara, g_standbyChara);
 						}
 
-						else if(character[g_standbyChara].speed - character[g_selectedChara].speed >= 5){
+						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
 
-								battleMove(delta_time, g_standbyChara, g_selectedChara);
+							//HP計算
+							battleMove(delta_time, g_standbyChara, g_selectedChara);
 						}
-
-						character[g_selectedChara].done = true;
-						g_phase = PHASE_SELECT_CHARACTER;
-
-						g_flagEnter = false;
-						g_flagCursor = true;
-						g_CanAttackMove = 0;
-
-						break;
 					}
+
+					else if (g_CanAttackMove == 7) { battleExit(); }
 				}
 
 			}
@@ -290,10 +288,10 @@ void gameStart() {
 	LoadDivGraph("graphics/battleHit.png",		25, 5, 5, 180, 60, g_battle_hit[0]);
 	
 	//攻撃エフェクトアニメーション
-	LoadDivGraph("graphics/effect_sword.png", 5, 5, 1, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_sword[0]);
-	LoadDivGraph("graphics/effect_snip.png",  9, 9, 1, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_snip[0]);
+	LoadDivGraph("graphics/effect_sword.png", 15, 5, 3, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_sword[0]);
+	LoadDivGraph("graphics/effect_snip.png",  10, 5, 2, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_snip[0]);
 	LoadDivGraph("graphics/effect_magic.png",14,14, 1, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_magic[0]);
-	LoadDivGraph("graphics/effect_leader.png",5, 5, 1, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_leader[0]);
+	LoadDivGraph("graphics/effect_leader.png",10, 5, 2, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_leader[0]);
 
 	//職業アイコン
 	icon_sword= LoadGraph("graphics/iconSWORD.png");
@@ -306,7 +304,7 @@ void gameStart() {
 	g_relation = LoadGraph("graphics/relation.png");
 
 	//マップ画面でのターン文字
-	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
+	//LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
 
 }
 

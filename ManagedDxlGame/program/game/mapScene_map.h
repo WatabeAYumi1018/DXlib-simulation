@@ -5,6 +5,10 @@ const int MAP_HEIGHT = 15;		//マップ画面高さ
 const int MAP_WIDTH = 40;		//マップ画面幅
 const int CHIP_SIZE = 32;		//チップサイズ
 
+//命令文の座標
+const int INSTRUCTIONS_X = 700;
+const int INSTRUCTIONS_Y = 10;
+
 extern int mapData[MAP_HEIGHT][MAP_WIDTH];
 
 //塗りつぶしの定義
@@ -35,7 +39,7 @@ extern int g_relation ;
 extern int g_relation_back ;
 
 //マップ画面でのターン文字
-extern int g_map_turn[1][15];
+//extern int g_map_turn[1][15];
 
 
 
