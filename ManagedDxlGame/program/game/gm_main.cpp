@@ -162,7 +162,7 @@ void phaseMove(float delta_time) {
 					//戦闘画面下グラフィック描画
 					battleGraph();
 					
-					//HP描画
+					//下画面HP描画
 					battleHp(g_selectedChara, g_standbyChara);
 
 					//戦闘画面下情報描画
@@ -179,8 +179,8 @@ void phaseMove(float delta_time) {
 
 					else if (g_CanAttackMove == 2) {//味方の攻撃
 						
-						//HP計算
-						battleHpMove(delta_time, g_selectedChara, g_standbyChara);
+						//ヒット率乱数によるダメージ判定
+						battleRandom(delta_time, g_selectedChara, g_standbyChara);
 
 						 if (character[g_standbyChara].hp <= 0) {battleExit();}
 					}
@@ -193,8 +193,8 @@ void phaseMove(float delta_time) {
 					
 					else if(g_CanAttackMove == 4) {
 
-						//HP計算
-						battleHpMove(delta_time, g_standbyChara, g_selectedChara);
+						//ヒット率乱数によるダメージ判定
+						battleRandom(delta_time, g_standbyChara, g_selectedChara);
 
 						if(character[g_selectedChara].hp <= 0){battleExit();}
 					}
@@ -217,15 +217,15 @@ void phaseMove(float delta_time) {
 					else if (g_CanAttackMove == 6) {
 
 						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
-
-							//HP計算
-							battleHpMove(delta_time, g_selectedChara, g_standbyChara);
+							
+							//ヒット率乱数によるダメージ判定
+							battleRandom(delta_time, g_selectedChara, g_standbyChara);
 						}
 
 						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
 
-							//HP計算
-							battleHpMove(delta_time, g_standbyChara, g_selectedChara);
+							//ヒット率乱数によるダメージ判定
+							battleRandom(delta_time, g_standbyChara, g_selectedChara);
 						}
 					}
 

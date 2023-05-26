@@ -72,8 +72,10 @@ void battleLost(int chara);
 //三すくみの関係
 bool ThreeRelation(int attack, int defence);
 
+void battleRandom(float delta_time, int attack, int defence);
+
 //戦闘計算処理
-int battleCalculate(int attack, int defence);
+int battleDamage(int attack, int defence);
 
 //戦闘によるダメージ変化の流れ
 void battleHpMove(float delta_time, int attack, int defence);
