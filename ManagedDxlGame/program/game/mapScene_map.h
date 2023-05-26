@@ -39,9 +39,10 @@ extern int g_relation ;
 extern int g_relation_back ;
 
 //マップ画面でのターン文字
-//extern int g_map_turn[1][15];
+extern int g_map_turn[1][15];
 
-
+//東西南北のベクトル
+extern int g_directions[][2];
 
 //地形種類
 enum {
@@ -68,9 +69,6 @@ enum {
 	DIRECTION_WEST,
 	DIRECTION_MAX
 };
-
-//東西南北のベクトル
-extern int g_directions[][2];
 
 //fillの初期化（これをしないと、次に選択しても前の選択情報が残ったままになってしまう）
 void resetFill();

@@ -44,9 +44,11 @@
 int sound_bgm_hdl = 0;
 int sound_se_hdl = 0;
 
-
-//フェーズ変数を作成
+//フェーズ変数
 int g_phase = PHASE_SELECT_CHARACTER;
+
+//ターン変数
+int g_turnMove= TURN_ALLAY;
 
 //カーソルフラグ
 bool g_flagCursor = true;
@@ -57,7 +59,80 @@ bool g_flagEnter = false;
 //バトル進行中か否かの判定フラグ
 int g_CanAttackMove = 0;
 
+//テロップアニメーションカウント
+float g_telopTimeCount = 0;
+
+//ターン切り替えフラグ
+int g_turnFlag = true;
+
 //-------------------------------------------------------------------------------------------
+
+void turnMove(float delta_time) {
+
+	const int TELOP_X_END = 700;
+	const int TELOP_Y_START = 100;
+	const int TELOP_Y_END = 200;
+	const int TELOP_SPEED=700;
+	const int TELOP_FRAME_MAX = 1400;
+
+	switch (g_turnMove) {
+	
+	case TURN_ALLAY: {
+
+		if ((tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB))) {g_turnMove = TURN_ENEMY;}
+
+		if (g_turnFlag) {
+
+			//毎フレーム足していく処理
+			g_telopTimeCount += delta_time;
+
+			int telopFrame = g_telopTimeCount * TELOP_SPEED;
+
+			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][10], true);
+
+			if (telopFrame >= TELOP_FRAME_MAX) {
+
+				telopFrame = 0;
+				g_telopTimeCount = 0;
+				g_turnFlag = false;
+			}
+		}
+		phaseMove(delta_time);
+
+		break;
+	}
+
+	case TURN_ENEMY: {
+
+		if (!g_turnFlag) {
+
+			//毎フレーム足していく処理
+			g_telopTimeCount += delta_time;
+
+			int telopFrame = g_telopTimeCount * TELOP_SPEED;
+
+			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][9], true);
+
+			if (telopFrame == TELOP_FRAME_MAX) {
+
+				telopFrame = 0;
+				g_telopTimeCount = 0;
+				g_turnFlag = true;
+			}
+		}
+
+		//敵のAIここから
+
+		//for (int i = 0; i < CHARACTER_MAX; i++) {
+
+		//	int ally = getCharacter(cursorX, cursorY);
+		//	if (character[ally].x < fill) { break; } //負の値だったらいない
+		//}
+
+		break;
+	}	
+	}
+}
 
 //カーソルエンター処理について
 void phaseMove(float delta_time) {
@@ -72,10 +147,13 @@ void phaseMove(float delta_time) {
 
 				//選択したキャラクターを囲って東西南北に1マスずつ塗りつぶし
 				int chara = getCharacter(cursorX, cursorY);
-				if (chara < 0) { break; } //もし負の値だったらそこにキャラはいない→塗りつぶさない
-
+				if (chara < 0) { break; } //負の値だったらいない
+				
 				//行動済みなら座標動かない
-				//if (character[chara].done) { resetFill(); }
+				if (character[chara].done) { 
+
+					resetFill();
+				}
 
 				//キャラがいれば(それ以外は)塗りつぶし
 				else {
@@ -92,7 +170,6 @@ void phaseMove(float delta_time) {
 						for (int j = 0; j < MAP_WIDTH; j++) {
 
 							int standChara = getCharacter(j, i);
-							
 							if (standChara >= 0 && fill[i][j]) {fill[i][j] = false;}
 						}
 					}
@@ -101,12 +178,14 @@ void phaseMove(float delta_time) {
 
 					//キャラを選択したら、移動フェーズへ
 					if (character[chara].team == TEAM_ALLY) {
+
 						g_selectedChara = chara; //味方キャラを代入
 						g_phase = PHASE_SET_MOVE_POSITION;
 					}
-					break;
+
+				break;
 				}
-			}
+			}		
 		}
 		case PHASE_SET_MOVE_POSITION: {
 
@@ -126,6 +205,7 @@ void phaseMove(float delta_time) {
 					for (int i = 0; i < CHARACTER_MAX; i++) {
 
 						if (checkCanBattle(g_selectedChara, i)) {
+
 							g_standbyChara = i;
 							checkBattleFlag = true;
 							break;
@@ -182,7 +262,11 @@ void phaseMove(float delta_time) {
 						//ヒット率乱数によるダメージ判定
 						battleRandom(delta_time, g_selectedChara, g_standbyChara);
 
-						 if (character[g_standbyChara].hp <= 0) {battleExit();}
+						if (character[g_standbyChara].hp <= 0) {
+							
+							battleExit();
+							battleLost();
+						}
 					}
 					
 					else if (g_CanAttackMove == 3) {
@@ -196,7 +280,11 @@ void phaseMove(float delta_time) {
 						//ヒット率乱数によるダメージ判定
 						battleRandom(delta_time, g_standbyChara, g_selectedChara);
 
-						if(character[g_selectedChara].hp <= 0){battleExit();}
+						if(character[g_selectedChara].hp <= 0){
+							
+							battleExit();
+							battleLost();
+						}
 					}
 
 					else if (g_CanAttackMove == 5) {
@@ -211,7 +299,10 @@ void phaseMove(float delta_time) {
 							battleEffectGraphic(delta_time, g_standbyChara);
 						}
 
-						else {battleExit();}
+						else {
+							battleExit();
+							battleLost();
+						}
 					}
 
 					else if (g_CanAttackMove == 6) {
@@ -229,21 +320,26 @@ void phaseMove(float delta_time) {
 						}
 					}
 
-					else if (g_CanAttackMove == 7) { battleExit(); }
+					else if (g_CanAttackMove == 7) {
+					
+						battleExit();
+						battleLost();
+					}
 				}
 
 			}
-			//else if (character[g_selectedChara].x == cursorX && character[g_selectedChara].y == cursorY) {
-			//	//自分を選択で待機
-			//	character[g_selectedChara].done = true;
-			//	resetFill();
-			//	g_phase = PHASE_SELECT_CHARACTER;
-			//}
 		break;
 		}
 	}
-}
+	
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
+		//攻撃可能キャラがいなければ、待機
+		character[g_selectedChara].done = true;
+		resetFill();
+		g_phase = PHASE_SELECT_CHARACTER;
+	}
+}
 
 void gameStart() {
 	srand(time(0));
@@ -304,7 +400,7 @@ void gameStart() {
 	g_relation = LoadGraph("graphics/relation.png");
 
 	//マップ画面でのターン文字
-	//LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
+	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
 
 }
 
@@ -332,7 +428,7 @@ void gameMain(float delta_time) {
 	display();
 	cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
 	instructions();
-	phaseMove(delta_time);
+	turnMove(delta_time);
 
 }
 //

@@ -67,11 +67,12 @@ void battleCharaGraphic(float delta_time, int attack, int defence);
 void battleEffectGraphic(float delta_time, int chara);
 
 //ロスト処理
-void battleLost(int chara);
+void battleLost();
 
 //三すくみの関係
 bool ThreeRelation(int attack, int defence);
 
+//バトル全般まとめ
 void battleRandom(float delta_time, int attack, int defence);
 
 //戦闘計算処理

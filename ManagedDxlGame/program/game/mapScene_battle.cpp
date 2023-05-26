@@ -4,7 +4,6 @@
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
-
 //戦闘中の画面ハンドル
 int g_battleGround = 0;
 int g_battleParaBack = 0;
@@ -218,6 +217,7 @@ void battleEffectGraphic(float delta_time, int chara) {
 
 		//毎フレーム足していく処理
 		g_effectTimeCount += delta_time;
+
 		if (g_effectTimeCount > 0.1f) {
 			g_effectFrame++;
 			g_effectTimeCount = 0;
@@ -267,18 +267,25 @@ void battleEffectGraphic(float delta_time, int chara) {
 }
 
 //ロスト処理
-void battleLost(int chara) {
+void battleLost() {
+
+	int lostCount = 0;
 
 	for(int i=0;i< CHARACTER_ALLAY_MAX;i++){
 		
-		if(charaData[character[i].y][character[i].x] == -1){
-			
-			//ゲームオーバー文字描画
-			//DrawGraph(400, 100, g_map_turn[0][4], TRUE);
+		if (character[i].hp <= 0) {
+
+			lostCount++;
+
+			if (lostCount == CHARACTER_ALLAY_MAX) {
+
+				//ゲームオーバー文字描画
+				DrawGraph(400, 100, g_map_turn[0][4], TRUE);
 
 
-			//タイトルシーンへ（今度書くよ）
+				//タイトルシーンへ（今度書くよ）
 
+			}
 		}
 	}
 }
@@ -318,6 +325,7 @@ int battleHit(int attack, int defence) {
 	return hit;
 }
 
+//バトル全般まとめ
 void battleRandom(float delta_time,int attack, int defence) {
 
 	const int HIT_RANDOM_MIN = 0;
@@ -367,19 +375,9 @@ void battleHpMove(float delta_time, int attack, int defence) {
 	if (g_flagBattleHp) {
 
 		//HP0になったら終了
-		if (character[attack].hp <= 0) {
+		if (character[attack].hp <= 0) {battleExit();}
 
-			//character[attack].hp = 0;
-
-			battleExit();
-		}
-
-		else if (character[defence].hp <= 0) {
-
-			//character[defence].hp = 0;
-
-			battleExit();
-		}
+		else if (character[defence].hp <= 0) {battleExit();}
 
 		//毎フレーム足していく処理
 		g_HpTimeCount += delta_time;

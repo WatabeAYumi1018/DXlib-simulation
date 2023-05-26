@@ -74,10 +74,7 @@ void getCharaPosition() {
 		int y = character[i].y;
 		int x = character[i].x;
 
-		if (character[i].hp > 0) {
-
-			charaData[character[i].y][character[i].x] = i;
-		}
+		if (character[i].hp > 0) {charaData[character[i].y][character[i].x] = i;}
 	}
 }
 

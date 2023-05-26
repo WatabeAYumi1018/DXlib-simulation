@@ -68,7 +68,7 @@ int g_relation = 0;
 int g_relation_back = 0;
 
 //マップ画面でのターン文字
-//int g_map_turn[1][15];
+int g_map_turn[1][15];
 
 //----------------------------------------------------------------------------
 //マップ全般に関わる関数
@@ -76,11 +76,11 @@ int g_relation_back = 0;
 
 //fillの初期化（これをしないと、次に選択しても前の選択情報が残ったままになってしまう）
 void resetFill() {
+
 	for (int i = 0; i < MAP_HEIGHT; i++) {
 		for (int j = 0; j < MAP_WIDTH; j++) {
-			fill[i][j] = false;
 
-			//味方全員doneで敵フェーズへ
+			fill[i][j] = false;
 		}
 	}
 }
