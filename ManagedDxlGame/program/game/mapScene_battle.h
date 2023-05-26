@@ -6,28 +6,11 @@ const int EFFECT_SIZE = 120;
 //アニメーションのMAXフレーム
 const int MAX_EFFECT_FRAM = 10;
 
-//バトル中のキャラアニメーション座標
-const int CHARA_ALLAY_X_START = 750;	//味方X始点
-const int CHARA_ALLAY_X_END = 850;		//味方X終点
-const int CHARA_ENEMY_X_START = 350;	//敵X始点
-const int CHARA_ENEMY_X_END = 450;		//敵X終点
-const int CHARA_Y_START = 250;			//共通Y始点
-const int CHARA_Y_END = 350;			//共通Y終点
-
-//戦闘エフェクトアニメーション座標
-const int EFFECT_ALLAY_X_START = 200;	//味方X始点
-const int EFFECT_ALLAY_X_END = 600;		//味方X終点
-const int EFFECT_ENEMY_X_START = 580;	//敵X始点
-const int EFFECT_ENEMY_X_END = 980;	//敵X終点
-const int EFFECT_Y_START = 150;			//共通Y始点
-const int EFFECT_Y_END = 450;			//共通Y終点
+const int SPEED_DIFFERENCE = 5;
 
 const int HP_ALLAY_X = 800;
 const int HP_ENEMY_X = 400;
 const int HP_Y = 500;
-
-//速さ判定
-const int SPEED_DIFFERENCE = 5;
 
 //戦闘中の画面ハンドル
 extern int g_battleGround ;
@@ -86,11 +69,14 @@ void battleEffectGraphic(float delta_time, int chara);
 //ロスト処理
 void battleLost(int chara);
 
+//三すくみの関係
+bool ThreeRelation(int attack, int defence);
+
 //戦闘計算処理
 int battleCalculate(int attack, int defence);
 
 //戦闘によるダメージ変化の流れ
-void battleMove(float delta_time, int attack, int defence);
+void battleHpMove(float delta_time, int attack, int defence);
 
 //戦闘処理終了
 void battleExit();

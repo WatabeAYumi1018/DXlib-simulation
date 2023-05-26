@@ -71,35 +71,45 @@ void battleGraph() {
 //戦闘中の情報描画(攻撃/防御)
 void battleInfo(int attack, int defence) {
 
+	const int ALLAY_X_START = 1100;
+	const int ALLY_X_END = 1150;
+	const int ENEMY_X_START = 100;
+	const int ENEMY_X_END = 150;
+
+	const int Y_START = 630;
+	const int Y_END = 680;
+
+	const int NAME_Y = 530;
+
 	SetFontSize(30);
 
 	//attack側の描画
-	DrawStringEx(1100, 530, TEXT_COLOR_WHITE, character[attack].name.c_str());
+	DrawStringEx(ALLAY_X_START, NAME_Y, TEXT_COLOR_WHITE, character[attack].name.c_str());
 
 	if (character[attack].job == JOB_SWORDMASTER) {
-		DrawExtendGraph(1100, 630, 1150, 680, icon_sword, true);//拡大縮小draw関数
+		DrawExtendGraph(ALLAY_X_START, Y_START, ALLY_X_END, Y_END, icon_sword, true);//拡大縮小draw関数
 	}
 	else if (character[attack].job == JOB_SNIPER) {
-		DrawExtendGraph(1100, 630, 1150, 680, icon_snip, true);
+		DrawExtendGraph(ALLAY_X_START, Y_START, ALLY_X_END, Y_END, icon_snip, true);
 	}
 	else if (character[attack].job == JOB_MAGICIAN) {
-		DrawExtendGraph(1100, 630, 1150, 680, icon_magic, true);
+		DrawExtendGraph(ALLAY_X_START, Y_START, ALLY_X_END, Y_END, icon_magic, true);
 	}
 
 	//defence側の描画
-	DrawStringEx(100, 530, TEXT_COLOR_WHITE, character[defence].name.c_str());
+	DrawStringEx(ENEMY_X_START, NAME_Y, TEXT_COLOR_WHITE, character[defence].name.c_str());
 
 	if (character[defence].job == JOB_SWORDMASTER) {
-		DrawExtendGraph(100, 630, 150, 680, icon_sword, true);
+		DrawExtendGraph(ENEMY_X_START, Y_START, ENEMY_X_END, Y_END, icon_sword, true);
 	}
 	else if (character[defence].job == JOB_SNIPER) {
-		DrawExtendGraph(100, 630, 150, 680, icon_snip, true);
+		DrawExtendGraph(ENEMY_X_START, Y_START, ENEMY_X_END, Y_END, icon_snip, true);
 	}
 	else if (character[defence].job == JOB_MAGICIAN) {
-		DrawExtendGraph(100, 630, 150, 680, icon_magic, true);
+		DrawExtendGraph(ENEMY_X_START, Y_START, ENEMY_X_END, Y_END, icon_magic, true);
 	}
 	else if (character[defence].job == JOB_LEADER) {
-		DrawExtendGraph(100, 630, 150, 680, icon_boss, true);
+		DrawExtendGraph(ENEMY_X_START, Y_START, ENEMY_X_END, Y_END, icon_boss, true);
 	}
 }
 
@@ -125,6 +135,14 @@ void battleHp(int attack, int defence) {
 
 //戦闘画面のキャラアニメ
 void battleCharaGraphic(float delta_time, int attack, int defence) {
+
+	//バトル中のキャラアニメーション座標
+	const int CHARA_ALLAY_X_START = 750;	//味方X始点
+	const int CHARA_ALLAY_X_END = 850;		//味方X終点
+	const int CHARA_ENEMY_X_START = 350;	//敵X始点
+	const int CHARA_ENEMY_X_END = 450;		//敵X終点
+	const int CHARA_Y_START = 250;			//共通Y始点
+	const int CHARA_Y_END = 350;			//共通Y終点
 
 	//毎フレーム足していく処理
 	g_animAlly_timeCount += delta_time;
@@ -158,12 +176,42 @@ void battleCharaGraphic(float delta_time, int attack, int defence) {
 
 			g_animEnemy_timeCount = 0;
 		}
-		DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[defence][g_charaEnemy_vector], true);
+
+		if (defence == 3 || defence == 6 || defence == 9 || defence == 12)
+		{
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[3][g_charaEnemy_vector], true);
+		}
+		else if (defence == 4 || defence == 7 || defence == 10 || defence == 13)
+		{
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[4][g_charaEnemy_vector], true);
+		}
+		else if (defence == 5 || defence == 8 || defence == 11 || defence == 14)
+		{
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[5][g_charaEnemy_vector], true);
+		}
+		else if (defence == 15)
+		{
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[6][g_charaEnemy_vector], true);
+		}
+
 	}
 }
 
 //戦闘エフェクトアニメ
 void battleEffectGraphic(float delta_time, int chara) {
+
+	//戦闘エフェクトアニメーション座標
+	const int EFFECT_ALLAY_X_START = 200;	//味方X始点
+	const int EFFECT_ALLAY_X_END = 600;		//味方X終点
+	const int EFFECT_ENEMY_X_START = 580;	//敵X始点
+	const int EFFECT_ENEMY_X_END = 980;		//敵X終点
+	const int EFFECT_Y_START = 150;			//共通Y始点
+	const int EFFECT_Y_END = 450;			//共通Y終点
+
+	const int HP_ALLAY_X = 800;
+	const int HP_ENEMY_X = 400;
+	const int HP_Y = 500;
+
 
 	if (g_flagBattleAnime) {
 
@@ -234,38 +282,80 @@ void battleLost(int chara) {
 	}
 }
 
+//三すくみの関係
+bool ThreeRelation(int attack, int defence) {
+
+	if ((character[attack].job == JOB_SWORDMASTER && character[defence].job == JOB_MAGICIAN) ||
+		(character[attack].job == JOB_SNIPER && character[defence].job == JOB_SWORDMASTER) ||
+		(character[attack].job == JOB_MAGICIAN && character[defence].job == JOB_SNIPER)) {
+	
+		return true;
+	}
+
+	if ((character[attack].job == JOB_MAGICIAN && character[defence].job == JOB_SWORDMASTER) ||
+		(character[attack].job == JOB_SWORDMASTER && character[defence].job == JOB_SNIPER) ||
+		(character[attack].job == JOB_SNIPER && character[defence].job == JOB_MAGICIAN)) {
+
+		return false;
+	}
+}
+
+//命中計算処理
+int battleHit(int attack, int defence) {
+
+	int hit = 0;
+
+	//３すくみ有利の場合
+	if (ThreeRelation(attack,defence)) {hit =character[attack].hit;}
+
+	//３すくみ不利の場合
+	if (!ThreeRelation(attack, defence)) {hit = 0.6 * character[attack].hit;}
+
+	//それ以外（３すくみの影響なし）
+	else {hit= 0.8 * character[attack].hit;}
+
+	return hit;
+}
+
+void battleRandom(float delta_time,int attack, int defence) {
+
+	const int HIT_RANDOM_MIN = 0;
+	const int HIT_RANDOM_MAX = 100;
+
+	int hitRandom = rand() % (HIT_RANDOM_MAX - HIT_RANDOM_MIN + 1);	//0~100の乱数
+
+	int hit = battleHit(attack, defence);
+
+	//
+	if (hit < HIT_RANDOM_MAX) { battleHpMove(delta_time, attack, defence); }
+
+}
+
 //戦闘計算処理
 int battleCalculate(int attack, int defence) {
 
 	int damage = 0;
 
 	//３すくみ有利の場合
-	if ((character[attack].job == JOB_SWORDMASTER && character[defence].job == JOB_MAGICIAN) ||
-		(character[attack].job == JOB_SNIPER && character[defence].job == JOB_SWORDMASTER) ||
-		(character[attack].job == JOB_MAGICIAN && character[defence].job == JOB_SNIPER)) {
+	if (ThreeRelation(attack, defence)) {
 
 		damage = 2 * (character[attack].attack - character[defence].defence);
 	}
 
 	//３すくみ不利の場合
-	else if ((character[attack].job == JOB_MAGICIAN && character[defence].job == JOB_SWORDMASTER) ||
-		(character[attack].job == JOB_SWORDMASTER && character[defence].job == JOB_SNIPER) ||
-		(character[attack].job == JOB_SNIPER && character[defence].job == JOB_MAGICIAN)) {
+	else if (!ThreeRelation(attack, defence)) {
 
-		damage = 0.5 * (character[attack].attack - character[defence].defence);
+			damage = 0.5 * (character[attack].attack - character[defence].defence);	
 	}
 
 	//それ以外（３すくみの影響なし）
-	else {
-
-		damage = character[attack].attack - character[defence].defence;
-	}
+	else {damage = character[attack].attack - character[defence].defence;}
 
 	return damage;
 }
 
 //戦闘によるダメージ変化の流れ
-void battleMove(float delta_time, int attack, int defence) {
+void battleHpMove(float delta_time, int attack, int defence) {
 
 	SetFontSize(60);
 

@@ -32,7 +32,6 @@ extern JOB jobData[];
 const int CHARACTER_MAX = 16;
 const int CHARACTER_ALLAY_MAX = 3;
 
-
 //選択されたキャラクター
 extern int g_selectedChara ;
 

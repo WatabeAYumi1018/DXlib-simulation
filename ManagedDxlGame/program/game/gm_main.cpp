@@ -180,7 +180,7 @@ void phaseMove(float delta_time) {
 					else if (g_CanAttackMove == 2) {//–¡•û‚ÌUŒ‚
 						
 						//HPŒvZ
-						battleMove(delta_time, g_selectedChara, g_standbyChara);
+						battleHpMove(delta_time, g_selectedChara, g_standbyChara);
 
 						 if (character[g_standbyChara].hp <= 0) {battleExit();}
 					}
@@ -194,7 +194,7 @@ void phaseMove(float delta_time) {
 					else if(g_CanAttackMove == 4) {
 
 						//HPŒvZ
-						battleMove(delta_time, g_standbyChara, g_selectedChara);
+						battleHpMove(delta_time, g_standbyChara, g_selectedChara);
 
 						if(character[g_selectedChara].hp <= 0){battleExit();}
 					}
@@ -219,13 +219,13 @@ void phaseMove(float delta_time) {
 						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
 
 							//HPŒvZ
-							battleMove(delta_time, g_selectedChara, g_standbyChara);
+							battleHpMove(delta_time, g_selectedChara, g_standbyChara);
 						}
 
 						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
 
 							//HPŒvZ
-							battleMove(delta_time, g_standbyChara, g_selectedChara);
+							battleHpMove(delta_time, g_standbyChara, g_selectedChara);
 						}
 					}
 
