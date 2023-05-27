@@ -161,22 +161,16 @@ void phaseMove(float delta_time) {
 
 		case PHASE_SELECT_CHARACTER: {
 
-			//回復地形の上にいたら、ターン開始時に１００回復
-			for (int i = 0; i < MAP_HEIGHT; i++) {
-				for (int j = 0; j < MAP_WIDTH; j++) {
-				
-					int startChara = getCharacter(j, i);
-					if (startChara == CELL_HOUSE || startChara == CELL_FORT) {
-						
-						if (character[startChara].hp > 0 && character[startChara].hp < character[startChara].maxHp) {
+			if (charaData[character[g_selectedChara].y][character[g_selectedChara].x] == CELL_HOUSE ||
+				charaData[character[g_selectedChara].y][character[g_selectedChara].x] == CELL_FORT) {
 
-							character[startChara].hp += 100;
-
-							if (character[startChara].hp > character[startChara].maxHp) {
-
-								character[startChara].hp = character[startChara].maxHp;
-							}
-						}
+				if (character[g_selectedChara].hp > 0 && character[g_selectedChara].hp < character[g_selectedChara].maxHp) {
+					
+					character[g_selectedChara].hp += 100;
+					
+					if (character[g_selectedChara].hp > character[g_selectedChara].maxHp) {
+					
+						character[g_selectedChara].hp = character[g_selectedChara].maxHp;
 					}
 				}
 			}

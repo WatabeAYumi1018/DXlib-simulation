@@ -9,7 +9,8 @@ enum {
 	GAME_STORY,
 	GAME_MAP,
 	GAME_OVER,
-	GAME_CLEAR
+	GAME_CLEAR,
+	GAME_RESTART
 };
 
 
@@ -51,6 +52,10 @@ extern float g_telopTimeCount;
 
 //ターン切り替えフラグ
 extern int g_flagTurn;
+
+//ゲームスタート
+extern int g_flagGameStart;
+
 
 //ゲームオーバーフラグ
 extern int g_flagGameOver;
