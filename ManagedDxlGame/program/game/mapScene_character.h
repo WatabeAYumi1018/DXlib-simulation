@@ -35,7 +35,7 @@ const int CHARACTER_ALLAY_MAX = 3;
 //選択されたキャラクター
 extern int g_selectedChara ;
 
-//攻撃対象の待機中キャラクター
+//待機中敵キャラクター
 extern int g_standbyChara ;
 
 //アイコン画像ハンドル

@@ -1,5 +1,15 @@
 #pragma once
 
+//ゲームシーン分け
+enum {
+	GAME_START,
+	GAME_STORY,
+	GAME_MAP,
+	GAME_OVER,
+	GAME_CLEAR
+};
+
+
 //文字の色
 const int TEXT_COLOR_WHITE = -1;
 
@@ -37,7 +47,13 @@ extern int g_turnMove ;
 extern float g_telopTimeCount;
 
 //ターン切り替えフラグ
-extern int g_turnFlag;
+extern int g_flagTurn;
+
+//ゲームオーバーフラグ
+extern int g_flagGameOver;
+
+//ゲームオーバー画面ハンドル
+extern int g_gameOver ;
 
 //サウンド
 extern int sound_bgm_hdl;

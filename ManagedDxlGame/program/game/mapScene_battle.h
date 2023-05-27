@@ -67,7 +67,7 @@ void battleCharaGraphic(float delta_time, int attack, int defence);
 void battleEffectGraphic(float delta_time, int chara);
 
 //ƒƒXƒgˆ—
-void battleLost();
+bool battleLost();
 
 //O‚·‚­‚İ‚ÌŠÖŒW
 bool ThreeRelation(int attack, int defence);

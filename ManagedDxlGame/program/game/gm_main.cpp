@@ -13,11 +13,11 @@
 //
 // -----------------------------------------------------------
 // 
-//★味方全員動いたらターン終了
-//★敵のターン
+//★味方全員動いたらターン終了　OK
+//★敵のターン　OK
 //★敵の動きAI（ボスは動かない）
-//★全員の待機確認
-//★味方ターンへフェーズチェンジ
+//★全員の待機確認　OK
+//★味方ターンへフェーズチェンジ　OK
 //★ボス戦		（下書きOK）
 //★ステージクリア
 //ゲームオーバー	（下書きOK）
@@ -27,17 +27,16 @@
 
 //地形の上に乗ると、毎ターン体力回復
 
-//味方全員がdone=trueで敵フェーズへ移行（今までのフェーズは全部味方の処理である！）
-
 //if敵のmove内の座標に味方が入ったら⇒味方の座標へ向かってくる⇒バトルがはじまる（関数へ）
 
-//敵フェーズを作る。
 
 //-------------------------------------------------------------------------------------------
 //進行フェーズのフラグ変数
 //
 
 
+//int g_gameScene_id = GAME_START; 本番こっち！！
+int g_gameScene_id = GAME_MAP;
 
 //サウンド鳴らし方（wav.mp3もおっけ）
 //一回だけ再生命令を出す（毎フレーム命令出すと使えない）
@@ -63,9 +62,16 @@ int g_CanAttackMove = 0;
 float g_telopTimeCount = 0;
 
 //ターン切り替えフラグ
-int g_turnFlag = true;
+int g_flagTurn = true;
 
+//ゲームオーバーフラグ
+int g_flagGameOver = false;
+
+//ゲームオーバー画面ハンドル
+int g_gameOver = 0;
 //-------------------------------------------------------------------------------------------
+
+
 
 void turnMove(float delta_time) {
 
@@ -81,7 +87,7 @@ void turnMove(float delta_time) {
 
 		if ((tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB))) {g_turnMove = TURN_ENEMY;}
 
-		if (g_turnFlag) {
+		if (g_flagTurn) {
 
 			//毎フレーム足していく処理
 			g_telopTimeCount += delta_time;
@@ -94,7 +100,7 @@ void turnMove(float delta_time) {
 
 				telopFrame = 0;
 				g_telopTimeCount = 0;
-				g_turnFlag = false;
+				g_flagTurn = false;
 			}
 		}
 		phaseMove(delta_time);
@@ -104,7 +110,7 @@ void turnMove(float delta_time) {
 
 	case TURN_ENEMY: {
 
-		if (!g_turnFlag) {
+		if (!g_flagTurn) {
 
 			//毎フレーム足していく処理
 			g_telopTimeCount += delta_time;
@@ -117,7 +123,7 @@ void turnMove(float delta_time) {
 
 				telopFrame = 0;
 				g_telopTimeCount = 0;
-				g_turnFlag = true;
+				g_flagTurn = true;
 			}
 		}
 
@@ -150,10 +156,10 @@ void phaseMove(float delta_time) {
 				if (chara < 0) { break; } //負の値だったらいない
 				
 				//行動済みなら座標動かない
-				if (character[chara].done) { 
+				//if (character[chara].done) { 
 
-					resetFill();
-				}
+				//	resetFill();
+				//}
 
 				//キャラがいれば(それ以外は)塗りつぶし
 				else {
@@ -182,7 +188,6 @@ void phaseMove(float delta_time) {
 						g_selectedChara = chara; //味方キャラを代入
 						g_phase = PHASE_SET_MOVE_POSITION;
 					}
-
 				break;
 				}
 			}		
@@ -236,7 +241,6 @@ void phaseMove(float delta_time) {
 					g_flagBattleHp = true;
 					g_CanAttackMove ++;
 				}
-
 				if (g_flagEnter && !g_flagCursor) {
 
 					//戦闘画面下グラフィック描画
@@ -256,25 +260,22 @@ void phaseMove(float delta_time) {
 						//attack側の攻撃エフェクト描画
 						battleEffectGraphic(delta_time, g_selectedChara);
 					}
-
 					else if (g_CanAttackMove == 2) {//味方の攻撃
 						
 						//ヒット率乱数によるダメージ判定
 						battleRandom(delta_time, g_selectedChara, g_standbyChara);
 
 						if (character[g_standbyChara].hp <= 0) {
-							
+						
 							battleExit();
-							battleLost();
+							if (battleLost()) { g_gameScene_id = GAME_OVER; }
 						}
 					}
-					
 					else if (g_CanAttackMove == 3) {
 
 						//defence側の攻撃エフェクト描画
 						battleEffectGraphic(delta_time, g_standbyChara);
 					}
-					
 					else if(g_CanAttackMove == 4) {
 
 						//ヒット率乱数によるダメージ判定
@@ -283,28 +284,23 @@ void phaseMove(float delta_time) {
 						if(character[g_selectedChara].hp <= 0){
 							
 							battleExit();
-							battleLost();
+							if (battleLost()) { g_gameScene_id = GAME_OVER; }
 						}
 					}
-
 					else if (g_CanAttackMove == 5) {
 
 						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
 
 							battleEffectGraphic(delta_time, g_selectedChara);
 						}
-
 						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
 
 							battleEffectGraphic(delta_time, g_standbyChara);
 						}
-
 						else {
-							battleExit();
-							battleLost();
+							if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { battleExit(); }
 						}
 					}
-
 					else if (g_CanAttackMove == 6) {
 
 						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
@@ -312,26 +308,22 @@ void phaseMove(float delta_time) {
 							//ヒット率乱数によるダメージ判定
 							battleRandom(delta_time, g_selectedChara, g_standbyChara);
 						}
-
 						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
 
 							//ヒット率乱数によるダメージ判定
 							battleRandom(delta_time, g_standbyChara, g_selectedChara);
 						}
 					}
-
 					else if (g_CanAttackMove == 7) {
 					
 						battleExit();
-						battleLost();
+						if (battleLost()) { g_gameScene_id = GAME_OVER; }
 					}
 				}
-
 			}
 		break;
 		}
 	}
-	
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		//攻撃可能キャラがいなければ、待機
@@ -378,6 +370,10 @@ void gameStart() {
 	//攻撃画面の背景
 	g_battleGround = LoadGraph("graphics/battleback.jpg");
 
+	//ゲームオーバー背景
+	g_gameOver = LoadGraph("graphics/GameOver.jpg");
+
+
 	//攻撃中の下画面
 	LoadDivGraph("graphics/battleHp.png",		35, 5, 7, 120, 60, g_battle_hp[0]);
 	LoadDivGraph("graphics/battleAttack.png",	42, 3, 14,300, 60, g_battle_attack[0]);
@@ -423,13 +419,50 @@ void gameMain(float delta_time) {
 	//曲を途中から再生する
 	//PlaySoundMem(sound_bgm_hdl,DX_PLAYTYPE_LOOP,false);
 
-	getCharaPosition();
-	mapPosition();
-	display();
-	cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
-	instructions();
-	turnMove(delta_time);
+	switch (g_gameScene_id) {
+	
+	case GAME_START:
 
+		break;
+
+	case GAME_STORY:
+		
+		break;
+
+	case GAME_MAP:
+
+		getCharaPosition();
+		mapPosition();
+		display();
+		cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
+		instructions();
+		turnMove(delta_time);
+
+		DrawExtendGraph(0, 0, 1300, 750, g_gameOver, true);
+		DrawExtendGraph(200, 200, 1100, 400, g_map_turn[0][3], true);
+		DrawStringEx(500, 500, TEXT_COLOR_WHITE, "タイトルへもどる");
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_flagGameOver = GAME_START; }
+
+		break;
+
+	case GAME_OVER:
+		
+		if (g_flagGameOver) {
+
+			//DrawExtendGraph(0, 0, 1400, 800, g_gameOver, true);
+			//DrawExtendGraph(200, 200, 1100, 400, g_map_turn[0][3], true);
+			//DrawStringEx(600, 600, TEXT_COLOR_WHITE, "タイトルへもどる");
+		}
+
+		break;
+
+	case GAME_CLEAR:
+		
+		break;
+	
+	}
+
+	
 }
 //
 //------------------------------------------------------------------------------------------------------------
@@ -439,5 +472,5 @@ void gameEnd() {
 }
 
 
-//棒グラフでのダメージ減算描画
+//棒グラフでのダメージ減算
 //DrawExtendで、ダメージ受けたら（フラグ管理）その分を減らす（描画のサイズを変える）

@@ -117,20 +117,21 @@ void battleHp(int attack, int defence) {
 	
 	SetFontSize(60);
 
-	if (character[attack].hp > 0) {
+	if (character[attack].hp <= 0) { 
+		DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, "0"); 
+	}
+	else {
 		//attack側のHP描画
 		std::string attack_Hp = std::to_string(character[attack].hp);
 		DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, attack_Hp.c_str());
 	}
 
-	if (character[defence].hp > 0) {
+	if (character[defence].hp <= 0) { DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, "0"); }
+	else {
 		//defence側のHP描画
 		std::string defence_Hp = std::to_string(character[defence].hp);
 		DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, defence_Hp.c_str());
 	}
-
-	if (character[attack].hp <= 0)	{DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE,"0");}
-	if (character[defence].hp <= 0) {DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE,"0");}
 }
 
 //戦闘画面のキャラアニメ
@@ -267,26 +268,23 @@ void battleEffectGraphic(float delta_time, int chara) {
 }
 
 //ロスト処理
-void battleLost() {
+bool battleLost() {
 
-	int lostCount = 0;
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
-	for(int i=0;i< CHARACTER_ALLAY_MAX;i++){
-		
-		if (character[i].hp <= 0) {
+		int static lostCount = 0;
+
+		if (character[g_selectedChara].hp <= 0 && character[g_selectedChara].team == TEAM_ALLY) {
 
 			lostCount++;
 
 			if (lostCount == CHARACTER_ALLAY_MAX) {
 
-				//ゲームオーバー文字描画
-				DrawGraph(400, 100, g_map_turn[0][4], TRUE);
-
-
-				//タイトルシーンへ（今度書くよ）
-
+				g_flagGameOver = true;
+				return true;
 			}
 		}
+		return false;
 	}
 }
 
@@ -332,7 +330,6 @@ void battleRandom(float delta_time,int attack, int defence) {
 	const int HIT_RANDOM_MAX = 100;
 
 	int hitRandom = rand() % (HIT_RANDOM_MAX - HIT_RANDOM_MIN + 1);	//0~100の乱数
-
 	int hit = battleHit(attack, defence);
 
 	//攻撃ミス
@@ -341,7 +338,6 @@ void battleRandom(float delta_time,int attack, int defence) {
 		//攻撃ミスの描画
 
 	}
-
 	//攻撃判定
 	else { battleHpMove(delta_time, attack, defence); }
 }
@@ -356,13 +352,11 @@ int battleDamage(int attack, int defence) {
 
 		damage = 2 * (character[attack].attack - character[defence].defence);
 	}
-
 	//３すくみ不利の場合
 	else if (!ThreeRelation(attack, defence)) {
 
 			damage = 0.5 * (character[attack].attack - character[defence].defence);	
 	}
-
 	//それ以外（３すくみの影響なし）
 	else {damage = character[attack].attack - character[defence].defence;}
 
@@ -374,11 +368,6 @@ void battleHpMove(float delta_time, int attack, int defence) {
 
 	if (g_flagBattleHp) {
 
-		//HP0になったら終了
-		if (character[attack].hp <= 0) {battleExit();}
-
-		else if (character[defence].hp <= 0) {battleExit();}
-
 		//毎フレーム足していく処理
 		g_HpTimeCount += delta_time;
 
@@ -386,6 +375,7 @@ void battleHpMove(float delta_time, int attack, int defence) {
 
 			int damage = battleDamage(attack, defence);
 			character[defence].hp -= damage;
+			if (character[defence].hp <= 0) { character[defence].hp = 0; }
 
 			g_HpTimeCount = 0;
 			g_flagBattleHp = false;
@@ -396,12 +386,15 @@ void battleHpMove(float delta_time, int attack, int defence) {
 //戦闘処理終了
 void battleExit() {
 
-	character[g_selectedChara].done = true;
-	g_phase = PHASE_SELECT_CHARACTER;
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
-	g_flagEnter = false;
-	g_flagCursor = true;
-	g_CanAttackMove = 0;
+		character[g_selectedChara].done = true;
+		g_phase = PHASE_SELECT_CHARACTER;
+
+		g_flagEnter = false;
+		g_flagCursor = true;
+		g_CanAttackMove = 0;
+	}
 }
 
 //スピード比較

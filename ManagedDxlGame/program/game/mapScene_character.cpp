@@ -3,6 +3,8 @@
 #include "mapScene_map.h"
 #include "mapScene_character.h"
 
+
+
 //キャラクターのデータ二次元配列（マップチップとキャラチップを分けて考える）
 int charaData[MAP_HEIGHT][MAP_WIDTH];
 
@@ -18,7 +20,7 @@ JOB jobData[] = {
 //選択されたキャラクター
 int g_selectedChara = 0;
 
-//攻撃対象の待機中キャラクター
+//待機中敵キャラクター
 int g_standbyChara = 0;
 
 //アイコン画像ハンドル
