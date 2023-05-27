@@ -170,6 +170,7 @@
     <ClCompile Include="program\game\mapScene_battle.cpp" />
     <ClCompile Include="program\game\mapScene_character.cpp" />
     <ClCompile Include="program\game\mapScene_map.cpp" />
+    <ClCompile Include="program\game\titleScene.cpp" />
     <ClCompile Include="program\library\json11.cpp" />
     <ClCompile Include="program\library\tnl_font_texture.cpp" />
     <ClCompile Include="program\library\tnl_inclution_owner_locked.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="program\game\mapScene_battle.h" />
     <ClInclude Include="program\game\mapScene_character.h" />
     <ClInclude Include="program\game\mapScene_map.h" />
+    <ClInclude Include="program\game\titleScene.h" />
     <ClInclude Include="program\library\json11.hpp" />
     <ClInclude Include="program\library\stb_image.h" />
     <ClInclude Include="program\library\tnl_font_texture.h" />

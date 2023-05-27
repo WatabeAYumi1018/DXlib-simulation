@@ -1,5 +1,8 @@
 #pragma once
 
+//ゲームシーン
+extern int g_gameScene_id;
+
 //ゲームシーン分け
 enum {
 	GAME_START,

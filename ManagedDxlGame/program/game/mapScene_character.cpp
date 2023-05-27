@@ -32,9 +32,9 @@ int icon_boss = 0;
 //äeÉLÉÉÉâÉNÉ^Å[ÇÃèÓïÒ
 Character character[] = {
 	//ÉLÉÉÉâñºÅ@ êEã∆				HPÅ@maxHp	çUåÇ ñhå‰ ë¨Ç≥ ñΩíÜ à⁄ìÆ	É`Å[ÉÄ	X	 Y
-	{"ÇOî‘",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ALLY,	36, 3},
-	{"ÇPî‘",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ALLY,	34, 4},
-	{"ÇQî‘",	JOB_MAGICIAN,		100, 100,	200,  50,  10,  100,  4,	TEAM_ALLY,	38, 5},
+	{"ÇOî‘",	JOB_SWORDMASTER,	300, 300,	100,  0,  20,  100,  5,	TEAM_ALLY,	36, 3},
+	{"ÇPî‘",	JOB_SNIPER,			200, 200,	150,  0,  15,  100,  4,	TEAM_ALLY,	34, 4},
+	{"ÇQî‘",	JOB_MAGICIAN,		100, 100,	200,  0,  10,  100,  4,	TEAM_ALLY,	38, 5},
 	{"åïém",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ENEMY,	31, 6},
 	{"ã|égÇ¢",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ENEMY,	33, 11},
 	{"ñÇìπém",	JOB_MAGICIAN,		100, 100,	200,  50,  10,  100,  4,	TEAM_ENEMY,	27, 1},

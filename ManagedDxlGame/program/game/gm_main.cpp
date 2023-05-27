@@ -4,6 +4,7 @@
 #include <string>
 #include "../dxlib_ext/dxlib_ext.h"
 #include "gm_main.h"
+#include "titleScene.h"
 #include "mapScene_map.h"
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
@@ -36,7 +37,7 @@
 
 
 //int g_gameScene_id = GAME_START; 本番こっち！！
-int g_gameScene_id = GAME_MAP;
+int g_gameScene_id = GAME_START;
 
 //サウンド鳴らし方（wav.mp3もおっけ）
 //一回だけ再生命令を出す（毎フレーム命令出すと使えない）
@@ -64,12 +65,25 @@ float g_telopTimeCount = 0;
 //ターン切り替えフラグ
 int g_flagTurn = true;
 
+//ゲームスタート
+int g_flagGameStart = true;
+
 //ゲームオーバーフラグ
 int g_flagGameOver = false;
 
-//ゲームオーバー画面ハンドル
+
+//ゲームオーバー画面
 int g_gameOver = 0;
+
+
+
+
+
+
+
 //-------------------------------------------------------------------------------------------
+
+
 
 
 
@@ -336,7 +350,7 @@ void phaseMove(float delta_time) {
 void gameStart() {
 	srand(time(0));
 
-	SetWindowText("ファイアーエムブレムっぽいもの");
+	SetWindowText("GREEN OCEAN");
 
 	//音楽の出力--------------------------------------------
 	//sound_bgm_hdl = LoadSoundMem("sound/test_bgm.wav");
@@ -346,6 +360,17 @@ void gameStart() {
 	//sound_se_hdl = LoadSoundMem("sound/test_se.wav");
 
 	//画像の出力--------------------------------------------
+
+	//ゲームスタート画面
+	g_gameStart = LoadGraph("graphics/GameStart.jpg");
+	
+	//ゲームスタート画面アニメーション
+	g_gameStartAnim = LoadGraph("graphics/titleAnim.png");
+
+	//タイトル選択画像
+	g_select_cursor_hdl = LoadGraph("graphics/flowerSelect.png");
+
+	
 	//マップデータ
 	LoadDivGraph("graphics/pipo-map001.png", 88, 8, 11, CHIP_SIZE, CHIP_SIZE, map_chips[0]);
 
@@ -423,6 +448,13 @@ void gameMain(float delta_time) {
 	
 	case GAME_START:
 
+		if(g_flagGameStart){
+
+			DrawExtendGraph(0, 0, 1300, 750, g_gameStart, true);
+			rightFlash(delta_time);
+			sceneTitle();
+		}
+
 		break;
 
 	case GAME_STORY:
@@ -438,20 +470,23 @@ void gameMain(float delta_time) {
 		instructions();
 		turnMove(delta_time);
 
-		DrawExtendGraph(0, 0, 1300, 750, g_gameOver, true);
-		DrawExtendGraph(200, 200, 1100, 400, g_map_turn[0][3], true);
-		DrawStringEx(500, 500, TEXT_COLOR_WHITE, "タイトルへもどる");
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_flagGameOver = GAME_START; }
-
 		break;
 
 	case GAME_OVER:
 		
 		if (g_flagGameOver) {
 
-			//DrawExtendGraph(0, 0, 1400, 800, g_gameOver, true);
-			//DrawExtendGraph(200, 200, 1100, 400, g_map_turn[0][3], true);
-			//DrawStringEx(600, 600, TEXT_COLOR_WHITE, "タイトルへもどる");
+			DrawExtendGraph(0, 0, 1300, 750, g_gameOver, true);
+			DrawExtendGraph(200, 200, 1100, 400, g_map_turn[0][3], true);
+			DrawStringEx(500, 500, TEXT_COLOR_WHITE, "タイトルへもどる");
+			
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+				g_flagGameOver = false;
+				g_flagGameStart = true;
+			}
+			if (!g_flagGameOver && g_flagGameStart) { g_gameScene_id = GAME_START; }
+
+			break;
 		}
 
 		break;
