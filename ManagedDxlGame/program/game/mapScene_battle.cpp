@@ -40,8 +40,41 @@ bool g_flagBattleHp = true;
 //HPタイムカウント
 float g_HpTimeCount = 0;
 
+bool checkAllyInFill(int enemy,int ally) {
+	
+	int characterX = character[enemy].x;
+	int characterY = character[enemy].y;
+
+	for (int y = characterY - 4; y <= characterY + 4; y++) {
+		for (int x = characterX - 4; x <= characterX + 4; x++) {
+
+			if (fill[y][x] > charaData[character[ally].y][character[ally].x]) {
+			
+				int distanceX = abs(characterX - x);
+				int distanceY = abs(characterY - y);
+				if (distanceX + distanceY <= 4 && character[ally].team == TEAM_ALLY) {
+				
+					return true;  // fill内の範囲内に味方キャラが存在する場合
+				}
+			}
+		}
+	}
+	return false;  // fill内の範囲内に味方キャラが存在しない場合
+}
+
+
+////敵からの攻撃判定
+//bool checkCanEnemyBattle(int attack, int defence) {
+//	
+//	int distanceX = abs(character[attack].x - character[defence].x);//absolute valueの略。絶対　値。
+//	int distanceY = abs(character[attack].y - character[defence].y);
+//	if (distanceX <= 3 && distanceY <= 3 ){ return true; }
+//
+//	return false;
+//}
+
 //攻撃可能かどうか判定
-bool checkCanBattle(int attack, int defence) {
+bool checkCanAllyBattle(int attack, int defence) {
 
 	if (character[attack].team == character[defence].team) { return false; }//味方同士、敵同士は攻撃できない
 	if ((character[attack].hp <= 0) || (character[defence].hp <= 0)) { return false; } //体力０以下も不可
@@ -397,6 +430,87 @@ void battleExit() {
 	}
 }
 
+void battle(float delta_time) {
+	if (g_flagEnter && !g_flagCursor) {
+
+		//戦闘画面下グラフィック描画
+		battleGraph();
+
+		//下画面HP描画
+		battleHp(g_selectedChara, g_standbyChara);
+
+		//戦闘画面下情報描画
+		battleInfo(g_selectedChara, g_standbyChara);
+
+		//戦闘画面のキャラアニメーション
+		battleCharaGraphic(delta_time, g_selectedChara, g_standbyChara);
+
+		if (g_CanAttackMove == 1) {
+
+			//attack側の攻撃エフェクト描画
+			battleEffectGraphic(delta_time, g_selectedChara);
+		}
+		else if (g_CanAttackMove == 2) {//味方の攻撃
+
+			//ヒット率乱数によるダメージ判定
+			battleRandom(delta_time, g_selectedChara, g_standbyChara);
+
+			if (character[g_standbyChara].hp <= 0) {
+
+				battleExit();
+				if (battleLost()) { g_gameScene_id = GAME_OVER; }
+			}
+		}
+		else if (g_CanAttackMove == 3) {
+
+			//defence側の攻撃エフェクト描画
+			battleEffectGraphic(delta_time, g_standbyChara);
+		}
+		else if (g_CanAttackMove == 4) {
+
+			//ヒット率乱数によるダメージ判定
+			battleRandom(delta_time, g_standbyChara, g_selectedChara);
+
+			if (character[g_selectedChara].hp <= 0) {
+
+				battleExit();
+				if (battleLost()) { g_gameScene_id = GAME_OVER; }
+			}
+		}
+		else if (g_CanAttackMove == 5) {
+
+			if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
+
+				battleEffectGraphic(delta_time, g_selectedChara);
+			}
+			else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
+
+				battleEffectGraphic(delta_time, g_standbyChara);
+			}
+			else {
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { battleExit(); }
+			}
+		}
+		else if (g_CanAttackMove == 6) {
+
+			if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
+
+				//ヒット率乱数によるダメージ判定
+				battleRandom(delta_time, g_selectedChara, g_standbyChara);
+			}
+			else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
+
+				//ヒット率乱数によるダメージ判定
+				battleRandom(delta_time, g_standbyChara, g_selectedChara);
+			}
+		}
+		else if (g_CanAttackMove == 7) {
+
+			battleExit();
+			if (battleLost()) { g_gameScene_id = GAME_OVER; }
+		}
+	}
+}
 //スピード比較
 //bool battleSpeed(float delta_time, int attack, int defence) {
 //

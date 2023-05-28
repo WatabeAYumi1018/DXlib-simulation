@@ -75,17 +75,23 @@ int g_flagGameOver = false;
 //ゲームオーバー画面
 int g_gameOver = 0;
 
-
-
-
-
-
-
 //-------------------------------------------------------------------------------------------
 
 
 
+void moveEnemyToAlly(float delta_time, int enemy) {
+	for (int i = 0; i < CHARACTER_ALLAY_MAX; i++) {
+		if (checkAllyInFill(enemy,i)) {
 
+			getCharaPosition();
+			battle(delta_time);
+			//character[enemy].x = abs(character[i].x+1);   // 目標の味方キャラの隣に移動
+			//character[enemy].y = abs(character[i].y+0);
+		}
+	}
+	//g_flagEnter = true;
+	//g_flagCursor = false;
+}
 
 void turnMove(float delta_time) {
 
@@ -142,13 +148,18 @@ void turnMove(float delta_time) {
 		}
 
 		//敵のAIここから
+		if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {
 
-		//for (int i = 0; i < CHARACTER_MAX; i++) {
+  			for (int c = CHARACTER_MAX - 1; c >= 0; c--) {
 
-		//	int ally = getCharacter(cursorX, cursorY);
-		//	if (character[ally].x < fill) { break; } //負の値だったらいない
-		//}
+				//if (character[c].team == TEAM_ALLY && character[c].hp <= 0)	continue;	//ロストキャラはスルー
+				
+				if (c != 15 && character[c].team == TEAM_ENEMY && character[c].hp > 0) {
 
+    				moveEnemyToAlly(delta_time, c);
+				}
+			}
+		}
 		break;
 	}	
 	}
@@ -242,7 +253,7 @@ void phaseMove(float delta_time) {
 				
 					for (int i = 0; i < CHARACTER_MAX; i++) {
 
-						if (checkCanBattle(g_selectedChara, i)) {
+						if (checkCanAllyBattle(g_selectedChara, i)) {
 
 							g_standbyChara = i;
 							checkBattleFlag = true;
@@ -274,85 +285,9 @@ void phaseMove(float delta_time) {
 					g_flagBattleHp = true;
 					g_CanAttackMove ++;
 				}
-				if (g_flagEnter && !g_flagCursor) {
+				
+				battle(delta_time);
 
-					//戦闘画面下グラフィック描画
-					battleGraph();
-					
-					//下画面HP描画
-					battleHp(g_selectedChara, g_standbyChara);
-
-					//戦闘画面下情報描画
-					battleInfo(g_selectedChara, g_standbyChara);
-
-					//戦闘画面のキャラアニメーション
-					battleCharaGraphic(delta_time, g_selectedChara, g_standbyChara);			
-
-					if (g_CanAttackMove == 1) {
-
-						//attack側の攻撃エフェクト描画
-						battleEffectGraphic(delta_time, g_selectedChara);
-					}
-					else if (g_CanAttackMove == 2) {//味方の攻撃
-						
-						//ヒット率乱数によるダメージ判定
-						battleRandom(delta_time, g_selectedChara, g_standbyChara);
-
-						if (character[g_standbyChara].hp <= 0) {
-						
-							battleExit();
-							if (battleLost()) { g_gameScene_id = GAME_OVER; }
-						}
-					}
-					else if (g_CanAttackMove == 3) {
-
-						//defence側の攻撃エフェクト描画
-						battleEffectGraphic(delta_time, g_standbyChara);
-					}
-					else if(g_CanAttackMove == 4) {
-
-						//ヒット率乱数によるダメージ判定
-						battleRandom(delta_time, g_standbyChara, g_selectedChara);
-
-						if(character[g_selectedChara].hp <= 0){
-							
-							battleExit();
-							if (battleLost()) { g_gameScene_id = GAME_OVER; }
-						}
-					}
-					else if (g_CanAttackMove == 5) {
-
-						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
-
-							battleEffectGraphic(delta_time, g_selectedChara);
-						}
-						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
-
-							battleEffectGraphic(delta_time, g_standbyChara);
-						}
-						else {
-							if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { battleExit(); }
-						}
-					}
-					else if (g_CanAttackMove == 6) {
-
-						if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
-							
-							//ヒット率乱数によるダメージ判定
-							battleRandom(delta_time, g_selectedChara, g_standbyChara);
-						}
-						else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
-
-							//ヒット率乱数によるダメージ判定
-							battleRandom(delta_time, g_standbyChara, g_selectedChara);
-						}
-					}
-					else if (g_CanAttackMove == 7) {
-					
-						battleExit();
-						if (battleLost()) { g_gameScene_id = GAME_OVER; }
-					}
-				}
 			}
 		break;
 		}

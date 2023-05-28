@@ -48,8 +48,13 @@ extern bool g_flagBattleHp ;
 //HPタイムカウント
 extern float g_HpTimeCount ;
 
+bool checkAllyInFill(int enemy, int ally);
+
+//敵からの攻撃判定
+bool checkCanEnemyBattle(int attack, int defence);
+
 //攻撃可能かどうか判定
-bool checkCanBattle(int attack, int defence);
+bool checkCanAllyBattle(int attack, int defence);
 
 //戦闘下画面のグラフィック描画
 void battleGraph();
@@ -83,6 +88,9 @@ void battleHpMove(float delta_time, int attack, int defence);
 
 //戦闘処理終了
 void battleExit();
+
+//戦闘処理
+void battle(float delta_time);
 
 //スピード比較
 //bool battleSpeed(float delta_time, int attack, int defence);
