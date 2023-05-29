@@ -100,7 +100,6 @@ void fillCanMove(int _chara, int _x, int _y, int _move) {//‘I‘ğ‚µ‚½–¡•ûƒLƒƒƒ‰A
 	//‰æ–ÊŠO‚ÍƒXƒ‹[
 	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return; }
 
-
 	//¡‚¢‚éêŠ‚Ìcellî•ñ‚ğæ“¾AE‹Æ‚Ìî•ñ‚Æ‡‚í‚¹‚ÄmoveCells‚ğæ“¾‚·‚é
 	//—á‚¦‚ÎAX‚Ìã‚É‚¢‚éê‡‚ÍAE‹Æ‚É‚æ‚Á‚Ä‚ÍˆÚ“®ƒRƒXƒg‚PA‚Q‚¾‚Á‚½‚è‚·‚éB
 	int moveCost = jobData[character[_chara].job].moveCells[mapData[_y][_x]];

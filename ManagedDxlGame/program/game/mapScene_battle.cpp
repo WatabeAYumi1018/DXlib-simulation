@@ -45,20 +45,20 @@ bool checkAllyInFill(int enemy,int ally) {
 	int characterX = character[enemy].x;
 	int characterY = character[enemy].y;
 
-	for (int y = characterY - 4; y <= characterY + 4; y++) {
-		for (int x = characterX - 4; x <= characterX + 4; x++) {
-
-			if (fill[y][x] > charaData[character[ally].y][character[ally].x]) {
-			
-				int distanceX = abs(characterX - x);
-				int distanceY = abs(characterY - y);
-				if (distanceX + distanceY <= 4 && character[ally].team == TEAM_ALLY) {
+	for (int dir = 0; dir < DIRECTION_MAX; dir++)
+	{
+		int x = characterX + g_directions[dir][0];
+		int y = characterY + g_directions[dir][1];
+		fillCanMove(enemy, x, y, character[enemy].move);//‚Ç‚ñ‚Ç‚ñ—×‚è‡‚¤êŠ‚ð’²¸
+	
+		if (fill[y][x] && charaData[y][x] != -1) {
 				
-					return true;  // fill“à‚Ì”ÍˆÍ“à‚É–¡•ûƒLƒƒƒ‰‚ª‘¶Ý‚·‚éê‡
-				}
+			if (character[charaData[y][x]].team == TEAM_ALLY) {
+					
+				return true;  // fill“à‚Ì”ÍˆÍ“à‚É–¡•ûƒLƒƒƒ‰‚ª‘¶Ý‚·‚éê‡
 			}
 		}
-	}
+	}	
 	return false;  // fill“à‚Ì”ÍˆÍ“à‚É–¡•ûƒLƒƒƒ‰‚ª‘¶Ý‚µ‚È‚¢ê‡
 }
 

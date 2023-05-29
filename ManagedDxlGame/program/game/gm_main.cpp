@@ -56,6 +56,9 @@ bool g_flagCursor = true;
 //エンター押しフラグ
 bool g_flagEnter = false;
 
+//スペース押しフラグ
+extern bool g_flseSpace=false;
+
 //バトル進行中か否かの判定フラグ
 int g_CanAttackMove = 0;
 
@@ -78,19 +81,32 @@ int g_gameOver = 0;
 //-------------------------------------------------------------------------------------------
 
 
+//敵からの攻撃判定
+void moveEnemyToAlly(int enemy) {
 
-void moveEnemyToAlly(float delta_time, int enemy) {
-	for (int i = 0; i < CHARACTER_ALLAY_MAX; i++) {
-		if (checkAllyInFill(enemy,i)) {
+	int characterX = character[enemy].x;
+	int characterY = character[enemy].y;
+	//int moveCost = jobData[character[enemy].job].moveCells[mapData[characterY][characterX]];
 
-			getCharaPosition();
-			battle(delta_time);
-			//character[enemy].x = abs(character[i].x+1);   // 目標の味方キャラの隣に移動
-			//character[enemy].y = abs(character[i].y+0);
+	// 塗りつぶし範囲内に味方キャラが存在する場合
+	// 味方の隣のマスに移動する処理
+	for (int dir = 0; dir < DIRECTION_MAX; dir++) {
+		int x = characterX + g_directions[dir][0];
+		int y = characterY + g_directions[dir][1];
+
+		if (x >= 0 &&x < MAP_WIDTH &&y >= 0 &&y < MAP_HEIGHT &&charaData[y][x] != -1) {
+			
+			if (character[charaData[y][x]].team == TEAM_ALLY) {
+
+				// 味方の隣のマスに移動
+				//character[enemy].x = x;
+				//character[enemy].y = y;
+				//character[enemy].move -= moveCost;
+
+				break;
+			}
 		}
 	}
-	//g_flagEnter = true;
-	//g_flagCursor = false;
 }
 
 void turnMove(float delta_time) {
@@ -148,15 +164,27 @@ void turnMove(float delta_time) {
 		}
 
 		//敵のAIここから
-		if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {
+		if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {g_flseSpace = true;}
 
-  			for (int c = CHARACTER_MAX - 1; c >= 0; c--) {
+		if(g_flseSpace){
+
+			for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
 
 				//if (character[c].team == TEAM_ALLY && character[c].hp <= 0)	continue;	//ロストキャラはスルー
-				
-				if (c != 15 && character[c].team == TEAM_ENEMY && character[c].hp > 0) {
 
-    				moveEnemyToAlly(delta_time, c);
+				if (enemy != 15 && character[enemy].team == TEAM_ENEMY && character[enemy].hp > 0) {
+
+					moveEnemyToAlly(enemy);
+
+					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+						g_flagEnter = true;
+						g_flagCursor = false;
+						g_flagBattleAnime = true;
+						g_flagBattleHp = true;
+						g_CanAttackMove++;
+					}
+					battle(delta_time);
 				}
 			}
 		}
@@ -284,8 +312,7 @@ void phaseMove(float delta_time) {
 					g_flagBattleAnime = true;
 					g_flagBattleHp = true;
 					g_CanAttackMove ++;
-				}
-				
+				}	
 				battle(delta_time);
 
 			}

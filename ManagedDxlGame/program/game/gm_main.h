@@ -41,6 +41,9 @@ extern bool g_flagCursor ;
 //エンター押しフラグ
 extern bool g_flagEnter ;
 
+//スペース押しフラグ
+extern bool g_flseSpace;
+
 //バトル進行中か否かの判定フラグ
 extern int g_CanAttackMove;
 
@@ -66,6 +69,9 @@ extern int g_gameOver ;
 //サウンド
 extern int sound_bgm_hdl;
 extern int sound_se_hdl;
+
+//敵からの攻撃判定
+void moveEnemyToAlly(int enemy);
 
 void phaseEnd();
 
