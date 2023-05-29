@@ -42,7 +42,7 @@ extern bool g_flagCursor ;
 extern bool g_flagEnter ;
 
 //スペース押しフラグ
-extern bool g_flseSpace;
+extern bool g_flagSpace;
 
 //バトル進行中か否かの判定フラグ
 extern int g_CanAttackMove;
@@ -54,14 +54,14 @@ extern int g_turnMove ;
 extern float g_telopTimeCount;
 
 //ターン切り替えフラグ
-extern int g_flagTurn;
+extern bool g_flagTurnAlly;
 
 //ゲームスタート
-extern int g_flagGameStart;
+extern bool g_flagGameStart;
 
 
 //ゲームオーバーフラグ
-extern int g_flagGameOver;
+extern bool g_flagGameOver;
 
 //ゲームオーバー画面ハンドル
 extern int g_gameOver ;
@@ -71,7 +71,7 @@ extern int sound_bgm_hdl;
 extern int sound_se_hdl;
 
 //敵からの攻撃判定
-void moveEnemyToAlly(int enemy);
+bool moveEnemyToAlly(float delta_time, int enemy);
 
 void phaseEnd();
 

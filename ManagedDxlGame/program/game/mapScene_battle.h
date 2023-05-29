@@ -48,7 +48,7 @@ extern bool g_flagBattleHp ;
 //HPタイムカウント
 extern float g_HpTimeCount ;
 
-bool checkAllyInFill(int enemy, int ally);
+//bool checkAllyInFill(int enemy, int ally);
 
 //敵からの攻撃判定
 bool checkCanEnemyBattle(int attack, int defence);

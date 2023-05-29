@@ -57,7 +57,7 @@ bool g_flagCursor = true;
 bool g_flagEnter = false;
 
 //スペース押しフラグ
-extern bool g_flseSpace=false;
+bool g_flagSpace=false;
 
 //バトル進行中か否かの判定フラグ
 int g_CanAttackMove = 0;
@@ -65,15 +65,17 @@ int g_CanAttackMove = 0;
 //テロップアニメーションカウント
 float g_telopTimeCount = 0;
 
-//ターン切り替えフラグ
-int g_flagTurn = true;
+//味方ターン切り替え
+bool g_flagTurnAlly = true;
+
+//敵ターン切り替え
+bool g_flagTurnEnemy = false;
 
 //ゲームスタート
-int g_flagGameStart = false;
+bool g_flagGameStart = false;
 
 //ゲームオーバーフラグ
-int g_flagGameOver = false;
-
+bool g_flagGameOver = false;
 
 //ゲームオーバー画面
 int g_gameOver = 0;
@@ -82,7 +84,7 @@ int g_gameOver = 0;
 
 
 //敵からの攻撃判定
-void moveEnemyToAlly(int enemy) {
+bool moveEnemyToAlly(float delta_time,int enemy) {
 
 	int characterX = character[enemy].x;
 	int characterY = character[enemy].y;
@@ -94,19 +96,20 @@ void moveEnemyToAlly(int enemy) {
 		int x = characterX + g_directions[dir][0];
 		int y = characterY + g_directions[dir][1];
 
-		if (x >= 0 &&x < MAP_WIDTH &&y >= 0 &&y < MAP_HEIGHT &&charaData[y][x] != -1) {
+		if (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT && charaData[y][x] != -1) {
 			
 			if (character[charaData[y][x]].team == TEAM_ALLY) {
-
+	
 				// 味方の隣のマスに移動
 				//character[enemy].x = x;
 				//character[enemy].y = y;
 				//character[enemy].move -= moveCost;
 
-				break;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 void turnMove(float delta_time) {
@@ -118,12 +121,10 @@ void turnMove(float delta_time) {
 	const int TELOP_FRAME_MAX = 1400;
 
 	switch (g_turnMove) {
-	
+
 	case TURN_ALLAY: {
 
-		if ((tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB))) {g_turnMove = TURN_ENEMY;}
-
-		if (g_flagTurn) {
+		if (g_flagTurnAlly) {
 
 			//毎フレーム足していく処理
 			g_telopTimeCount += delta_time;
@@ -136,17 +137,20 @@ void turnMove(float delta_time) {
 
 				telopFrame = 0;
 				g_telopTimeCount = 0;
-				g_flagTurn = false;
+				g_flagTurnAlly = false;
 			}
 		}
 		phaseMove(delta_time);
 
-		break;
+		if ((tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB))) {
+			g_flagTurnEnemy = true;
+			g_turnMove = TURN_ENEMY;
+		}
 	}
 
 	case TURN_ENEMY: {
 
-		if (!g_flagTurn) {
+		if (g_flagTurnEnemy) {
 
 			//毎フレーム足していく処理
 			g_telopTimeCount += delta_time;
@@ -159,14 +163,12 @@ void turnMove(float delta_time) {
 
 				telopFrame = 0;
 				g_telopTimeCount = 0;
-				g_flagTurn = true;
+				g_flagSpace = true;
+				g_flagTurnEnemy = false;
 			}
 		}
-
 		//敵のAIここから
-		if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {g_flseSpace = true;}
-
-		if(g_flseSpace){
+		if (g_flagSpace) {
 
 			for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
 
@@ -174,22 +176,38 @@ void turnMove(float delta_time) {
 
 				if (enemy != 15 && character[enemy].team == TEAM_ENEMY && character[enemy].hp > 0) {
 
-					moveEnemyToAlly(enemy);
+					if (moveEnemyToAlly(delta_time, enemy)) {
 
-					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+						battle(delta_time);
 
-						g_flagEnter = true;
-						g_flagCursor = false;
-						g_flagBattleAnime = true;
-						g_flagBattleHp = true;
-						g_CanAttackMove++;
+						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+							g_flagEnter = true;
+							g_flagCursor = false;
+							g_flagBattleAnime = true;
+							g_flagBattleHp = true;
+							g_CanAttackMove++;
+						}
 					}
-					battle(delta_time);
 				}
 			}
 		}
-		break;
-	}	
+		//やりたいこと！一連の流れ！！
+		//敵のターンになったら、すぐに敵が周りの判定をはじめ、戦闘に入る。
+		//戦闘に入ったら、スペースを押すとバトルが進行していく。
+		//全てのバトルが終わると自動で味方のターンへ移動する。
+
+		else {
+		
+			g_flagTurnAlly = true;
+			g_flagSpace = false;
+			character[g_selectedChara].done = false;
+			g_turnMove = TURN_ALLAY;
+
+		}
+		//if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {}
+	}
+
 	}
 }
 
@@ -319,6 +337,7 @@ void phaseMove(float delta_time) {
 		break;
 		}
 	}
+
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		//攻撃可能キャラがいなければ、待機

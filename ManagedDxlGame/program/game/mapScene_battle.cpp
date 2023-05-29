@@ -40,37 +40,27 @@ bool g_flagBattleHp = true;
 //HPタイムカウント
 float g_HpTimeCount = 0;
 
-bool checkAllyInFill(int enemy,int ally) {
-	
-	int characterX = character[enemy].x;
-	int characterY = character[enemy].y;
-
-	for (int dir = 0; dir < DIRECTION_MAX; dir++)
-	{
-		int x = characterX + g_directions[dir][0];
-		int y = characterY + g_directions[dir][1];
-		fillCanMove(enemy, x, y, character[enemy].move);//どんどん隣り合う場所を調査
-	
-		if (fill[y][x] && charaData[y][x] != -1) {
-				
-			if (character[charaData[y][x]].team == TEAM_ALLY) {
-					
-				return true;  // fill内の範囲内に味方キャラが存在する場合
-			}
-		}
-	}	
-	return false;  // fill内の範囲内に味方キャラが存在しない場合
-}
-
-
-////敵からの攻撃判定
-//bool checkCanEnemyBattle(int attack, int defence) {
+//敵のAIで移動可能範囲に味方がいるか判定（未完成）
+//bool checkAllyInFill(int enemy,int ally) {
 //	
-//	int distanceX = abs(character[attack].x - character[defence].x);//absolute valueの略。絶対　値。
-//	int distanceY = abs(character[attack].y - character[defence].y);
-//	if (distanceX <= 3 && distanceY <= 3 ){ return true; }
+//	int characterX = character[enemy].x;
+//	int characterY = character[enemy].y;
 //
-//	return false;
+//	for (int dir = 0; dir < DIRECTION_MAX; dir++)
+//	{
+//		int x = characterX + g_directions[dir][0];
+//		int y = characterY + g_directions[dir][1];
+//		fillCanMove(enemy, x, y, character[enemy].move);//どんどん隣り合う場所を調査
+//	
+//		if (fill[y][x] && charaData[y][x] != -1) {
+//				
+//			if (character[charaData[y][x]].team == TEAM_ALLY) {
+//					
+//				return true;  // fill内の範囲内に味方キャラが存在する場合
+//			}
+//		}
+//	}	
+//	return false;  // fill内の範囲内に味方キャラが存在しない場合
 //}
 
 //攻撃可能かどうか判定
@@ -419,7 +409,8 @@ void battleHpMove(float delta_time, int attack, int defence) {
 //戦闘処理終了
 void battleExit() {
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
+		tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		character[g_selectedChara].done = true;
 		g_phase = PHASE_SELECT_CHARACTER;
@@ -431,6 +422,7 @@ void battleExit() {
 }
 
 void battle(float delta_time) {
+
 	if (g_flagEnter && !g_flagCursor) {
 
 		//戦闘画面下グラフィック描画
@@ -488,7 +480,8 @@ void battle(float delta_time) {
 				battleEffectGraphic(delta_time, g_standbyChara);
 			}
 			else {
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { battleExit(); }
+				if(tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) || 
+					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) { battleExit(); }
 			}
 		}
 		else if (g_CanAttackMove == 6) {
