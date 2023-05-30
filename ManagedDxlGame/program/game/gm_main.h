@@ -59,12 +59,15 @@ extern bool g_flagTurnAlly;
 //ゲームスタート
 extern bool g_flagGameStart;
 
-
 //ゲームオーバーフラグ
 extern bool g_flagGameOver;
 
 //ゲームオーバー画面ハンドル
 extern int g_gameOver ;
+
+
+extern int g_flagBattle ;
+
 
 //サウンド
 extern int sound_bgm_hdl;

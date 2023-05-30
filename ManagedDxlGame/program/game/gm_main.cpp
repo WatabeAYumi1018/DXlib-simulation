@@ -80,6 +80,8 @@ bool g_flagGameOver = false;
 //ゲームオーバー画面
 int g_gameOver = 0;
 
+int g_flagBattle = 0;
+
 //-------------------------------------------------------------------------------------------
 
 
@@ -135,17 +137,19 @@ void turnMove(float delta_time) {
 
 			if (telopFrame >= TELOP_FRAME_MAX) {
 
-				telopFrame = 0;
-				g_telopTimeCount = 0;
-				g_flagTurnAlly = false;
+				telopFrame = 0;			//テロップの流れた距離リセット
+				g_telopTimeCount = 0;	//テロップのカウントリセット
+				g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
 			}
 		}
 		phaseMove(delta_time);
 
-		if ((tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB))) {
-			g_flagTurnEnemy = true;
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+			
+			g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
 			g_turnMove = TURN_ENEMY;
 		}
+	break;
 	}
 
 	case TURN_ENEMY: {
@@ -159,53 +163,51 @@ void turnMove(float delta_time) {
 
 			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][9], true);
 
-			if (telopFrame == TELOP_FRAME_MAX) {
+			if (telopFrame >= TELOP_FRAME_MAX) {
 
-				telopFrame = 0;
-				g_telopTimeCount = 0;
-				g_flagSpace = true;
-				g_flagTurnEnemy = false;
+				telopFrame = 0;				//テロップの流れた距離リセット
+				g_telopTimeCount = 0;		//テロップのカウントリセット
+				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
+				g_flagSpace = true;			//敵が自分の隣に味方がいるかを判断するためのフラグ
 			}
 		}
 		//敵のAIここから
 		if (g_flagSpace) {
 
-			for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
+ 			//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
 
 				//if (character[c].team == TEAM_ALLY && character[c].hp <= 0)	continue;	//ロストキャラはスルー
 
-				if (enemy != 15 && character[enemy].team == TEAM_ENEMY && character[enemy].hp > 0) {
+				if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
 
-					if (moveEnemyToAlly(delta_time, enemy)) {
+ 					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
 
-						battle(delta_time);
-
-						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-							g_flagEnter = true;
-							g_flagCursor = false;
-							g_flagBattleAnime = true;
-							g_flagBattleHp = true;
+ 						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+						
 							g_CanAttackMove++;
+							g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
+							g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
+							g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
+							g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット）
+							g_flagBattle = 1;
 						}
+						if (g_flagBattle==1) {battle(delta_time);}					
+					}
+					if (!moveEnemyToAlly(delta_time, g_standbyChara) && tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+
+						g_flagEnter = false;
+						g_flagCursor = true;
+						g_flagSpace = false;				//いないから、敵の判断が終了
+						character[0].done = false;
+						character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+						character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+						g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+						g_turnMove = TURN_ALLAY;
+						g_flagBattle = 0;
 					}
 				}
-			}
 		}
-		//やりたいこと！一連の流れ！！
-		//敵のターンになったら、すぐに敵が周りの判定をはじめ、戦闘に入る。
-		//戦闘に入ったら、スペースを押すとバトルが進行していく。
-		//全てのバトルが終わると自動で味方のターンへ移動する。
-
-		else {
-		
-			g_flagTurnAlly = true;
-			g_flagSpace = false;
-			character[g_selectedChara].done = false;
-			g_turnMove = TURN_ALLAY;
-
-		}
-		//if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {}
+		break;
 	}
 
 	}
@@ -246,10 +248,7 @@ void phaseMove(float delta_time) {
 				if (chara < 0) { break; } //負の値だったらいない
 				
 				//行動済みなら座標動かない
-				//if (character[chara].done) { 
-
-				//	resetFill();
-				//}
+				if (character[chara].done) { resetFill();}
 
 				//キャラがいれば(それ以外は)塗りつぶし
 				else {
@@ -332,7 +331,6 @@ void phaseMove(float delta_time) {
 					g_CanAttackMove ++;
 				}	
 				battle(delta_time);
-
 			}
 		break;
 		}
@@ -366,7 +364,7 @@ void gameStart() {
 	g_gameStart = LoadGraph("graphics/GameStart.jpg");
 	
 	//ゲームスタート画面アニメーション
-	g_gameStartAnim = LoadGraph("graphics/titleAnim.png");
+	g_gameStartAnim = LoadGraph("graphics/titleSakura.png");
 
 	//タイトル選択画像
 	g_select_cursor_hdl = LoadGraph("graphics/flowerSelect.png");
@@ -448,7 +446,6 @@ void gameMain(float delta_time) {
 	switch (g_gameScene_id) {
 
 		case GAME_START: {
-
 
 			DrawExtendGraph(0, 0, 1300, 750, g_gameStart, true);
 			rightFlash(delta_time);

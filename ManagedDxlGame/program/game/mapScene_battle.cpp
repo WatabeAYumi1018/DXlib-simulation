@@ -312,36 +312,38 @@ bool battleLost() {
 }
 
 //O‚·‚­‚İ‚ÌŠÖŒW
-bool ThreeRelation(int attack, int defence) {
+int ThreeRelation(int attack, int defence) {
 
 	if ((character[attack].job == JOB_SWORDMASTER && character[defence].job == JOB_MAGICIAN) ||
 		(character[attack].job == JOB_SNIPER && character[defence].job == JOB_SWORDMASTER) ||
 		(character[attack].job == JOB_MAGICIAN && character[defence].job == JOB_SNIPER)) {
 	
-		return true;
-	}
+		return 0;
 
+	}
 	if ((character[attack].job == JOB_MAGICIAN && character[defence].job == JOB_SWORDMASTER) ||
 		(character[attack].job == JOB_SWORDMASTER && character[defence].job == JOB_SNIPER) ||
 		(character[attack].job == JOB_SNIPER && character[defence].job == JOB_MAGICIAN)) {
 
-		return false;
+		return 1;
 	}
+
+	return 2;
 }
 
 //–½’†ŒvZˆ—
-int battleHit(int attack, int defence) {
+float battleHit(int attack, int defence) {
 
-	int hit = 0;
+	float hit = 0.0f;
 
 	//‚R‚·‚­‚İ—L—˜‚Ìê‡
-	if (ThreeRelation(attack,defence)) {hit =character[attack].hit;}
+	if (ThreeRelation(attack,defence)==0) {hit = character[attack].hit;}
 
 	//‚R‚·‚­‚İ•s—˜‚Ìê‡
-	else if (!ThreeRelation(attack, defence)) {hit = 0.1 * character[attack].hit;}
+	else if (ThreeRelation(attack, defence)==1) {hit = 0.1f * character[attack].hit;}
 
 	//‚»‚êˆÈŠOi‚R‚·‚­‚İ‚Ì‰e‹¿‚È‚µj
-	else {hit= 0.8 * character[attack].hit;}
+	else if (ThreeRelation(attack, defence) == 2) {hit= 0.8f * character[attack].hit;}
 
 	return hit;
 }
@@ -353,16 +355,21 @@ void battleRandom(float delta_time,int attack, int defence) {
 	const int HIT_RANDOM_MAX = 100;
 
 	int hitRandom = rand() % (HIT_RANDOM_MAX - HIT_RANDOM_MIN + 1);	//0~100‚Ì—”
-	int hit = battleHit(attack, defence);
+	float hit = battleHit(attack, defence);
 
 	//UŒ‚ƒ~ƒX
 	if (hit < hitRandom) {
 	
 		//UŒ‚ƒ~ƒX‚Ì•`‰æ
 
+
+		g_CanAttackMove++;
 	}
 	//UŒ‚”»’è
-	else { battleHpMove(delta_time, attack, defence); }
+	else { 
+		battleHpMove(delta_time, attack, defence); 
+		g_CanAttackMove++;
+	}
 }
 
 //í“¬ŒvZˆ—
@@ -480,8 +487,10 @@ void battle(float delta_time) {
 				battleEffectGraphic(delta_time, g_standbyChara);
 			}
 			else {
-				if(tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) || 
-					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) { battleExit(); }
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
+					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+					battleExit();
+				}
 			}
 		}
 		else if (g_CanAttackMove == 6) {
@@ -497,32 +506,9 @@ void battle(float delta_time) {
 				battleRandom(delta_time, g_standbyChara, g_selectedChara);
 			}
 		}
-		else if (g_CanAttackMove == 7) {
-
+		else {
 			battleExit();
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 		}
 	}
 }
-//ƒXƒs[ƒh”äŠr
-//bool battleSpeed(float delta_time, int attack, int defence) {
-//
-//	//attack‚ª‚TˆÈã‘‚¢ê‡
-//
-//	if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
-//
-//		battleEffectGraphic(delta_time, attack);
-//
-//		return true;
-//	}
-//
-//	//defence‚ª‚TˆÈã‘‚¢ê‡
-//	else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
-//		
-//		battleEffectGraphic(delta_time, defence);
-//
-//
-//		return true;
-//	}
-//	return false;
-//}
