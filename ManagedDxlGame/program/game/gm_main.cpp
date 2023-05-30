@@ -80,11 +80,12 @@ bool g_flagGameOver = false;
 //ゲームオーバー画面
 int g_gameOver = 0;
 
+//敵ターンでのバトル進行制御（本当に必要かは思案中）
 int g_flagBattle = 0;
 
 //-------------------------------------------------------------------------------------------
 
-
+//★
 //敵からの攻撃判定
 bool moveEnemyToAlly(float delta_time,int enemy) {
 
@@ -114,6 +115,30 @@ bool moveEnemyToAlly(float delta_time,int enemy) {
 	return false;
 }
 
+
+//一連の流れ
+//味方のターンからはじまる→カーソル操作でキャラを動かす（この辺りは問題ないです）→TABキーを押すと、敵のターンへ移行する
+
+//問題は、敵のターンです。まず、一連の流れを説明します。
+//
+// 敵のターンでしたいこと
+//①待機中の敵キャラ（character[3]～character[16]）は、それぞれの上下左右一マス隣に味方キャラがいないか判定する
+//（ただし、ボスであるcharacter[16]は戦闘を仕掛けてこない予定です。19行：g_standbyChara != 15がそれです。 ）
+// （また、これは待機中の敵キャラクター1人ずつ判定する必要があります。for文で回すべきかと思いますが、現状ではその辺りの宣言も不透明）
+//②味方キャラがいた場合は、戦闘に入る
+// （ただ、現状隣のマスに複数キャラがいた場合どうするかの処理は出来ていません。予定としては、敵から見て三すくみで有利なキャラを優先して攻撃する予定）
+//③隣マスに味方がいないことが確認出来たら、自動で味方キャラへターン移行する(218行)
+//
+//エラーが生じてしまうこと。
+//★味方ターンの時に、例えば一番近くにいる剣士の隣に味方キャラを配置して、敵ターンへ移行し、スペースキーを押します。
+//理想としては、battle(delta_time)が呼び出され、そのあとに味方のターンへ移行してほしいのですが、
+//現状battle関数が一瞬しか描画されず、すぐに味方ターンへ移ってしまいます。
+//
+//もしかしたら途中で呼び出しているmoveEnemyToAlly関数（205行）が間違っているのかと思案中です。
+//補足ですが、g_からはじまる変数は全てグローバル変数です。
+//コードが分かりにくいと思いますので、ひとまず詳しい内容については明日改めて説明させていただきます！
+
+//★
 void turnMove(float delta_time) {
 
 	const int TELOP_X_END = 700;
@@ -191,9 +216,11 @@ void turnMove(float delta_time) {
 							g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット）
 							g_flagBattle = 1;
 						}
-						if (g_flagBattle==1) {battle(delta_time);}					
+						else if (g_flagBattle==1) {
+								battle(delta_time);
+							}					
 					}
-					if (!moveEnemyToAlly(delta_time, g_standbyChara) && tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+					if (!moveEnemyToAlly(delta_time, g_standbyChara)){
 
 						g_flagEnter = false;
 						g_flagCursor = true;
