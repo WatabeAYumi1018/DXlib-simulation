@@ -200,44 +200,44 @@ void turnMove(float delta_time) {
 			}
 		}
 		//敵のAIここから
-		if (g_flagSpace) {
+		//if (g_flagSpace) {
 
- 			//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
+ 	//		//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
 
-				if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
+		//		if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
 
- 					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
+ 	//				if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
 
- 						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-						
-							g_CanAttackMove++;
-							g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
-							g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
-							g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
-							g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット）
-							g_flagBattle = 1;
-						}
-						else if (g_flagBattle==1) {
-								battle(delta_time);
-							}	
+ 	//					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+		//				
+		//					g_CanAttackMove++;
+		//					g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
+		//					g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
+		//					g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
+		//					g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット）
+		//					g_flagBattle = 1;
+		//				}
+		//				else if (g_flagBattle==1) {
+		//						battle(delta_time);
+		//					}	
 
-						g_turnMove = TURN_ALLAY;
+		//				g_turnMove = TURN_ALLAY;
 
-					}
-					if (!moveEnemyToAlly(delta_time, g_standbyChara)){
+		//			}
+		//			if (!moveEnemyToAlly(delta_time, g_standbyChara)){
 
-						g_flagEnter = false;
-						g_flagCursor = true;
-						g_flagSpace = false;				//いないから、敵の判断が終了
-						character[0].done = false;
-						character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-						character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-						g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-						g_turnMove = TURN_ALLAY;
-						g_flagBattle = 0;
-					}
-				}
-		}
+		//				g_flagEnter = false;
+		//				g_flagCursor = true;
+		//				g_flagSpace = false;				//いないから、敵の判断が終了
+		//				character[0].done = false;
+		//				character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+		//				character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+		//				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+		//				g_turnMove = TURN_ALLAY;
+		//				g_flagBattle = 0;
+		//			}
+		//		}
+		//}
 		break;
 	}
 

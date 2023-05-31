@@ -213,7 +213,6 @@ void mapPosition() {
 			DrawExtendGraph(35, 440, 75, 480, icon_magic, true);
 			DrawExtendGraph(85, 390, 125, 430, icon_snip, true);
 
-
 			//現在の選択カーソルの位置を描画
 			if (j == cursorX && i == cursorY) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, g_cursor, TRUE); }
 		}

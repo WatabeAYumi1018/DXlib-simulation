@@ -111,8 +111,8 @@ void characterMapInfo(int chara) {
 		DrawStringEx(630, 570, TEXT_COLOR_WHITE, " / %s", maxHp_str.c_str());//maxHp
 
 		SetFontSize(20);
-		if (character[chara].team == TEAM_ALLY && character[chara].done == true) { DrawStringEx(200, 540, -1, "行動終了"); }
-		else if (character[chara].team == TEAM_ALLY && character[chara].done == false) { DrawStringEx(200, 540, -1, "未行動"); }
+		if (character[chara].team == TEAM_ALLY && character[chara].done == true) { DrawStringEx(200, 540, TEXT_COLOR_WHITE, "行動終了"); }
+		else if (character[chara].team == TEAM_ALLY && character[chara].done == false) { DrawStringEx(200, 540, TEXT_COLOR_WHITE, "未行動"); }
 
 		DrawStringEx(900, 550, TEXT_COLOR_WHITE, "攻撃力：%s", attack_str.c_str());//attack
 		DrawStringEx(900, 600, TEXT_COLOR_WHITE, "防御力：%s", defence_str.c_str());//defence
