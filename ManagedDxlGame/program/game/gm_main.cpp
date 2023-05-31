@@ -80,6 +80,9 @@ bool g_flagGameOver = false;
 //ゲームオーバー画面
 int g_gameOver = 0;
 
+//ゲームクリア画面
+int g_gameClear = 0;
+
 //敵ターンでのバトル進行制御（本当に必要かは思案中）
 int g_flagBattle = 0;
 
@@ -201,8 +204,6 @@ void turnMove(float delta_time) {
 
  			//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
 
-				//if (character[c].team == TEAM_ALLY && character[c].hp <= 0)	continue;	//ロストキャラはスルー
-
 				if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
 
  					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
@@ -218,7 +219,10 @@ void turnMove(float delta_time) {
 						}
 						else if (g_flagBattle==1) {
 								battle(delta_time);
-							}					
+							}	
+
+						g_turnMove = TURN_ALLAY;
+
 					}
 					if (!moveEnemyToAlly(delta_time, g_standbyChara)){
 
@@ -275,8 +279,15 @@ void phaseMove(float delta_time) {
 				if (chara < 0) { break; } //負の値だったらいない
 				
 				//行動済みなら座標動かない
-				if (character[chara].done) { resetFill();}
+				//if (character[chara].done) {
 
+				//	//もしキャラクター0～２のいずれかの座標が（3,3）になったらクリア
+				//	if (character[chara].x == 3 && character[chara].y == 3) {
+
+				//		g_gameScene_id = GAME_CLEAR;
+				//	}
+				//	resetFill();
+				//}
 				//キャラがいれば(それ以外は)塗りつぶし
 				else {
 
@@ -295,7 +306,6 @@ void phaseMove(float delta_time) {
 							if (standChara >= 0 && fill[i][j]) {fill[i][j] = false;}
 						}
 					}
-
 					drawFill();
 
 					//キャラを選択したら、移動フェーズへ
@@ -362,7 +372,6 @@ void phaseMove(float delta_time) {
 		break;
 		}
 	}
-
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		//攻撃可能キャラがいなければ、待機
@@ -424,6 +433,8 @@ void gameStart() {
 	//ゲームオーバー背景
 	g_gameOver = LoadGraph("graphics/GameOver.jpg");
 
+	//ゲームクリア背景
+	g_gameClear = LoadGraph("graphics/GameClear.jpg");
 
 	//攻撃中の下画面
 	LoadDivGraph("graphics/battleHp.png",		35, 5, 7, 120, 60, g_battle_hp[0]);
@@ -448,7 +459,6 @@ void gameStart() {
 
 	//マップ画面でのターン文字
 	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
-
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -478,6 +488,14 @@ void gameMain(float delta_time) {
 			rightFlash(delta_time);
 			sceneTitle();
 
+
+			const int BACK_START_X_Y = 0;
+			const int BACK_END_X = 1300;
+			const int BACK_END_Y = 750;
+
+			//DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameClear, true);
+
+
 			break;
 		}
 		case GAME_STORY:
@@ -497,6 +515,14 @@ void gameMain(float delta_time) {
 		}
 		case GAME_OVER: {
 
+			const int BACK_START_X_Y = 0;
+			const int BACK_END_X = 1300;
+			const int BACK_END_Y = 750;
+
+			const int TEXT_START_X_Y = 200;
+			const int TEXT_END_X = 1100;
+			const int TEXT_END_Y = 400;
+
 			float static g_gameOverTimeCount = 0;
 			bool static g_gameOver_write = true;
 
@@ -508,16 +534,23 @@ void gameMain(float delta_time) {
 				g_gameOverTimeCount = 0;
 			}
 
-			DrawExtendGraph(0, 0, 1300, 750, g_gameOver, true);
-			DrawExtendGraph(200, 200, 1100, 400, g_map_turn[0][3], true);
+			DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameOver, true);
+			DrawExtendGraph(TEXT_START_X_Y, TEXT_START_X_Y, TEXT_END_X, TEXT_END_Y, g_map_turn[0][3], true);
 
 			if (g_gameOver_write) {
 				SetFontSize(50);
-				DrawStringEx(430, 500, TEXT_COLOR_WHITE, "CLOSE");
+				DrawStringEx(550, 500, TEXT_COLOR_WHITE, "CLOSE");
 			}
 			break;
 		}
 		case GAME_CLEAR:
+			
+			const int BACK_START_X_Y = 0;
+			const int BACK_END_X = 1300;
+			const int BACK_END_Y = 750;
+
+			DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameClear, true);
+
 
 			break;
 	}

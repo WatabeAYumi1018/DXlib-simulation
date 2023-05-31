@@ -62,10 +62,6 @@ void rightFlash(float delta_time) {
 	DrawExtendGraph(560, 300, 660, 400, g_gameStartAnim, true);
 	DrawExtendGraph(1000, 700, 1400, 740, g_gameStartAnim, true);
 
-
-	int alpha = static_cast<int>(sin(sin_count) * 255);
-
-
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 

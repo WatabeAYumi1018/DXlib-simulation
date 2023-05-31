@@ -8,10 +8,6 @@ const int MAX_EFFECT_FRAM = 10;
 
 const int SPEED_DIFFERENCE = 5;
 
-const int HP_ALLAY_X = 800;
-const int HP_ENEMY_X = 400;
-const int HP_Y = 500;
-
 //戦闘中の画面ハンドル
 extern int g_battleGround ;
 extern int g_battleParaBack ;
@@ -63,7 +59,7 @@ void battleGraph();
 void battleInfo(int attack, int defence);
 
 //開始時のHP描画
-void battleHp(int attack, int defence);
+void battleHpDraw(int attack, int defence);
 
 //戦闘画面のキャラアニメ
 void battleCharaGraphic(float delta_time, int attack, int defence);
@@ -77,8 +73,11 @@ bool battleLost();
 //三すくみの関係
 int ThreeRelation(int attack, int defence);
 
-//バトル全般まとめ
-void battleRandom(float delta_time, int attack, int defence);
+//命中計算処理
+int battleHit(int attack, int defence);
+
+//バトル全般まとめ(命中率変動による攻撃の変化)
+void battleHitRandom(float delta_time, int attack, int defence);
 
 //戦闘計算処理
 int battleDamage(int attack, int defence);
