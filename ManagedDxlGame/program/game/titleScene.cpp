@@ -36,10 +36,8 @@ void titleSelect() {
 			if (g_select_player_menu == TITLE_MENU_CONTINUE) { g_gameScene_id = GAME_MAP; }
 			if (g_select_player_menu == TITLE_MENU_CHARACTER) { g_gameScene_id = GAME_OVER; }
 		}
-
 		//選択カーソル位置の描画
 		DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor_hdl, true);
-	
 }
 
 void rightFlash(float delta_time) {

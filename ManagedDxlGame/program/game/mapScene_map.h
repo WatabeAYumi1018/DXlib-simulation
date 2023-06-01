@@ -31,6 +31,9 @@ extern int map_chips[1][88];		//マップチップ格納配列
 //マップ画面での情報描画
 extern int display_map ;
 
+//ボタン操作描画
+extern int g_bottonLayout;
+
 //カーソル画像
 extern int g_cursor ;
 
@@ -86,4 +89,4 @@ void instructions();
 void cursorMove();
 
 //マップ全体の情報を読み取り、ifで各数字に対応するチップを描画する
-void mapPosition();
+void mapPosition(float delta_time);

@@ -42,7 +42,6 @@ bool fill[MAP_HEIGHT][MAP_WIDTH];
 int cursorX = 0;
 int cursorY = 0;
 
-
 //----------------------------------------------------------------------------
 //マップ描画全般の画像描画に関するハンドル
 //
@@ -56,6 +55,9 @@ int graphic_cell_ground = 0;
 
 //マップ下画像
 int display_map = 0;
+
+//ボタン操作描画
+int g_bottonLayout=0;
 
 //カーソル画像
 int g_cursor = 0;
@@ -158,7 +160,7 @@ void cursorMove() {
 }
 
 //マップ全体の情報を読み取り、ifで各数字に対応するチップを描画する
-void mapPosition() {
+void mapPosition(float delta_time) {
 
 	for (int i = 0; i < MAP_HEIGHT; i++) {
 		for (int j = 0; j < MAP_WIDTH; j++) {
@@ -182,10 +184,69 @@ void mapPosition() {
 			//キャラチップ描画
 			if (charaData[i][j] >= 0) {
 
-				if (charaData[i][j] == 0) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[0][1], TRUE); }
-				else if (charaData[i][j] == 1) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[1][1], TRUE); }
-				else if (charaData[i][j] == 2) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[2][1], TRUE); }
+				if (charaData[i][j] == 0) {
+				
+					static float charaSWORD_timeCount = 0;
+					static int charaSWORD_vector = 0;
+					static int charaSWORD_vectorCount = 0;
 
+					//毎フレーム足していく処理
+					charaSWORD_timeCount += delta_time;
+
+					if (charaSWORD_timeCount > 0.5f) {
+
+						if (charaSWORD_vector == 2) { charaSWORD_vectorCount = -1; }
+						else if (charaSWORD_vector == 0) { charaSWORD_vectorCount = 1; }
+
+						charaSWORD_vector += charaSWORD_vectorCount;
+
+						charaSWORD_timeCount = 0;
+					}
+					if (character[0].done) {DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[0][1], TRUE);}
+					else if (!character[0].done) {DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[0][charaSWORD_vector], TRUE);}
+				}
+				else if (charaData[i][j] == 1) {
+				
+					static float charaSNIP_timeCount = 0;
+					static int charaSNIP_vector = 0;
+					static int charaSNIP_vectorCount = 0;
+
+					//毎フレーム足していく処理
+					charaSNIP_timeCount += delta_time;
+
+					if (charaSNIP_timeCount > 0.5f) {
+
+						if (charaSNIP_vector == 2) { charaSNIP_vectorCount = -1; }
+						else if (charaSNIP_vector == 0) { charaSNIP_vectorCount = 1; }
+
+						charaSNIP_vector += charaSNIP_vectorCount;
+
+						charaSNIP_timeCount = 0;
+					}
+					if (character[1].done) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[1][1], TRUE); }
+					else if (!character[1].done) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[1][charaSNIP_vector], TRUE); }
+				}
+				else if (charaData[i][j] == 2) { 
+				
+					static float charaMAGIC_timeCount = 0;
+					static int charaMAGIC_vector = 0;
+					static int charaMAGIC_vectorCount = 0;
+
+					//毎フレーム足していく処理
+					charaMAGIC_timeCount += delta_time;
+
+					if (charaMAGIC_timeCount > 0.5f) {
+
+						if (charaMAGIC_vector == 2) { charaMAGIC_vectorCount = -1; }
+						else if (charaMAGIC_vector == 0) { charaMAGIC_vectorCount = 1; }
+
+						charaMAGIC_vector += charaMAGIC_vectorCount;
+
+						charaMAGIC_timeCount = 0;
+					}
+					if (character[2].done) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[2][1], TRUE); }
+					else if (!character[2].done) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[2][charaMAGIC_vector], TRUE); }
+				}
 				else if (charaData[i][j] == 3 || charaData[i][j] == 6 || charaData[i][j] == 9 || charaData[i][j] == 12)
 				{
 					DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, character_chips[3][1], TRUE);
@@ -205,7 +266,10 @@ void mapPosition() {
 			}
 			//マップ上でのキャラ情報画面描画
 			DrawExtendGraph(0, 500, 1400, 730, display_map, true);
-
+			
+			//ボタン説明描画
+			DrawGraph(1060, 490, g_bottonLayout, TRUE);
+			
 			//三すくみ関連画像描画
 			DrawExtendGraph(0, 370, 125, 480, g_relation_back, true);
 			DrawGraph(15, 370, g_relation, TRUE);

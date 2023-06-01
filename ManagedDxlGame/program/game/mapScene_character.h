@@ -64,6 +64,8 @@ struct Character {
 //各キャラクターの情報
 extern Character character[];
 
+void mapCharaSwordAnim(float delta_time);
+
 int getCharacter(int x, int y);
 
 void getCharaPosition();

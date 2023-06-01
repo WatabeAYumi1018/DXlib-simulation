@@ -31,6 +31,9 @@ extern int g_battle_effect_snip[1][14];
 extern int g_battle_effect_magic[1][14];
 extern int g_battle_effect_leader[1][14];
 
+//攻撃ミスの画像
+extern int g_battleMiss;
+
 //攻撃エフェクトのアニメーションハンドル
 extern float g_effectTimeCount ;
 extern int g_effectFrame ;

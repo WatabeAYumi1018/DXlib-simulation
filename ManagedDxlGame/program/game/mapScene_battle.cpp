@@ -27,6 +27,9 @@ int g_battle_effect_snip[1][14];
 int g_battle_effect_magic[1][14];
 int g_battle_effect_leader[1][14];
 
+//攻撃ミスの画像
+int g_battleMiss;
+
 //攻撃エフェクトのアニメーションハンドル
 float g_effectTimeCount = 0;
 int g_effectFrame = 0;
@@ -494,10 +497,10 @@ void battleHitRandom(float delta_time,int attack, int defence) {
 
 	//攻撃ミス
 	if (hit < hitRandom) {
-	
+
 		//攻撃ミスの描画
-
-
+		DrawRotaGraph(800, 300, 1.0f, 45, g_battleMiss, TRUE);
+		
 		g_CanAttackMove++;
 	}
 	//攻撃判定

@@ -32,22 +32,22 @@ int icon_boss = 0;
 //各キャラクターの情報
 Character character[] = {
 	//キャラ名　 職業				HP　maxHp	攻撃 防御 速さ 命中 移動	チーム		X	 Y
-	{"０番",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ALLY,	36, 3},
-	{"１番",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ALLY,	34, 4},
+	{"０番",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  6,	TEAM_ALLY,	36, 3},
+	{"１番",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  5,	TEAM_ALLY,	34, 4},
 	{"２番",	JOB_MAGICIAN,		100, 100,	200,  50,  10,  100,  4,	TEAM_ALLY,	38, 5},
-	{"剣士",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ENEMY,	31, 6},
-	{"弓使い",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ENEMY,	33, 11},
-	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  50,  10,  100,  4,	TEAM_ENEMY,	27, 1},
-	{"剣士",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ENEMY,	15, 10},
-	{"弓使い",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ENEMY,	12, 4},
-	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  50,  10,  100,  4,	TEAM_ENEMY,	9,	2},
-	{"剣士",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ENEMY,	25, 12},
-	{"弓使い",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ENEMY,	24, 6},
-	{"魔道士",	JOB_MAGICIAN,		100, 100,	100,  50,  10,  100,  4,	TEAM_ENEMY,	10, 10},
-	{"剣士",	JOB_SWORDMASTER,	300, 300,	100,  60,  20,  100,  5,	TEAM_ENEMY,	5,	6},
-	{"弓使い",	JOB_SNIPER,			200, 200,	150,  70,  15,  100,  4,	TEAM_ENEMY,	5,	10},
-	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  50,  10,  100,  4,	TEAM_ENEMY,	20, 8},
-	{"長",		JOB_LEADER,			400, 400,	200,  70,  20,  150,  5,	TEAM_ENEMY,	4,	3}
+	{"剣士",	JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 6},
+	{"弓使い",	JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	33, 11},
+	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	27, 1},
+	{"剣士",	JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	15, 10},
+	{"弓使い",	JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	12, 4},
+	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	9,	2},
+	{"剣士",	JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	25, 12},
+	{"弓使い",	JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	24, 6},
+	{"魔道士",	JOB_MAGICIAN,		100, 100,	100,  40,  10,  100,  4,	TEAM_ENEMY,	10, 10},
+	{"剣士",	JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	5,	6},
+	{"弓使い",	JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	5,	10},
+	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	20, 8},
+	{"長",		JOB_LEADER,			300, 300,	200,  70,  20,  150,  5,	TEAM_ENEMY,	4,	3}
 };
 
 //charaDateに中身入れる。1人ずつ座標を読み取り、いない場所にはー１を返す
@@ -107,18 +107,18 @@ void characterMapInfo(int chara) {
 		SetFontSize(30);
 		DrawStringEx(100, 530, TEXT_COLOR_WHITE, character[chara].name.c_str());
 		DrawStringEx(100, 630, TEXT_COLOR_WHITE, "職業：%s", jobData[character[chara].job].job_name.c_str());//job
-		DrawStringEx(530, 570, TEXT_COLOR_WHITE, "HP：%s", hp_str.c_str());//hp
-		DrawStringEx(630, 570, TEXT_COLOR_WHITE, " / %s", maxHp_str.c_str());//maxHp
+		DrawStringEx(430, 570, TEXT_COLOR_WHITE, "HP：%s", hp_str.c_str());//hp
+		DrawStringEx(530, 570, TEXT_COLOR_WHITE, " / %s", maxHp_str.c_str());//maxHp
 
 		SetFontSize(20);
 		if (character[chara].team == TEAM_ALLY && character[chara].done == true) { DrawStringEx(200, 540, TEXT_COLOR_WHITE, "行動終了"); }
 		else if (character[chara].team == TEAM_ALLY && character[chara].done == false) { DrawStringEx(200, 540, TEXT_COLOR_WHITE, "未行動"); }
 
-		DrawStringEx(900, 550, TEXT_COLOR_WHITE, "攻撃力：%s", attack_str.c_str());//attack
-		DrawStringEx(900, 600, TEXT_COLOR_WHITE, "防御力：%s", defence_str.c_str());//defence
-		DrawStringEx(900, 650, TEXT_COLOR_WHITE, "素早さ：%s", speed_str.c_str());//speed
-		DrawStringEx(1100, 550, TEXT_COLOR_WHITE, "命中率：%s", hit_str.c_str());//hit
-		DrawStringEx(1100, 600, TEXT_COLOR_WHITE, "移動力：%s", move_str.c_str());//move
+		DrawStringEx(750, 550, TEXT_COLOR_WHITE, "攻撃力：%s", attack_str.c_str());//attack
+		DrawStringEx(750, 600, TEXT_COLOR_WHITE, "防御力：%s", defence_str.c_str());//defence
+		DrawStringEx(750, 650, TEXT_COLOR_WHITE, "素早さ：%s", speed_str.c_str());//speed
+		DrawStringEx(900, 550, TEXT_COLOR_WHITE, "命中率：%s", hit_str.c_str());//hit
+		DrawStringEx(900, 600, TEXT_COLOR_WHITE, "移動力：%s", move_str.c_str());//move
 
 		//アイコン表示
 		if (character[chara].job == JOB_SWORDMASTER) {

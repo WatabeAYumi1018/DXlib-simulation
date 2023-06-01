@@ -405,7 +405,6 @@ void gameStart() {
 	//タイトル選択画像
 	g_select_cursor_hdl = LoadGraph("graphics/flowerSelect.png");
 
-	
 	//マップデータ
 	LoadDivGraph("graphics/pipo-map001.png", 88, 8, 11, CHIP_SIZE, CHIP_SIZE, map_chips[0]);
 
@@ -424,15 +423,21 @@ void gameStart() {
 	//マップ上での情報表示用（下画面）
 	display_map = LoadGraph("graphics/mapInfo.png"); 
 	
+	//マップ下のボタン描画
+	g_bottonLayout = LoadGraph("graphics/bottonLayout.png");
+
 	//マップ上での行動可能範囲
 	fill_map = LoadGraph("graphics/canMoveTile.png"); 
 
 	//攻撃画面の背景
 	g_battleGround = LoadGraph("graphics/battleback.jpg");
 
+	//攻撃ミスの画像
+	g_battleMiss = LoadGraph("graphics/miss.png");
+
 	//ゲームオーバー背景
 	g_gameOver = LoadGraph("graphics/GameOver.jpg");
-
+	
 	//ゲームクリア背景
 	g_gameClear = LoadGraph("graphics/GameClear.jpg");
 
@@ -459,6 +464,7 @@ void gameStart() {
 
 	//マップ画面でのターン文字
 	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
+
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -488,13 +494,7 @@ void gameMain(float delta_time) {
 			rightFlash(delta_time);
 			sceneTitle();
 
-
-			const int BACK_START_X_Y = 0;
-			const int BACK_END_X = 1300;
-			const int BACK_END_Y = 750;
-
-			//DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameClear, true);
-
+			//PlayMovieToGraph(confetti);
 
 			break;
 		}
@@ -505,7 +505,7 @@ void gameMain(float delta_time) {
 		case GAME_MAP: {
 
 			getCharaPosition();
-			mapPosition();
+			mapPosition(delta_time);
 			display();
 			cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
 			instructions();
@@ -550,7 +550,6 @@ void gameMain(float delta_time) {
 			const int BACK_END_Y = 750;
 
 			DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameClear, true);
-
 
 			break;
 	}
