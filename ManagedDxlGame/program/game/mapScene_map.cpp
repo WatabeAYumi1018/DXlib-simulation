@@ -76,6 +76,14 @@ int g_map_turn[1][15];
 //マップ全般に関わる関数
 //
 
+void scoreDraw() {
+
+	SetFontSize(40);
+	DrawStringEx(100, 0, TEXT_COLOR_WHITE, "SCORE :");
+	std::string SCORE = std::to_string(g_score);
+	DrawStringEx(260, 0, TEXT_COLOR_WHITE, SCORE.c_str());
+}
+
 //fillの初期化（これをしないと、次に選択しても前の選択情報が残ったままになってしまう）
 void resetFill() {
 

@@ -62,10 +62,6 @@ extern bool g_flagGameOver;
 //ゲームオーバー画面ハンドル
 extern int g_gameOver ;
 
-
-extern int g_flagBattle ;
-
-
 //サウンド
 extern int sound_bgm_hdl;
 extern int sound_se_hdl;

@@ -69,6 +69,9 @@ enum {
 	DIRECTION_MAX
 };
 
+//score表示
+void scoreDraw();
+
 //fillの初期化（これをしないと、次に選択しても前の選択情報が残ったままになってしまう）
 void resetFill();
 

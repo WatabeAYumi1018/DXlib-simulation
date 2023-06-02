@@ -80,42 +80,89 @@ int g_gameOver = 0;
 //ゲームクリア画面
 int g_gameClear = 0;
 
-//敵ターンでのバトル進行制御（本当に必要かは思案中）
-int g_flagBattle = 0;
-
 //スコア変数
 int g_score = 0;
 
 //-------------------------------------------------------------------------------------------
 
-//★
+//★まだ確認してない！これに、三すくみ有利を優先攻撃付け足し
 //敵からの攻撃判定
 bool moveEnemyToAlly(float delta_time,int enemy) {
 
-	int characterX = character[enemy].x;
-	int characterY = character[enemy].y;
-	//int moveCost = jobData[character[enemy].job].moveCells[mapData[characterY][characterX]];
+	int enemyX = character[enemy].x;
+	int enemyY = character[enemy].y;
+	int moveCost = jobData[character[enemy].job].moveCells[mapData[enemyY][enemyX]];
 
-	// 塗りつぶし範囲内に味方キャラが存在する場合
-	// 味方の隣のマスに移動する処理
-	for (int dir = 0; dir < DIRECTION_MAX; dir++) {
-		int x = characterX + g_directions[dir][0];
-		int y = characterY + g_directions[dir][1];
+	// 味方の座標を探す
+	int allyX = -1; // 味方キャラのX座標
+	int allyY = -1; // 味方キャラのY座標
 
-		if (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT && charaData[y][x] != -1) {
-			
-			if (character[charaData[y][x]].team == TEAM_ALLY) {
-	
-				// 味方の隣のマスに移動
-				//character[enemy].x = x;
-				//character[enemy].y = y;
-				//character[enemy].move -= moveCost;
+	for (int i = 0; i < MAP_HEIGHT; i++) {
+		for (int j = 0; j < MAP_WIDTH; j++) {
+			if (character[getCharacter(j, i)].team == TEAM_ALLY) {
+				allyX = j;
+				allyY = i;
+				break;
+			}
+		}
+		if (allyX != -1 && allyY != -1) {
+			break;
+		}
+	}
 
-				return true;
+	// 味方の座標が見つかった場合、敵キャラクターを移動させる
+	if (allyX != -1 && allyY != -1) {
+		// 味方との距離を計算
+		int distanceX = std::abs(enemyX - allyX);
+		int distanceY = std::abs(enemyY - allyY);
+
+		// 可動範囲内かつ味方の隣に移動する
+		if ((distanceX + distanceY) <= moveCost) {
+			if (distanceX == 1 && distanceY == 0) {
+				// 味方が左にいる場合
+				enemyX = allyX - 1;
+				enemyY = allyY;
+			}
+			else if (distanceX == 0 && distanceY == 1) {
+				// 味方が上にいる場合
+				enemyX = allyX;
+				enemyY = allyY - 1;
+			}
+			else if (distanceX == -1 && distanceY == 0) {
+				// 味方が右にいる場合
+				enemyX = allyX + 1;
+				enemyY = allyY;
+			}
+			else if (distanceX == 0 && distanceY == -1) {
+				// 味方が下にいる場合
+				enemyX = allyX;
+				enemyY = allyY + 1;
 			}
 		}
 	}
-	return false;
+	// 移動後の座標を設定
+	character[enemy].x = enemyX;
+	character[enemy].y = enemyY;
+	// 塗りつぶし範囲内に味方キャラが存在する場合
+	// 味方の隣のマスに移動する処理
+	//for (int dir = 0; dir < DIRECTION_MAX; dir++) {
+	//	int x = characterX + g_directions[dir][0];
+	//	int y = characterY + g_directions[dir][1];
+
+		//if (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT && charaData[y][x] != -1) {
+		//	
+ 	//		if (character[enemy].team == TEAM_ALLY) {
+	
+		//		// 味方の隣のマスに移動
+		//		//character[enemy].x = x;
+		//		//character[enemy].y = y;
+		//		//character[enemy].move -= moveCost;
+
+		//		return true;
+		//	}
+		//}
+//	}
+	//return false;
 }
 
 //--------------------------------------------------------------------------
@@ -127,28 +174,6 @@ bool moveEnemyToAlly(float delta_time,int enemy) {
 
 
 //一連の流れ
-//味方のターンからはじまる→カーソル操作でキャラを動かす（この辺りは問題ないです）→TABキーを押すと、敵のターンへ移行する
-
-//問題は、敵のターンです。まず、一連の流れを説明します。
-//
-// 敵のターンでしたいこと
-//①待機中の敵キャラ（character[3]～character[16]）は、それぞれの上下左右一マス隣に味方キャラがいないか判定する
-//（ただし、ボスであるcharacter[16]は戦闘を仕掛けてこない予定です。19行：g_standbyChara != 15がそれです。 ）
-// （また、これは待機中の敵キャラクター1人ずつ判定する必要があります。for文で回すべきかと思いますが、現状ではその辺りの宣言も不透明）
-//②味方キャラがいた場合は、戦闘に入る
-// （ただ、現状隣のマスに複数キャラがいた場合どうするかの処理は出来ていません。予定としては、敵から見て三すくみで有利なキャラを優先して攻撃する予定）
-//③隣マスに味方がいないことが確認出来たら、自動で味方キャラへターン移行する(218行)
-//
-//エラーが生じてしまうこと。
-//★味方ターンの時に、例えば一番近くにいる剣士の隣に味方キャラを配置して、敵ターンへ移行し、スペースキーを押します。
-//理想としては、battle(delta_time)が呼び出され、そのあとに味方のターンへ移行してほしいのですが、
-//現状battle関数が一瞬しか描画されず、すぐに味方ターンへ移ってしまいます。
-//
-//もしかしたら途中で呼び出しているmoveEnemyToAlly関数（205行）が間違っているのかと思案中です。
-//補足ですが、g_からはじまる変数は全てグローバル変数です。
-//コードが分かりにくいと思いますので、ひとまず詳しい内容については明日改めて説明させていただきます！
-
-//★
 void turnMove(float delta_time) {
 
 	const int TELOP_X_END = 700;
@@ -210,44 +235,42 @@ void turnMove(float delta_time) {
 			}
 		}
 		//敵のAIここから
-		//if (g_flagSpace) {
+		if (g_flagSpace) {
 
- 	//		//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
+ 			//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
 
-		//		if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
+				if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
 
- 	//				if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
+ 					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
 
- 	//					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-		//				
-		//					g_CanAttackMove++;
-		//					g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
-		//					g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
-		//					g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
-		//					g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット）
-		//					g_flagBattle = 1;
-		//				}
-		//				else if (g_flagBattle==1) {
-		//						battle(delta_time);
-		//					}	
+ 						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+						
+							g_CanAttackMove++;
+							g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
+							g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
+							g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
+							g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット
+						}
+						battle(delta_time);
 
-		//				g_turnMove = TURN_ALLAY;
+						
+						//g_turnMove = TURN_ALLAY;
+							
 
-		//			}
-		//			if (!moveEnemyToAlly(delta_time, g_standbyChara)){
+					}
+					if (!moveEnemyToAlly(delta_time, g_standbyChara)) {
 
-		//				g_flagEnter = false;
-		//				g_flagCursor = true;
-		//				g_flagSpace = false;				//いないから、敵の判断が終了
-		//				character[0].done = false;
-		//				character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-		//				character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-		//				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-		//				g_turnMove = TURN_ALLAY;
-		//				g_flagBattle = 0;
-		//			}
-		//		}
-		//}
+						g_flagEnter = false;
+						g_flagCursor = true;
+						g_flagSpace = false;				//いないから、敵の判断が終了
+						character[0].done = false;
+						character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+						character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+						g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+						g_turnMove = TURN_ALLAY;
+					}
+				}
+		}
 		break;
 	}
 
@@ -272,7 +295,7 @@ void phaseMove(float delta_time) {
 
 							character[startChara].hp += 100;
 
-							if (character[startChara].hp > character[startChara].maxHp) {
+							if (character[startChara].hp >= character[startChara].maxHp) {
 
 								character[startChara].hp = character[startChara].maxHp;
 							}
@@ -289,15 +312,8 @@ void phaseMove(float delta_time) {
 				if (chara < 0) { break; } //負の値だったらいない
 				
 				//行動済みなら座標動かない
-				//if (character[chara].done) {
-
-				//	//もしキャラクター0～２のいずれかの座標が（3,3）になったらクリア
-				//	if (character[chara].x == 3 && character[chara].y == 3) {
-
-				//		g_gameScene_id = GAME_CLEAR;
-				//	}
-				//	resetFill();
-				//}
+				//if (character[chara].done) {resetFill();}
+				
 				//キャラがいれば(それ以外は)塗りつぶし
 				else {
 
@@ -390,7 +406,6 @@ void phaseMove(float delta_time) {
 		g_phase = PHASE_SELECT_CHARACTER;
 	}
 }
-
 
 void gameStart() {
 	srand(time(0));
@@ -519,13 +534,9 @@ void gameMain(float delta_time) {
 			display();
 			cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
 			instructions(delta_time);
+			scoreDraw();
 			turnMove(delta_time);
-
-			SetFontSize(40);
-			DrawStringEx(100, 0, TEXT_COLOR_WHITE, "SCORE :");
-			std::string SCORE = std::to_string(g_score);
-			DrawStringEx(260, 0, TEXT_COLOR_WHITE, SCORE.c_str());
-
+			
 			break;
 		}
 		case GAME_OVER: {

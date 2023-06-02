@@ -571,7 +571,7 @@ void battleExit() {
 //ƒXƒRƒA•Ï“®ˆ—
 void scoreMove() {
 
-	if (character[g_standbyChara].team == TEAM_ENEMY) {
+	if (character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp <=0) {
 		if (ThreeRelation(g_selectedChara, g_standbyChara) == 0) { g_score += 30; }
 		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 1) { g_score += 100; }
 		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 2) { g_score += 70; }
