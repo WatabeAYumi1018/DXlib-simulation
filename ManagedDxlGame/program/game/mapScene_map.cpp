@@ -123,26 +123,52 @@ void fillCanMove(int _chara, int _x, int _y, int _move) {//‘I‘ð‚µ‚½–¡•ûƒLƒƒƒ‰A
 	}
 }
 
+//void 
+
 //î•ñ‚âŠeƒtƒF[ƒY‚Å‚ÌŽwŽ¦•¶Žš•`‰æˆ—i‚±‚±‚É“_–Åˆ—‚ð‰Á‚¦‚æ‚¤j
-void instructions() {
+void instructions(float delta_time) {
+
+	//–½—ß•¶‚ÌÀ•W
+	const int INSTRUCTIONS_X = 700;
+	const int INSTRUCTIONS_Y = 10;
+
+	float static instructionsTimeCount = 0;
+	bool static instructionsDraw = true;
+
+	//–ˆƒtƒŒ[ƒ€‘«‚µ‚Ä‚¢‚­ˆ—
+	instructionsTimeCount += delta_time;
+
+	if (instructionsTimeCount > 1.0f) {
+		instructionsDraw = !instructionsDraw;
+		instructionsTimeCount = 0;
+	}
 
 	//ŠeƒtƒF[ƒY‚Å‚ÌŽwŽ¦•¶Í•`‰æ
 	switch (g_phase) {
 
-	case PHASE_SELECT_CHARACTER:
-		SetFontSize(30);
-		DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ƒLƒƒƒ‰ƒNƒ^[‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
-		break;
+		case PHASE_SELECT_CHARACTER:
 
-	case PHASE_SET_MOVE_POSITION:
-		SetFontSize(30);
-		DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ˆÚ“®æ‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
-		break;
+			if (instructionsDraw) {
+				SetFontSize(30);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ƒLƒƒƒ‰ƒNƒ^[‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
+			}
+			break;
 
-	case PHASE_SELECT_ATTACK:
-		SetFontSize(30);
-		DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "UŒ‚‘ÎÛ‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
-		break;
+		case PHASE_SET_MOVE_POSITION:
+
+			if (instructionsDraw) {
+				SetFontSize(30);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ˆÚ“®æ‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
+			}
+			break;
+
+		case PHASE_SELECT_ATTACK:
+
+			if (instructionsDraw) {
+				SetFontSize(30);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "UŒ‚‘ÎÛ‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
+			}
+			break;
 	}
 }
 
@@ -280,5 +306,36 @@ void mapPosition(float delta_time) {
 			//Œ»Ý‚Ì‘I‘ðƒJ[ƒ\ƒ‹‚ÌˆÊ’u‚ð•`‰æ
 			if (j == cursorX && i == cursorY) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, g_cursor, TRUE); }
 		}
+	}
+}
+
+//ƒQ[ƒ€ƒI[ƒo[‰æ–Ê•`‰æ
+void gameOver(float delta_time) {
+
+	const int BACK_START_X_Y = 0;
+	const int BACK_END_X = 1300;
+	const int BACK_END_Y = 750;
+
+	const int TEXT_START_X_Y = 200;
+	const int TEXT_END_X = 1100;
+	const int TEXT_END_Y = 400;
+
+	float static g_gameOverTimeCount = 0;
+	bool static g_gameOver_write = true;
+
+	// “_–Åˆ—
+	g_gameOverTimeCount += delta_time;
+
+	if (g_gameOverTimeCount > 0.5f) {
+		g_gameOver_write = !g_gameOver_write;
+		g_gameOverTimeCount = 0;
+	}
+
+	DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameOver, true);
+	DrawExtendGraph(TEXT_START_X_Y, TEXT_START_X_Y, TEXT_END_X, TEXT_END_Y, g_map_turn[0][3], true);
+
+	if (g_gameOver_write) {
+		SetFontSize(50);
+		DrawStringEx(550, 500, TEXT_COLOR_WHITE, "CLOSE");
 	}
 }

@@ -10,11 +10,8 @@ tnl::Vector3 g_sel_cursor_pos = TITLE_SELECT_MENU_POSITION[g_select_player_menu]
 //ゲームスタート画面
 int g_gameStart = 0;
 
-//ゲームスタート画面ライト
+//ゲームスタート画面
 int g_gameStartAnim = 0;
-
-//タイムカウント
-//int g_titleRighTimeCont = 0;
 
 //タイトルメニューで選択
 void titleSelect() {

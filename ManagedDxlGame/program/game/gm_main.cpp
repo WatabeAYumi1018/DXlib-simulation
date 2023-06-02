@@ -508,39 +508,15 @@ void gameMain(float delta_time) {
 			mapPosition(delta_time);
 			display();
 			cursorMove();//ÅÉ<resetFill()/drawFill())ÅÉgetCharacter(,)/returnÅ®fillCanMove(,,,)
-			instructions();
+			instructions(delta_time);
 			turnMove(delta_time);
 
 			break;
 		}
 		case GAME_OVER: {
 
-			const int BACK_START_X_Y = 0;
-			const int BACK_END_X = 1300;
-			const int BACK_END_Y = 750;
-
-			const int TEXT_START_X_Y = 200;
-			const int TEXT_END_X = 1100;
-			const int TEXT_END_Y = 400;
-
-			float static g_gameOverTimeCount = 0;
-			bool static g_gameOver_write = true;
-
-			// ì_ñ≈èàóù
-			g_gameOverTimeCount += delta_time;
-
-			if (g_gameOverTimeCount > 0.5f) {
-				g_gameOver_write = !g_gameOver_write;
-				g_gameOverTimeCount = 0;
-			}
-
-			DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameOver, true);
-			DrawExtendGraph(TEXT_START_X_Y, TEXT_START_X_Y, TEXT_END_X, TEXT_END_Y, g_map_turn[0][3], true);
-
-			if (g_gameOver_write) {
-				SetFontSize(50);
-				DrawStringEx(550, 500, TEXT_COLOR_WHITE, "CLOSE");
-			}
+			gameOver(delta_time);
+			
 			break;
 		}
 		case GAME_CLEAR:

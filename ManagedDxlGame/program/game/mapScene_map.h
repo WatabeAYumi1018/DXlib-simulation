@@ -5,10 +5,6 @@ const int MAP_HEIGHT = 15;		//マップ画面高さ
 const int MAP_WIDTH = 40;		//マップ画面幅
 const int CHIP_SIZE = 32;		//チップサイズ
 
-//命令文の座標
-const int INSTRUCTIONS_X = 700;
-const int INSTRUCTIONS_Y = 10;
-
 extern int mapData[MAP_HEIGHT][MAP_WIDTH];
 
 //塗りつぶしの定義
@@ -21,10 +17,10 @@ extern int fill_map;
 extern int cursorX ;
 extern int cursorY ;
 
-//マップチップ
+//マップチップ画像ハンドル
 extern int graphic_cell_ground;
 
-//チップ画像
+//チップ画像ハンドル
 extern int character_chips[7][12];	//キャラチップ格納配列
 extern int map_chips[1][88];		//マップチップ格納配列
 
@@ -83,10 +79,12 @@ void drawFill();
 void fillCanMove(int _chara, int _x, int _y, int _move);
 
 //情報や各フェーズでの指示文字描画処理（ここに点滅処理を加えよう）
-void instructions();
+void instructions(float delta_time);
 
 //カーソル移動
 void cursorMove();
 
 //マップ全体の情報を読み取り、ifで各数字に対応するチップを描画する
 void mapPosition(float delta_time);
+
+void gameOver(float delta_time);

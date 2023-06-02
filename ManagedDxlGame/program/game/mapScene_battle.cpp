@@ -13,14 +13,6 @@ int g_battle_hp[1][35];
 int g_battle_attack[1][42];
 int g_battle_hit[1][25];
 
-//キャラアニメーション関連
-int g_charaAlly_vector = 3;		//味方キャラの向き
-int g_charaEnemy_vector = 6;	//敵キャラの向き
-int g_vectorAlly_count = 1;		//味方カウント変数
-float g_vectorEnemy_count = 1;	//敵カウント変数
-float g_animAlly_timeCount = 0;	//仲間描画速さの制御
-float g_animEnemy_timeCount = 0;//敵描画速さの制御
-
 //戦闘中の攻撃エフェクト
 int g_battle_effect_sword[1][14];
 int g_battle_effect_snip[1][14];
@@ -30,18 +22,11 @@ int g_battle_effect_leader[1][14];
 //攻撃ミスの画像
 int g_battleMiss;
 
-//攻撃エフェクトのアニメーションハンドル
-float g_effectTimeCount = 0;
-int g_effectFrame = 0;
-
 //戦闘アニメーションの生存フラグ
 bool g_flagBattleAnime = true;
 
 //HP減算フラグ
 bool g_flagBattleHp = true;
-
-//HPタイムカウント
-float g_HpTimeCount = 0;
 
 //敵のAIで移動可能範囲に味方がいるか判定（未完成）
 //bool checkAllyInFill(int enemy,int ally) {
@@ -305,56 +290,63 @@ void battleCharaGraphic(float delta_time, int attack, int defence) {
 	const int CHARA_Y_START = 250;			//共通Y始点
 	const int CHARA_Y_END = 350;			//共通Y終点
 
-	//毎フレーム足していく処理
-	g_animAlly_timeCount += delta_time;
+	//キャラアニメーション関連
+	int static charaAlly_vector = 3;		//味方キャラの向き
+	int static charaEnemy_vector = 6;		//敵キャラの向き
+	int static vectorAlly_count = 1;		//味方カウント変数
+	float static vectorEnemy_count = 1;		//敵カウント変数
+	float static animAlly_timeCount = 0;	//仲間描画速さの制御
+	float static animEnemy_timeCount = 0;	//敵描画速さの制御
 
 	//毎フレーム足していく処理
-	g_animEnemy_timeCount += delta_time;
+	animAlly_timeCount += delta_time;
+
+	//毎フレーム足していく処理
+	animEnemy_timeCount += delta_time;
 
 	if (character[attack].team == TEAM_ALLY) {
 
-		if (g_animAlly_timeCount > 0.5f) {
+		if (animAlly_timeCount > 0.5f) {
 
-			if (g_charaAlly_vector == 5) { g_vectorAlly_count = -1; }
-			else if (g_charaAlly_vector == 3) { g_vectorAlly_count = 1; }
+			if (charaAlly_vector == 5) { vectorAlly_count = -1; }
+			else if (charaAlly_vector == 3) { vectorAlly_count = 1; }
 
-			g_charaAlly_vector += g_vectorAlly_count;
+			charaAlly_vector += vectorAlly_count;
 
-			g_animAlly_timeCount = 0;
+			animAlly_timeCount = 0;
 
 		}
-		DrawExtendGraph(CHARA_ALLAY_X_START, CHARA_Y_START, CHARA_ALLAY_X_END, CHARA_Y_END, character_chips[attack][g_charaAlly_vector], true);
+		DrawExtendGraph(CHARA_ALLAY_X_START, CHARA_Y_START, CHARA_ALLAY_X_END, CHARA_Y_END, character_chips[attack][charaAlly_vector], true);
 	}
 
 	if (character[defence].team == TEAM_ENEMY) {
 
-		if (g_animEnemy_timeCount > 0.5f) {
+		if (animEnemy_timeCount > 0.5f) {
 
-			if (g_charaEnemy_vector == 8) { g_vectorEnemy_count = -1; }
-			else if (g_charaEnemy_vector == 6) { g_vectorEnemy_count = 1; }
+			if (charaEnemy_vector == 8) { vectorEnemy_count = -1; }
+			else if (charaEnemy_vector == 6) { vectorEnemy_count = 1; }
 
-			g_charaEnemy_vector += g_vectorEnemy_count;
+			charaEnemy_vector += vectorEnemy_count;
 
-			g_animEnemy_timeCount = 0;
+			animEnemy_timeCount = 0;
 		}
 
 		if (defence == 3 || defence == 6 || defence == 9 || defence == 12)
 		{
-			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[3][g_charaEnemy_vector], true);
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[3][charaEnemy_vector], true);
 		}
 		else if (defence == 4 || defence == 7 || defence == 10 || defence == 13)
 		{
-			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[4][g_charaEnemy_vector], true);
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[4][charaEnemy_vector], true);
 		}
 		else if (defence == 5 || defence == 8 || defence == 11 || defence == 14)
 		{
-			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[5][g_charaEnemy_vector], true);
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[5][charaEnemy_vector], true);
 		}
 		else if (defence == 15)
 		{
-			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[6][g_charaEnemy_vector], true);
+			DrawExtendGraph(CHARA_ENEMY_X_START, CHARA_Y_START, CHARA_ENEMY_X_END, CHARA_Y_END, character_chips[6][charaEnemy_vector], true);
 		}
-
 	}
 }
 
@@ -373,6 +365,12 @@ void battleEffectGraphic(float delta_time, int chara) {
 	const int HP_ENEMY_X = 400;
 	const int HP_Y = 500;
 
+	//アニメーションのMAXフレーム
+	const int MAX_EFFECT_FRAM = 10;
+
+	//攻撃エフェクトのアニメーションハンドル
+	float static g_effectTimeCount = 0;
+	int static g_effectFrame = 0;
 
 	if (g_flagBattleAnime) {
 
@@ -533,6 +531,9 @@ int battleDamage(int attack, int defence) {
 
 //戦闘によるダメージ変化の流れ
 void battleHpMove(float delta_time, int attack, int defence) {
+
+	//HPタイムカウント
+	float static g_HpTimeCount = 0;
 
 	if (g_flagBattleHp) {
 
