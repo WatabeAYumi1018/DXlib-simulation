@@ -50,9 +50,6 @@ extern int g_CanAttackMove;
 //ターン変数
 extern int g_turnMove ;
 
-//テロップアニメーションカウント
-extern float g_telopTimeCount;
-
 //ターン切り替えフラグ
 extern bool g_flagTurnAlly;
 
@@ -72,6 +69,9 @@ extern int g_flagBattle ;
 //サウンド
 extern int sound_bgm_hdl;
 extern int sound_se_hdl;
+
+//スコア変数
+extern int g_score;
 
 //敵からの攻撃判定
 bool moveEnemyToAlly(float delta_time, int enemy);

@@ -439,6 +439,7 @@ bool battleLost() {
 			if (lostCount == CHARACTER_ALLAY_MAX) {
 
 				g_flagGameOver = true;
+				
 				return true;
 			}
 		}
@@ -567,6 +568,19 @@ void battleExit() {
 	}
 }
 
+//スコア変動処理
+void scoreMove() {
+
+	if (character[g_standbyChara].team == TEAM_ENEMY) {
+		if (ThreeRelation(g_selectedChara, g_standbyChara) == 0) { g_score += 30; }
+		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 1) { g_score += 100; }
+		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 2) { g_score += 70; }
+	}
+	if (character[g_selectedChara].team == TEAM_ALLY ) {
+	
+		if (character[g_selectedChara].hp <= 0 && character[g_selectedChara].team == TEAM_ALLY) { g_score -= 50; }
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 //★バトル関数（スペースキーを押すとg_CanAttackMove++でインクリメントされていきます。）
@@ -602,6 +616,7 @@ void battle(float delta_time) {
 
 			if (character[g_standbyChara].hp <= 0) {
 
+				scoreMove();
 				battleExit();
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			}
@@ -618,6 +633,7 @@ void battle(float delta_time) {
 
 			if (character[g_selectedChara].hp <= 0) {
 
+				scoreMove();
 				battleExit();
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			}
@@ -653,6 +669,8 @@ void battle(float delta_time) {
 			}
 		}
 		else {
+
+			if (character[g_selectedChara].hp <= 0) {scoreMove();}
 			battleExit();
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 		}

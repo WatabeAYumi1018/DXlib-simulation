@@ -62,9 +62,6 @@ bool g_flagSpace=false;
 //バトル進行中か否かの判定フラグ
 int g_CanAttackMove = 0;
 
-//テロップアニメーションカウント
-float g_telopTimeCount = 0;
-
 //味方ターン切り替え
 bool g_flagTurnAlly = true;
 
@@ -85,6 +82,9 @@ int g_gameClear = 0;
 
 //敵ターンでのバトル進行制御（本当に必要かは思案中）
 int g_flagBattle = 0;
+
+//スコア変数
+int g_score = 0;
 
 //-------------------------------------------------------------------------------------------
 
@@ -118,6 +118,13 @@ bool moveEnemyToAlly(float delta_time,int enemy) {
 	return false;
 }
 
+//--------------------------------------------------------------------------
+//★★★
+//制御する方法！！
+//ENEMYCHARACTER_MAX定数を作る。
+//もしcharacter[3]==隣判定trueなら…で、14まで全て作って判定する（for分を使わずに、全てのキャラの判定をする）
+//if else ifで管理すれば、順番に見てくれるのでは？？
+
 
 //一連の流れ
 //味方のターンからはじまる→カーソル操作でキャラを動かす（この辺りは問題ないです）→TABキーを押すと、敵のターンへ移行する
@@ -149,6 +156,9 @@ void turnMove(float delta_time) {
 	const int TELOP_Y_END = 200;
 	const int TELOP_SPEED=700;
 	const int TELOP_FRAME_MAX = 1400;
+
+	//テロップアニメーションカウント
+	float static g_telopTimeCount = 0;
 
 	switch (g_turnMove) {
 
@@ -510,6 +520,11 @@ void gameMain(float delta_time) {
 			cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
 			instructions(delta_time);
 			turnMove(delta_time);
+
+			SetFontSize(40);
+			DrawStringEx(100, 0, TEXT_COLOR_WHITE, "SCORE :");
+			std::string SCORE = std::to_string(g_score);
+			DrawStringEx(260, 0, TEXT_COLOR_WHITE, SCORE.c_str());
 
 			break;
 		}

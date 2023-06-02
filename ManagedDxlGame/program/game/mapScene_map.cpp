@@ -123,8 +123,6 @@ void fillCanMove(int _chara, int _x, int _y, int _move) {//‘I‘ğ‚µ‚½–¡•ûƒLƒƒƒ‰A
 	}
 }
 
-//void 
-
 //î•ñ‚âŠeƒtƒF[ƒY‚Å‚Ìw¦•¶š•`‰æˆ—i‚±‚±‚É“_–Åˆ—‚ğ‰Á‚¦‚æ‚¤j
 void instructions(float delta_time) {
 
