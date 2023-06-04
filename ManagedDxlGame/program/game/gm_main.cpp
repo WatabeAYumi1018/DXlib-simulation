@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include <math.h>
 #include <time.h>
+#include <climits>
 #include <string>
 #include "../dxlib_ext/dxlib_ext.h"
 #include "gm_main.h"
@@ -87,67 +88,67 @@ int g_score = 0;
 
 //★まだ確認してない！これに、三すくみ有利を優先攻撃付け足し
 //敵からの攻撃判定
-bool moveEnemyToAlly(float delta_time,int enemy) {
-
+bool moveEnemyToAlly(float delta_time, int enemy) {
 	int enemyX = character[enemy].x;
 	int enemyY = character[enemy].y;
 	int moveCost = jobData[character[enemy].job].moveCells[mapData[enemyY][enemyX]];
 
-	// 味方の座標を探す
-	int allyX = -1; // 味方キャラのX座標
-	int allyY = -1; // 味方キャラのY座標
+	int ally = 0;
+	int allyX = -1; // 最も近い味方キャラのX座標
+	int allyY = -1; // 最も近い味方キャラのY座標
+	int maxDistance = INT_MAX; // 最大距離
 
+	// マップ上の全ての座標を探索する
 	for (int i = 0; i < MAP_HEIGHT; i++) {
 		for (int j = 0; j < MAP_WIDTH; j++) {
-			if (character[getCharacter(j, i)].team == TEAM_ALLY) {
-				allyX = j;
-				allyY = i;
-				break;
+			
+			ally = getCharacter(j, i);
+			
+			if (ally != -1 && character[ally].team == TEAM_ALLY) {
+			
+				// 敵キャラとの距離を計算
+				int distance = abs(character[ally].x - enemyX) + abs(character[ally].y - enemyY);
+
+				// 最小距離が更新された場合（より近くにいる場合、その距離を最小値とする）
+				if (distance < maxDistance) {
+					allyX = character[ally].x;
+					allyY = character[ally].y;
+					maxDistance = distance;
+				}
 			}
-		}
-		if (allyX != -1 && allyY != -1) {
-			break;
 		}
 	}
 
-	// 味方の座標が見つかった場合、敵キャラクターを移動させる
-	if (allyX != -1 && allyY != -1) {
-		// 味方との距離を計算
-		int distanceX = std::abs(enemyX - allyX);
-		int distanceY = std::abs(enemyY - allyY);
+	// 最も近い味方の隣に移動
+	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy,ally))) {
+		int distanceX = allyX - enemyX;
+		int distanceY = allyY - enemyY;
 
-		// 可動範囲内かつ味方の隣に移動する
-		if ((distanceX + distanceY) <= moveCost) {
-			if (distanceX == 1 && distanceY == 0) {
-				// 味方が左にいる場合
-				enemyX = allyX - 1;
-				enemyY = allyY;
-			}
-			else if (distanceX == 0 && distanceY == 1) {
-				// 味方が上にいる場合
-				enemyX = allyX;
-				enemyY = allyY - 1;
-			}
-			else if (distanceX == -1 && distanceY == 0) {
-				// 味方が右にいる場合
-				enemyX = allyX + 1;
-				enemyY = allyY;
-			}
-			else if (distanceX == 0 && distanceY == -1) {
-				// 味方が下にいる場合
-				enemyX = allyX;
-				enemyY = allyY + 1;
-			}
+		
+
+		// 移動可能範囲内かつ一番近くの味方の隣に移動する
+		if ((abs(distanceX) + abs(distanceY)) <= moveCost && (abs(distanceX) <= moveCost && abs(distanceY) <= moveCost)) {
+			enemyX = allyX;
+			enemyY = allyY;
+
+			// 敵の座標を移動先の隣のマスに調整
+			if (distanceX < 0)
+				enemyX--;
+			else if (distanceX > 0)
+				enemyX++;
+
+			if (distanceY < 0)
+				enemyY--;
+			else if (distanceY > 0)
+				enemyY++;
 		}
 	}
 	// 移動後の座標を設定
 	character[enemy].x = enemyX;
 	character[enemy].y = enemyY;
-	// 塗りつぶし範囲内に味方キャラが存在する場合
-	// 味方の隣のマスに移動する処理
-	//for (int dir = 0; dir < DIRECTION_MAX; dir++) {
-	//	int x = characterX + g_directions[dir][0];
-	//	int y = characterY + g_directions[dir][1];
+
+	return true; // 移動成功
+}
 
 		//if (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT && charaData[y][x] != -1) {
 		//	
@@ -163,7 +164,7 @@ bool moveEnemyToAlly(float delta_time,int enemy) {
 		//}
 //	}
 	//return false;
-}
+
 
 //--------------------------------------------------------------------------
 //★★★
