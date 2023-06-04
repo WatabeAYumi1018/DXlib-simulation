@@ -22,7 +22,7 @@ enum {
 //ジョブの名前、移動数定義
 struct JOB {
 	std::string job_name;
-	int moveCells[CELL_MAX]; //移動に使うマス数
+	int moveCells[CELL_MAX]; //移動に使うマス数(CELLの種類によって移動量が変わる)
 };
 
 //ジョブの詳細データ

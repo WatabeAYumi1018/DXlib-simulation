@@ -28,29 +28,6 @@ bool g_flagBattleAnime = true;
 //HP減算フラグ
 bool g_flagBattleHp = true;
 
-//敵のAIで移動可能範囲に味方がいるか判定（未完成）
-//bool checkAllyInFill(int enemy,int ally) {
-//	
-//	int characterX = character[enemy].x;
-//	int characterY = character[enemy].y;
-//
-//	for (int dir = 0; dir < DIRECTION_MAX; dir++)
-//	{
-//		int x = characterX + g_directions[dir][0];
-//		int y = characterY + g_directions[dir][1];
-//		fillCanMove(enemy, x, y, character[enemy].move);//どんどん隣り合う場所を調査
-//	
-//		if (fill[y][x] && charaData[y][x] != -1) {
-//				
-//			if (character[charaData[y][x]].team == TEAM_ALLY) {
-//					
-//				return true;  // fill内の範囲内に味方キャラが存在する場合
-//			}
-//		}
-//	}	
-//	return false;  // fill内の範囲内に味方キャラが存在しない場合
-//}
-
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence) {
 

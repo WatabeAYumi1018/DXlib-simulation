@@ -89,6 +89,7 @@ int g_score = 0;
 //★まだ確認してない！これに、三すくみ有利を優先攻撃付け足し
 //敵からの攻撃判定
 bool moveEnemyToAlly(float delta_time, int enemy) {
+
 	int enemyX = character[enemy].x;
 	int enemyY = character[enemy].y;
 	int moveCost = jobData[character[enemy].job].moveCells[mapData[enemyY][enemyX]];
@@ -118,16 +119,14 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 			}
 		}
 	}
-
 	// 最も近い味方の隣に移動
 	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy,ally))) {
 		int distanceX = allyX - enemyX;
 		int distanceY = allyY - enemyY;
 
-		
-
 		// 移動可能範囲内かつ一番近くの味方の隣に移動する
-		if ((abs(distanceX) + abs(distanceY)) <= moveCost && (abs(distanceX) <= moveCost && abs(distanceY) <= moveCost)) {
+		if ((abs(distanceX) + abs(distanceY)) <= moveCost &&
+				(abs(distanceX) <= moveCost && abs(distanceY) <= moveCost)) {
 			enemyX = allyX;
 			enemyY = allyY;
 
@@ -149,22 +148,6 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 
 	return true; // 移動成功
 }
-
-		//if (x >= 0 && x < MAP_WIDTH && y >= 0 && y < MAP_HEIGHT && charaData[y][x] != -1) {
-		//	
- 	//		if (character[enemy].team == TEAM_ALLY) {
-	
-		//		// 味方の隣のマスに移動
-		//		//character[enemy].x = x;
-		//		//character[enemy].y = y;
-		//		//character[enemy].move -= moveCost;
-
-		//		return true;
-		//	}
-		//}
-//	}
-	//return false;
-
 
 //--------------------------------------------------------------------------
 //★★★
@@ -238,14 +221,14 @@ void turnMove(float delta_time) {
 		//敵のAIここから
 		if (g_flagSpace) {
 
- 			//for (int enemy = CHARACTER_MAX - 1; enemy >= 0; enemy--) {
-
+			while (g_standbyChara < CHARACTER_MAX) {
+			
 				if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
 
- 					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
+					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
 
- 						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-						
+						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
 							g_CanAttackMove++;
 							g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
 							g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
@@ -253,26 +236,26 @@ void turnMove(float delta_time) {
 							g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット
 						}
 						battle(delta_time);
-
-						
-						//g_turnMove = TURN_ALLAY;
-							
-
-					}
-					if (!moveEnemyToAlly(delta_time, g_standbyChara)) {
-
-						g_flagEnter = false;
-						g_flagCursor = true;
-						g_flagSpace = false;				//いないから、敵の判断が終了
-						character[0].done = false;
-						character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-						character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-						g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-						g_turnMove = TURN_ALLAY;
 					}
 				}
+				g_standbyChara++;
+			}
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+					
+				if (!moveEnemyToAlly(delta_time, g_standbyChara)) {
+
+					g_flagEnter = false;
+					g_flagCursor = true;
+					g_flagSpace = false;				//いないから、敵の判断が終了
+					character[0].done = false;
+					character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+					character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+					g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+					g_turnMove = TURN_ALLAY;
+				}
+			}
 		}
-		break;
+	break;
 	}
 
 	}
