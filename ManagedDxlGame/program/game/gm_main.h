@@ -31,8 +31,22 @@ enum {
 	PHASE_MAX
 };
 
+//敵のフェーズ
+enum {
+	PHASE_AI_SEARCH_CHARACTER,
+	PHASE_AI_MOVE_CHARACTER,
+	PHASE_AI_SELECT_ATTACK,
+	PHASE_AI_MAX
+};
+
 //フェーズ変数を作成
-extern int g_phase ;
+extern int g_allyPhase ;
+
+//味方フェーズ変数
+extern int g_phaseAlly;
+
+//敵フェーズ変数
+extern int g_phaseEnemy;
 
 //カーソルフラグ
 extern bool g_flagCursor ;
@@ -73,7 +87,7 @@ bool moveEnemyToAlly(float delta_time, int enemy);
 
 void phaseEnd();
 
-void phaseMove(float delta_time);
+void phaseAllyMove(float delta_time);
 
 void gameStart();
 void gameMain( float delta_time );

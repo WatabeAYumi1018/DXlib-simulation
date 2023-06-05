@@ -537,7 +537,7 @@ void battleExit() {
 		tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		character[g_selectedChara].done = true;
-		g_phase = PHASE_SELECT_CHARACTER;
+		g_phaseAlly = PHASE_SELECT_CHARACTER;
 
 		g_flagEnter = false;
 		g_flagCursor = true;
