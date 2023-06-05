@@ -92,7 +92,7 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 
 	int enemyX = character[enemy].x;
 	int enemyY = character[enemy].y;
-	int moveCost = jobData[character[enemy].job].moveCells[mapData[enemyY][enemyX]];
+	int moveRange = character[enemy].move;
 
 	int ally = 0;
 	int allyX = -1; // 最も近い味方キャラのX座標
@@ -108,7 +108,8 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 			if (ally != -1 && character[ally].team == TEAM_ALLY) {
 			
 				// 敵キャラとの距離を計算
-				int distance = abs(character[ally].x - enemyX) + abs(character[ally].y - enemyY);
+				int distance = abs(character[ally].x - enemyX) + 
+								abs(character[ally].y - enemyY);
 
 				// 最小距離が更新された場合（より近くにいる場合、その距離を最小値とする）
 				if (distance < maxDistance) {
@@ -123,12 +124,10 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy,ally))) {
 		int distanceX = allyX - enemyX;
 		int distanceY = allyY - enemyY;
-		//int cellType = mapData[enemyY][enemyX];
-		int moveRange = jobData[character[enemy].job].moveCells[cellType];
 
 		// 移動可能範囲内かつ一番近くの味方の隣に移動する
-		if ((abs(distanceX) + abs(distanceY)) <= maxDistance &&
-				(abs(distanceX) <= maxDistance && abs(distanceY) <= maxDistance  )) {
+		if ((abs(distanceX) + abs(distanceY)) <= moveRange &&
+				(abs(distanceX) <= moveRange && abs(distanceY) <= moveRange)) {
 			enemyX = allyX;
 			enemyY = allyY;
 
@@ -223,11 +222,11 @@ void turnMove(float delta_time) {
 		//敵のAIここから
 		if (g_flagSpace) {
 
-			while (g_standbyChara < CHARACTER_MAX) {
+			for (int enemy = 0; enemy < CHARACTER_MAX;enemy++) {
 			
-				if (g_standbyChara != 15 && character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp > 0) {
+				if (enemy != 15 && character[enemy].team == TEAM_ENEMY && character[enemy].hp > 0) {
 
-					if (moveEnemyToAlly(delta_time, g_standbyChara)) {	//隣のマスに味方がいた場合
+					if (moveEnemyToAlly(delta_time, enemy)) {	//行動範囲内に味方がいた場合
 
 						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
@@ -240,7 +239,6 @@ void turnMove(float delta_time) {
 						battle(delta_time);
 					}
 				}
-				g_standbyChara++;
 			}
 			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 					

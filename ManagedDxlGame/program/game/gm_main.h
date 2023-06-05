@@ -13,7 +13,6 @@ enum {
 	GAME_RESTART
 };
 
-
 //•¶š‚ÌF
 const int TEXT_COLOR_WHITE = -1;
 
