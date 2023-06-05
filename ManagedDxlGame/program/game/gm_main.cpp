@@ -123,10 +123,12 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy,ally))) {
 		int distanceX = allyX - enemyX;
 		int distanceY = allyY - enemyY;
+		//int cellType = mapData[enemyY][enemyX];
+		int moveRange = jobData[character[enemy].job].moveCells[cellType];
 
 		// ˆÚ“®‰Â”\”ÍˆÍ“à‚©‚Âˆê”Ô‹ß‚­‚Ì–¡•û‚Ì—×‚ÉˆÚ“®‚·‚é
-		if ((abs(distanceX) + abs(distanceY)) <= moveCost &&
-				(abs(distanceX) <= moveCost && abs(distanceY) <= moveCost)) {
+		if ((abs(distanceX) + abs(distanceY)) <= maxDistance &&
+				(abs(distanceX) <= maxDistance && abs(distanceY) <= maxDistance  )) {
 			enemyX = allyX;
 			enemyY = allyY;
 

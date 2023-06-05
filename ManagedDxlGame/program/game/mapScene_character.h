@@ -28,6 +28,22 @@ struct JOB {
 //ジョブの詳細データ
 extern JOB jobData[];
 
+//移動概念をもつ職業のMAX値
+const int JOB_MOVING_MAX = 3;
+
+//セルの名前、職業による移動数定義
+struct CELLDATA {
+
+	std::string cell_name;
+	int moveJobs[JOB_MOVING_MAX];	//職業における移動数
+};
+
+//セル⇒職業の詳細データ
+extern CELLDATA cellData[];
+
+//セルタイプ
+extern int cellType;
+
 //キャラ総数
 const int CHARACTER_MAX = 16;
 const int CHARACTER_ALLAY_MAX = 3;
