@@ -2,9 +2,13 @@
 #include "gm_main.h"
 #include "titleScene.h"
 
+//カーソル初期位置をはじめからへ
+int g_select_player_menu = TITLE_MENU_FIRST;
 
-int g_select_player_menu = TITLE_MENU_FIRST;//カーソル初期位置をはじめからへ
-int g_select_cursor_hdl = 0;				//カーソルを見える化するための変数を作成
+//カーソルを見える化するための変数を作成
+int g_select_cursor_hdl = 0;				
+
+//選択カーソルのポジション
 tnl::Vector3 g_sel_cursor_pos = TITLE_SELECT_MENU_POSITION[g_select_player_menu];
 
 //ゲームスタート画面
@@ -12,6 +16,18 @@ int g_gameStart = 0;
 
 //ゲームスタート画面
 int g_gameStartAnim = 0;
+
+//タイトル動画ハンドル
+int g_titleMovie = 0;
+
+//クリアクラッカー動画
+int g_clearCracker = 0;
+
+//スクリーン(フィルター処理した画像を保存する用)ハンドル
+int screen_handle = 0;	
+
+//明るさクリップフィルターに使用する閾値
+int bright_border = 150; 
 
 //タイトルメニューで選択
 void titleSelect() {
@@ -37,28 +53,28 @@ void titleSelect() {
 		DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor_hdl, true);
 }
 
-void rightFlash(float delta_time) {
-
-	float static sin_count = 0;
-	float static cos_count = 0;
-
-	sin_count += tnl::ToRadian(2.0f);
-	cos_count += tnl::ToRadian(2.0f);
-
-	int alphaSin = static_cast<int>(sin(sin_count) * 255);
-	int alphaCos = static_cast<int>(cos(cos_count) * 255);
-
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaSin);
-	DrawExtendGraph(60, 120, 80, 140, g_gameStartAnim, true);
-	DrawExtendGraph(200,500,300,600, g_gameStartAnim, true);
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaCos);
-	DrawExtendGraph(560, 300, 660, 400, g_gameStartAnim, true);
-	DrawExtendGraph(1000, 700, 1400, 740, g_gameStartAnim, true);
-
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-}
+//void rightFlash(float delta_time) {
+//
+//	float static sin_count = 0;
+//	float static cos_count = 0;
+//
+//	sin_count += tnl::ToRadian(2.0f);
+//	cos_count += tnl::ToRadian(2.0f);
+//
+//	int alphaSin = static_cast<int>(sin(sin_count) * 255);
+//	int alphaCos = static_cast<int>(cos(cos_count) * 255);
+//
+//
+//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaSin);
+//	DrawExtendGraph(60, 120, 80, 140, g_gameStartAnim, true);
+//	DrawExtendGraph(200,500,300,600, g_gameStartAnim, true);
+//
+//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaCos);
+//	DrawExtendGraph(560, 300, 660, 400, g_gameStartAnim, true);
+//	DrawExtendGraph(1000, 700, 1400, 740, g_gameStartAnim, true);
+//
+//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+//}
 
 //タイトル文字描画
 void sceneTitle() {

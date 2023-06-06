@@ -305,78 +305,78 @@ void turnMove(float delta_time) {
 //}
 
 //敵フェーズの動き
-void phaseEnemyMove() {
-
-	switch (g_phaseEnemy) {
-	
-	case PHASE_AI_SEARCH_CHARACTER: {
-
-		//敵キャラの座標を取得する
-		for (int i = 0; i < CHARACTER_MAX; i++) {
-
-			//HPが０以下、味方キャラ、ボスは判定しない
-			if (character[i].hp > 0 || i == 15) { break; }
-
-			//それ以外のキャラは全員座標を保持
-			else {
-
-				//味方キャラ
-				if (character[i].team == TEAM_ALLY) {
-
-					Ally ally;
-					//ally.job = character[i].job;
-					//ally.move = character[i].move;
-					ally.x = character[i].x;
-					ally.y = character[i].y;
-					allyMapList.push_back(ally);
-				}
-
-				//敵キャラ
-				else if (character[i].team == TEAM_ENEMY) {
-
-					Enemy enemy;
-					enemy.job = character[i].job;
-					enemy.move = character[i].move;
-					enemy.x = character[i].x;
-					enemy.y = character[i].y;
-					enemyMapList.push_back(enemy);
-				}
-			}
-		}
-		g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-
-		break;
-	}
-	case PHASE_AI_MOVE_CHARACTER:
-
-		//敵と味方の座標比較。移動可動範囲内なら
-
-		for (const auto& enemy : enemyMapList) {
-			int enemyX = enemy.x;
-			int enemyY = enemy.y;
-			int enemyMove = enemy.move;
-			int enemyJob = enemy.job;
-
-			for (const auto& ally : allyMapList) {
-				
-				//今後の方針
-				//座標の差を計算するのはちょっと大変かも（最短距離アルゴリズム）
-				//まずはfill内にこだわらず、敵が動く処理を作る⇒隣に到着したら攻撃判定でやる！
-				//そのあと、出来ると確信できたらfill内も考えてみよう
-				
-				
-			}
-		}
-
-		break;
-
-	case PHASE_AI_SELECT_ATTACK:
-		
-		g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-
-		break;
-	}
-}
+//void phaseEnemyMove() {
+//
+//	switch (g_phaseEnemy) {
+//	
+//	case PHASE_AI_SEARCH_CHARACTER: {
+//
+//		//敵キャラの座標を取得する
+//		for (int i = 0; i < CHARACTER_MAX; i++) {
+//
+//			//HPが０以下、味方キャラ、ボスは判定しない
+//			if (character[i].hp > 0 || i == 15) { break; }
+//
+//			//それ以外のキャラは全員座標を保持
+//			else {
+//
+//				//味方キャラ
+//				if (character[i].team == TEAM_ALLY) {
+//
+//					Ally ally;
+//					//ally.job = character[i].job;
+//					//ally.move = character[i].move;
+//					ally.x = character[i].x;
+//					ally.y = character[i].y;
+//					allyMapList.push_back(ally);
+//				}
+//
+//				//敵キャラ
+//				else if (character[i].team == TEAM_ENEMY) {
+//
+//					Enemy enemy;
+//					enemy.job = character[i].job;
+//					enemy.move = character[i].move;
+//					enemy.x = character[i].x;
+//					enemy.y = character[i].y;
+//					enemyMapList.push_back(enemy);
+//				}
+//			}
+//		}
+//		g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+//
+//		break;
+//	}
+//	case PHASE_AI_MOVE_CHARACTER:
+//
+//		//敵と味方の座標比較。移動可動範囲内なら
+//
+//		for (const auto& enemy : enemyMapList) {
+//			int enemyX = enemy.x;
+//			int enemyY = enemy.y;
+//			int enemyMove = enemy.move;
+//			int enemyJob = enemy.job;
+//
+//			for (const auto& ally : allyMapList) {
+//				
+//				//今後の方針
+//				//座標の差を計算するのはちょっと大変かも（最短距離アルゴリズム）
+//				//まずはfill内にこだわらず、敵が動く処理を作る⇒隣に到着したら攻撃判定でやる！
+//				//そのあと、出来ると確信できたらfill内も考えてみよう
+//				
+//				
+//			}
+//		}
+//
+//		break;
+//
+//	case PHASE_AI_SELECT_ATTACK:
+//		
+//		g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+//
+//		break;
+//	}
+//}
 
 //カーソルエンター処理について
 void phaseAllyMove(float delta_time) {
@@ -470,7 +470,7 @@ void phaseAllyMove(float delta_time) {
 						}
 					}
 				
-					if (checkBattleFlag) {g_allyPhase = PHASE_SELECT_ATTACK;}
+					if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK;}
 				
 					else {
 						//攻撃可能キャラがいなければ、待機
@@ -527,6 +527,10 @@ void gameStart() {
 	
 	//ゲームスタート画面アニメーション
 	g_gameStartAnim = LoadGraph("graphics/titleSakura.png");
+
+	//動画のロード
+	g_titleMovie = LoadGraph("graphics/titleMovie.mp4");
+	g_clearCracker = LoadGraph("graphics/clearCracker.mp4");
 
 	//タイトル選択画像
 	g_select_cursor_hdl = LoadGraph("graphics/flowerSelect.png");
@@ -616,11 +620,32 @@ void gameMain(float delta_time) {
 
 		case GAME_START: {
 
-			DrawExtendGraph(0, 0, 1300, 750, g_gameStart, true);
-			rightFlash(delta_time);
-			sceneTitle();
+			//動画の画像サイズを取得
+			int size_x=0;
+			int size_y=0;
 
-			//PlayMovieToGraph(confetti);
+			GetGraphSize(g_titleMovie, &size_x, &size_y);
+
+			//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
+			screen_handle = MakeScreen(size_x, size_y, TRUE);
+
+			// 動画の再生開始
+			PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+
+			//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
+			//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
+			//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
+			//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
+			//GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, false, GetColor(255, 255, 255), 255);
+			GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_REPLACEMENT, 0, 0, 0, 255, 0, 0, 0, 0);
+
+			//透過処理された画像を画面いっぱいに描画
+			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+
+			// 動画の再生開始
+			PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+
+			sceneTitle();
 
 			break;
 		}
@@ -647,12 +672,29 @@ void gameMain(float delta_time) {
 			break;
 		}
 		case GAME_CLEAR:
-			
-			const int BACK_START_X_Y = 0;
-			const int BACK_END_X = 1300;
-			const int BACK_END_Y = 750;
 
-			DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameClear, true);
+			DrawExtendGraph(0, 0, 1300, 750, g_gameStart, true);
+
+			//動画の画像サイズを取得
+			int size_x;
+			int size_y;
+
+			GetGraphSize(g_clearCracker, &size_x, &size_y);
+
+			//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
+			screen_handle = MakeScreen(size_x, size_y, TRUE);
+
+			// 動画の再生開始
+			PlayMovieToGraph(g_clearCracker, DX_PLAYTYPE_LOOP);
+
+			//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
+			//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
+			//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
+			//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
+			GraphFilterBlt(g_clearCracker, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, TRUE, GetColor(0, 0, 0), 0);
+
+			//透過処理された画像を画面いっぱいに描画
+			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
 
 			break;
 	}

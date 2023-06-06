@@ -61,27 +61,27 @@ struct Character {
 	bool done; //行動済み概念
 };
 
-struct Ally {
-
-	int job;
-	int move;
-	int x;		//座標
-	int y;
-};
-
-//味方キャラの情報をvectorにて配列管理
-std::vector<Ally> allyMapList;
-
-struct Enemy {
-
-	int job;
-	int move;
-	int x;		//座標
-	int y;
-};
-
-//敵キャラの情報をvectorにて配列管理
-std::vector<Enemy> enemyMapList;
+//struct Ally {
+//
+//	int job;
+//	int move;
+//	int x;		//座標
+//	int y;
+//};
+//
+////味方キャラの情報をvectorにて配列管理
+//std::vector<Ally> allyMapList;
+//
+//struct Enemy {
+//
+//	int job;
+//	int move;
+//	int x;		//座標
+//	int y;
+//};
+//
+////敵キャラの情報をvectorにて配列管理
+//std::vector<Enemy> enemyMapList;
 
 //各キャラクターの情報
 extern Character character[];

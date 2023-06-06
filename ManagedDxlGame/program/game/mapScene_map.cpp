@@ -135,51 +135,51 @@ void fillCanMove(int _chara, int _x, int _y, int _move) {//‘I‘ğ‚µ‚½–¡•ûƒLƒƒƒ‰A
 }
 
 //î•ñ‚âŠeƒtƒF[ƒY‚Å‚Ìw¦•¶š•`‰æˆ—i‚±‚±‚É“_–Åˆ—‚ğ‰Á‚¦‚æ‚¤j
-//void instructions(float delta_time) {
-//
-//	//–½—ß•¶‚ÌÀ•W
-//	const int INSTRUCTIONS_X = 700;
-//	const int INSTRUCTIONS_Y = 10;
-//
-//	float static instructionsTimeCount = 0;
-//	bool static instructionsDraw = true;
-//
-//	//–ˆƒtƒŒ[ƒ€‘«‚µ‚Ä‚¢‚­ˆ—
-//	instructionsTimeCount += delta_time;
-//
-//	if (instructionsTimeCount > 1.0f) {
-//		instructionsDraw = !instructionsDraw;
-//		instructionsTimeCount = 0;
-//	}
-//
-//	//ŠeƒtƒF[ƒY‚Å‚Ìw¦•¶Í•`‰æ
-//	switch (g_phaseAlly) {
-//
-//		case PHASE_SELECT_CHARACTER:
-//
-//			if (instructionsDraw) {
-//				SetFontSize(30);
-//				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ƒLƒƒƒ‰ƒNƒ^[‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
-//			}
-//			break;
-//
-//		case PHASE_SET_MOVE_POSITION:
-//
-//			if (instructionsDraw) {
-//				SetFontSize(30);
-//				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ˆÚ“®æ‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
-//			}
-//			break;
-//
-//		case PHASE_SELECT_ATTACK:
-//
-//			if (instructionsDraw) {
-//				SetFontSize(30);
-//				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "UŒ‚‘ÎÛ‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
-//			}
-//			break;
-//	}
-//}
+void instructions(float delta_time) {
+
+	//–½—ß•¶‚ÌÀ•W
+	const int INSTRUCTIONS_X = 700;
+	const int INSTRUCTIONS_Y = 10;
+
+	float static instructionsTimeCount = 0;
+	bool static instructionsDraw = true;
+
+	//–ˆƒtƒŒ[ƒ€‘«‚µ‚Ä‚¢‚­ˆ—
+	instructionsTimeCount += delta_time;
+
+	if (instructionsTimeCount > 1.0f) {
+		instructionsDraw = !instructionsDraw;
+		instructionsTimeCount = 0;
+	}
+
+	//ŠeƒtƒF[ƒY‚Å‚Ìw¦•¶Í•`‰æ
+	switch (g_phaseAlly) {
+
+		case PHASE_SELECT_CHARACTER:
+
+			if (instructionsDraw) {
+				SetFontSize(30);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ƒLƒƒƒ‰ƒNƒ^[‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
+			}
+			break;
+
+		case PHASE_SET_MOVE_POSITION:
+
+			if (instructionsDraw) {
+				SetFontSize(30);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "ˆÚ“®æ‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
+			}
+			break;
+
+		case PHASE_SELECT_ATTACK:
+
+			if (instructionsDraw) {
+				SetFontSize(30);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "UŒ‚‘ÎÛ‚ğ‘I‚ñ‚Å‚­‚¾‚³‚¢\n", TEXT_COLOR_WHITE);
+			}
+			break;
+	}
+}
 
 //ƒJ[ƒ\ƒ‹ˆÚ“®
 void cursorMove() {
