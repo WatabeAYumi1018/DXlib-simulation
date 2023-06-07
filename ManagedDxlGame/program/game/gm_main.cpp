@@ -36,7 +36,6 @@
 //進行フェーズのフラグ変数
 //
 
-
 //int g_gameScene_id = GAME_START; 本番こっち！！
 int g_gameScene_id = GAME_START;
 
@@ -90,7 +89,7 @@ int g_score = 0;
 //-------------------------------------------------------------------------------------------
 
 //敵からの攻撃判定
-bool moveEnemyToAlly(float delta_time, int enemy) {
+bool moveEnemyToAlly(int enemy) {
 
 	int enemyX = character[enemy].x;
 	int enemyY = character[enemy].y;
@@ -118,12 +117,13 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 
 				//地形情報を取り、移動範囲内か判定…？
 				int moveCost = jobData[character[enemy].job].moveCells[mapData[i][j]];
-				
+				character[enemy].move -= moveCost;
+
 				//--------------------------------------------
 				//現在地点から目標へ向かっていく
 
 				// 最小距離が更新された場合（より近くにいる場合、その距離を最小値とする）
-				if (distance < maxDistance && moveCost<=enemyMove) {				
+				if (distance < maxDistance && moveCost< character[enemy].move) {
 
 					ally = allyChara;
 					allyX = character[allyChara].x;
@@ -162,13 +162,29 @@ bool moveEnemyToAlly(float delta_time, int enemy) {
 	return true; // 移動成功
 }
 
+ bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move) {
+	
+	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
+
+	int chara = getCharacter(_x, _y);
+	if (chara >= 0 && character[chara].team != character[_chara].team)	return false;
+
+	int moveCost = jobData[character[_chara].job].moveCells[mapData[_y][_x]];
+
+	if (moveCost < 0)	return false;
+
+	// 移動するごとにコストを使っていく
+	if (_move < moveCost)	return false;
+
+	return true;
+}
+
 //--------------------------------------------------------------------------
 //★★★
 //制御する方法！！
 //ENEMYCHARACTER_MAX定数を作る。
 //もしcharacter[3]==隣判定trueなら…で、14まで全て作って判定する（for分を使わずに、全てのキャラの判定をする）
 //if else ifで管理すれば、順番に見てくれるのでは？？
-
 
 //一連の流れ
 void turnMove(float delta_time) {
@@ -205,11 +221,11 @@ void turnMove(float delta_time) {
 		phaseAllyMove(delta_time);
 
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
-			
+
 			g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
 			g_turnMove = TURN_ENEMY;
 		}
-	break;
+		break;
 	}
 
 	case TURN_ENEMY: {
@@ -228,155 +244,146 @@ void turnMove(float delta_time) {
 				telopFrame = 0;				//テロップの流れた距離リセット
 				g_telopTimeCount = 0;		//テロップのカウントリセット
 				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
-				//g_flagSpace = true;			//敵が自分の隣に味方がいるかを判断するためのフラグ
+				g_flagSpace = true;		//敵が自分の隣に味方がいるかを判断するためのフラグ
 			}
 		}
+
+#if 0
 		//敵のAIここから
-		//if (g_flagSpace) {//毎回移動してる
+		if (g_flagSpace) {//毎回移動してる
 
-			for (int enemy = 0; enemy < CHARACTER_MAX;enemy++) {
-			
-				if (enemy != 15 && character[enemy].team == TEAM_ENEMY && character[enemy].hp > 0) {
+			//ターゲットのキャラクターを決める
+			int target[2] = { character[0].x,character[0].y };
 
-					if (moveEnemyToAlly(delta_time, enemy)) {	//行動範囲内に味方がいた場合
+			for (int i = CHARACTER_MAX - 1; i >= 0; i--) {
 
-						if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+				if (i == 15 && character[i].team == TEAM_ALLY && character[i].hp <= 0) { continue; }
 
-							g_CanAttackMove++;
-							g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
-							g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
-							g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
-							g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット
+				int move = character[i].move;
+
+				while (1) {
+
+					int enemy = i;
+
+					if (checkCanAllyBattle(enemy, g_selectedChara)) {
+
+						if (enemy >= 0)
+							battle(delta_time);
+						break;
+					}
+					else {
+
+						int x = character[i].x;
+						int y = character[i].y;
+
+						if (x < character[0].x)	x++;
+						if (x > character[0].x)	x--;
+						if (y < character[0].y)	y++;
+						if (y < character[0].y)	y--;
+
+						if (checkCanMoveEnemy(i, x, y, move)) {
+
+							int chara = getCharacter(x, y);
+							if (chara < 0) {}
+
+							else { break; }
 						}
-						battle(delta_time);//★何人目かインクリメント（g_フラグ）
-						//upDateでfor中にdelta_timeは気持ち悪い！！
-						//delta_timeの関数は経過時間に合わせて移動するような処理
-						//animation ３フレームに一回の処理とかで管理
-						//敵のターンも味方同様enumで場面分け 
+						else { break; }
 					}
 				}
-			}
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
-					
-				if (!moveEnemyToAlly(delta_time, g_standbyChara)) {
+				if (moveEnemyToAlly(i)) {	//行動範囲内に味方がいた場合
 
-					g_flagEnter = false;
-					g_flagCursor = true;
-					g_flagSpace = false;				//いないから、敵の判断が終了
-					character[0].done = false;
-					character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-					character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-					g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-					g_turnMove = TURN_ALLAY;
+					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+						g_CanAttackMove++;
+						g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
+						g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
+						g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
+						g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット
+					}
+					battle(delta_time);
 				}
 			}
-		//}
-	break;
-	}
+		}
+#endif
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
+			if (!moveEnemyToAlly(g_standbyChara)) {
+
+				g_flagEnter = false;
+				g_flagCursor = true;
+				g_flagSpace = false;				//いないから、敵の判断が終了
+				character[0].done = false;
+				character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+				character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+				g_turnMove = TURN_ALLAY;
+			}
+		}
+		break;
+	}
 	}
 }
 
-//void enemyCanMove(int enemy, int enemyX, int enemyY, int enemyMove) {
-//
-//	if (enemyX < 0 || enemyX >= MAP_WIDTH || 
-//			enemyY < 0 || enemyY >= MAP_HEIGHT) { return; }
-//
-//	int moveCost = jobData[character[enemy].job].moveCells[mapData[enemyY][enemyX]];
-//
-//	if (moveCost < 0 || enemyMove < moveCost) { return; }
-//
-//	int ally=getCharacter
-//
-//	if (character[enemy].hp >= 0 &&
-//		character[enemy].team == TEAM_ALLY) {
-//
-//		character[enemy]. = true;
-//		return;
-//	}
-//
-//	for (int dir = 0; dir < DIRECTION_MAX; dir++) {
-//	
-//		int x = enemyX + g_directions[dir][0];
-//		int y = enemyY + g_directions[dir][1];
-//		enemyCanMove(enemy, enemyX, enemyY, enemyMove);
-//	}
-//
-//}
-
 //敵フェーズの動き
-//void phaseEnemyMove() {
-//
-//	switch (g_phaseEnemy) {
-//	
-//	case PHASE_AI_SEARCH_CHARACTER: {
-//
-//		//敵キャラの座標を取得する
-//		for (int i = 0; i < CHARACTER_MAX; i++) {
-//
-//			//HPが０以下、味方キャラ、ボスは判定しない
-//			if (character[i].hp > 0 || i == 15) { break; }
-//
-//			//それ以外のキャラは全員座標を保持
-//			else {
-//
-//				//味方キャラ
-//				if (character[i].team == TEAM_ALLY) {
-//
-//					Ally ally;
-//					//ally.job = character[i].job;
-//					//ally.move = character[i].move;
-//					ally.x = character[i].x;
-//					ally.y = character[i].y;
-//					allyMapList.push_back(ally);
-//				}
-//
-//				//敵キャラ
-//				else if (character[i].team == TEAM_ENEMY) {
-//
-//					Enemy enemy;
-//					enemy.job = character[i].job;
-//					enemy.move = character[i].move;
-//					enemy.x = character[i].x;
-//					enemy.y = character[i].y;
-//					enemyMapList.push_back(enemy);
-//				}
-//			}
-//		}
-//		g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-//
-//		break;
-//	}
-//	case PHASE_AI_MOVE_CHARACTER:
-//
-//		//敵と味方の座標比較。移動可動範囲内なら
-//
-//		for (const auto& enemy : enemyMapList) {
-//			int enemyX = enemy.x;
-//			int enemyY = enemy.y;
-//			int enemyMove = enemy.move;
-//			int enemyJob = enemy.job;
-//
-//			for (const auto& ally : allyMapList) {
-//				
-//				//今後の方針
-//				//座標の差を計算するのはちょっと大変かも（最短距離アルゴリズム）
-//				//まずはfill内にこだわらず、敵が動く処理を作る⇒隣に到着したら攻撃判定でやる！
-//				//そのあと、出来ると確信できたらfill内も考えてみよう
-//				
-//				
-//			}
-//		}
-//
-//		break;
-//
-//	case PHASE_AI_SELECT_ATTACK:
-//		
-//		g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-//
-//		break;
-//	}
-//}
+void phaseEnemyMove(float delta_time) {
+
+	static int currentEnemyNumber = 0;
+	constexpr int ENEMY_COUNT = 12;
+
+	while (delta_time <= 0.0f && currentEnemyCount < ENEMY_COUNT) {
+
+		int enemyNumber = currentEnemyNumber;
+
+		switch (g_phaseEnemy) {
+
+		case PHASE_AI_MOVE_CHARACTER: {
+
+			int maxDistance = INT_MAX; // 最大距離
+			int nearDistanceAlly = -1; // 最小距離
+
+			for (int i = 0; i < CHARACTER_ALLAY_MAX; ++i) {
+				
+				int allyX = character[i].x; // / 32;
+				int allyY = character[i].y; // / 32;
+
+				int enemyX = character[enemyNumber].x;
+				int enemyY = character[enemyNumber].y;
+
+				//int emx = enemyX / 32;
+				//int emy = enemyY / 32;
+
+				if (allyX == enemyX && allyY == enemyY) continue;
+
+				int distance = abs(allyX - enemyX) + abs(allyY - enemyY);
+				
+				if (distance < maxDistance) {
+					nearDistanceAlly = i;
+				}
+			}
+
+			g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+
+			break;
+		}
+		case PHASE_AI_MOVE_CHARACTER: {
+
+			int enemyMove = character[enemyNumber].move;
+
+			if(nearDistanceAlly<= enemyMove)
+
+
+			break;
+		}							//敵と味方の座標比較。移動可動範囲内なら
+		case PHASE_AI_SELECT_ATTACK: {
+
+			//g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+
+			break;
+		}
+		}
+	}
+}
 
 //カーソルエンター処理について
 void phaseAllyMove(float delta_time) {
@@ -621,29 +628,29 @@ void gameMain(float delta_time) {
 		case GAME_START: {
 
 			//動画の画像サイズを取得
-			int size_x=0;
-			int size_y=0;
+			//int size_x=0;
+			//int size_y=0;
 
-			GetGraphSize(g_titleMovie, &size_x, &size_y);
+			//GetGraphSize(g_titleMovie, &size_x, &size_y);
 
 			//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
-			screen_handle = MakeScreen(size_x, size_y, TRUE);
+			//screen_handle = MakeScreen(size_x, size_y, TRUE);
 
 			// 動画の再生開始
-			PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+			//PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
 
 			//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
 			//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
 			//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
 			//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
 			//GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, false, GetColor(255, 255, 255), 255);
-			GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_REPLACEMENT, 0, 0, 0, 255, 0, 0, 0, 0);
+			//GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_REPLACEMENT, 0, 0, 0, 255, 0, 0, 0, 0);
 
 			//透過処理された画像を画面いっぱいに描画
-			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+			//DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
 
 			// 動画の再生開始
-			PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+			//PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
 
 			sceneTitle();
 
@@ -671,32 +678,12 @@ void gameMain(float delta_time) {
 			
 			break;
 		}
-		case GAME_CLEAR:
+		case GAME_CLEAR: {
 
-			DrawExtendGraph(0, 0, 1300, 750, g_gameStart, true);
+			gameClear(delta_time);
 
-			//動画の画像サイズを取得
-			int size_x;
-			int size_y;
-
-			GetGraphSize(g_clearCracker, &size_x, &size_y);
-
-			//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
-			screen_handle = MakeScreen(size_x, size_y, TRUE);
-
-			// 動画の再生開始
-			PlayMovieToGraph(g_clearCracker, DX_PLAYTYPE_LOOP);
-
-			//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
-			//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
-			//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
-			//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
-			GraphFilterBlt(g_clearCracker, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, TRUE, GetColor(0, 0, 0), 0);
-
-			//透過処理された画像を画面いっぱいに描画
-			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
-
-			break;
+		break;
+		}
 	}
 }
 //

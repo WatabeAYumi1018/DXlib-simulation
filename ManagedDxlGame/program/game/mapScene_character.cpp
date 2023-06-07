@@ -46,7 +46,7 @@ Character character[] = {
 	{"剣士",	JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	5,	6},
 	{"弓使い",	JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	5,	10},
 	{"魔道士",	JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	20, 8},
-	{"長",		JOB_LEADER,			300, 300,	200,  70,  20,  150,  5,	TEAM_ENEMY,	4,	3}
+	{"長",		JOB_LEADER,			10, 300,	200,  70,  20,  150,  5,	TEAM_ENEMY,	4,	3}
 };
 
 //charaDateに中身入れる。1人ずつ座標を読み取り、いない場所にはー１を返す

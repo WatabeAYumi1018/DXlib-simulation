@@ -91,3 +91,5 @@ void cursorMove();
 void mapPosition(float delta_time);
 
 void gameOver(float delta_time);
+
+void gameClear(float delta_time);

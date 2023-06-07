@@ -36,7 +36,7 @@ enum {
 	PHASE_AI_SEARCH_CHARACTER,
 	PHASE_AI_MOVE_CHARACTER,
 	PHASE_AI_SELECT_ATTACK,
-	PHASE_AI_MAX
+	PHASE_AI_NEXT_ENEMY
 };
 
 //フェーズ変数を作成
@@ -83,7 +83,9 @@ extern int sound_se_hdl;
 extern int g_score;
 
 //敵からの攻撃判定
-bool moveEnemyToAlly(float delta_time, int enemy);
+bool moveEnemyToAlly(int enemy);
+
+bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move);
 
 void phaseEnd();
 

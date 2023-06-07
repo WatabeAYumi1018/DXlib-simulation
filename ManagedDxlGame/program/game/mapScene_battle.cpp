@@ -596,6 +596,7 @@ void battle(float delta_time) {
 				scoreMove();
 				battleExit();
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
+				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
 		}
 		else if (g_CanAttackMove == 3) {
@@ -613,6 +614,7 @@ void battle(float delta_time) {
 				scoreMove();
 				battleExit();
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
+				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
 		}
 		else if (g_CanAttackMove == 5) {
@@ -650,6 +652,7 @@ void battle(float delta_time) {
 			if (character[g_selectedChara].hp <= 0) {scoreMove();}
 			battleExit();
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
+			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 		}
 	}
 }

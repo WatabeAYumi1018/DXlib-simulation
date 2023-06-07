@@ -33,7 +33,7 @@ extern bool g_flagBattleHp ;
 //bool checkAllyInFill(int enemy, int ally);
 
 //“G‚©‚ç‚ÌUŒ‚”»’è
-bool checkCanEnemyBattle(int attack, int defence);
+//bool checkCanEnemyBattle(int attack, int defence);
 
 //UŒ‚‰Â”\‚©‚Ç‚¤‚©”»’è
 bool checkCanAllyBattle(int attack, int defence);
