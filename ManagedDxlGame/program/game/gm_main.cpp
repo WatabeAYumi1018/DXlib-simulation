@@ -88,96 +88,96 @@ int g_score = 0;
 
 //-------------------------------------------------------------------------------------------
 
-//敵からの攻撃判定
-bool moveEnemyToAlly(int enemy) {
-
-	int enemyX = character[enemy].x;
-	int enemyY = character[enemy].y;
-	int enemyMove = character[enemy].move;	//	各キャラの移動数
-
-	int ally = 0;	// 最も近くにいる味方キャラの番号
-	int allyX = -1; // 最も近い味方キャラのX座標
-	int allyY = -1; // 最も近い味方キャラのY座標
-	
-	int maxDistance = INT_MAX; // 最大距離
-
-	// マップ上の全ての座標を探索する
-	for (int i = 0; i < MAP_HEIGHT; i++) {
-		for (int j = 0; j < MAP_WIDTH; j++) {
-			
-			int allyChara = getCharacter(j, i);
-			
-			if (allyChara != -1 && character[allyChara].team == TEAM_ALLY) {
-			
-				//-------------------------------------------
-
-				// 敵キャラとの距離を計算
-				int distance = abs(character[allyChara].x - enemyX) + 
-								abs(character[allyChara].y - enemyY);
-
-				//地形情報を取り、移動範囲内か判定…？
-				int moveCost = jobData[character[enemy].job].moveCells[mapData[i][j]];
-				character[enemy].move -= moveCost;
-
-				//--------------------------------------------
-				//現在地点から目標へ向かっていく
-
-				// 最小距離が更新された場合（より近くにいる場合、その距離を最小値とする）
-				if (distance < maxDistance && moveCost< character[enemy].move) {
-
-					ally = allyChara;
-					allyX = character[allyChara].x;
-					allyY = character[allyChara].y;
-					maxDistance = distance;
-				}
-			}
-		}
-	}
-	// 最も近い味方の隣に移動
-	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy, ally))) {
-		int distanceX = allyX - enemyX;
-		int distanceY = allyY - enemyY;
-
-		// 移動可能範囲内かつ一番近くの味方の隣に移動する（これだと地形効果が無視されてる？）
-		if ((abs(distanceX) + abs(distanceY)) <= enemyMove &&
-				(abs(distanceX) <= enemyMove && abs(distanceY) <= enemyMove)) {
-			enemyX = allyX;
-			enemyY = allyY;
-
-			// ★敵の座標を移動先の隣のマスに調整
-			if (distanceX < 0)
-				enemyX--;
-			else if (distanceX > 0)
-				enemyX++;
-			else if (distanceY < 0)
-				enemyY--;
-			else if (distanceY > 0)
-				enemyY++;
-		}
-	}
-	// 移動後の座標を設定
-	character[enemy].x = enemyX;
-	character[enemy].y = enemyY;
-
-	return true; // 移動成功
-}
-
-bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move) {
-	
-	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
-
-	int chara = getCharacter(_x, _y);
-	if (chara >= 0 && character[chara].team != character[_chara].team)	return false;
-
-	int moveCost = jobData[character[_chara].job].moveCells[mapData[_y][_x]];
-
-	if (moveCost < 0)	return false;
-
-	// 移動するごとにコストを使っていく
-	if (_move < moveCost)	return false;
-
-	return true;
-}
+////敵からの攻撃判定
+//bool moveEnemyToAlly(int enemy) {
+//
+//	int enemyX = character[enemy].x;
+//	int enemyY = character[enemy].y;
+//	int enemyMove = character[enemy].move;	//	各キャラの移動数
+//
+//	int ally = 0;	// 最も近くにいる味方キャラの番号
+//	int allyX = -1; // 最も近い味方キャラのX座標
+//	int allyY = -1; // 最も近い味方キャラのY座標
+//	
+//	int maxDistance = INT_MAX; // 最大距離
+//
+//	// マップ上の全ての座標を探索する
+//	for (int i = 0; i < MAP_HEIGHT; i++) {
+//		for (int j = 0; j < MAP_WIDTH; j++) {
+//			
+//			int allyChara = getCharacter(j, i);
+//			
+//			if (allyChara != -1 && character[allyChara].team == TEAM_ALLY) {
+//			
+//				//-------------------------------------------
+//
+//				// 敵キャラとの距離を計算
+//				int distance = abs(character[allyChara].x - enemyX) + 
+//								abs(character[allyChara].y - enemyY);
+//
+//				//地形情報を取り、移動範囲内か判定…？
+//				int moveCost = jobData[character[enemy].job].moveCells[mapData[i][j]];
+//				character[enemy].move -= moveCost;
+//
+//				//--------------------------------------------
+//				//現在地点から目標へ向かっていく
+//
+//				// 最小距離が更新された場合（より近くにいる場合、その距離を最小値とする）
+//				if (distance < maxDistance && moveCost< character[enemy].move) {
+//
+//					ally = allyChara;
+//					allyX = character[allyChara].x;
+//					allyY = character[allyChara].y;
+//					maxDistance = distance;
+//				}
+//			}
+//		}
+//	}
+//	// 最も近い味方の隣に移動
+//	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy, ally))) {
+//		int distanceX = allyX - enemyX;
+//		int distanceY = allyY - enemyY;
+//
+//		// 移動可能範囲内かつ一番近くの味方の隣に移動する（これだと地形効果が無視されてる？）
+//		if ((abs(distanceX) + abs(distanceY)) <= enemyMove &&
+//				(abs(distanceX) <= enemyMove && abs(distanceY) <= enemyMove)) {
+//			enemyX = allyX;
+//			enemyY = allyY;
+//
+//			// ★敵の座標を移動先の隣のマスに調整
+//			if (distanceX < 0)
+//				enemyX--;
+//			else if (distanceX > 0)
+//				enemyX++;
+//			else if (distanceY < 0)
+//				enemyY--;
+//			else if (distanceY > 0)
+//				enemyY++;
+//		}
+//	}
+//	// 移動後の座標を設定
+//	character[enemy].x = enemyX;
+//	character[enemy].y = enemyY;
+//
+//	return true; // 移動成功
+//}
+//
+//bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move) {
+//	
+//	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
+//
+//	int chara = getCharacter(_x, _y);
+//	if (chara >= 0 && character[chara].team != character[_chara].team)	return false;
+//
+//	int moveCost = jobData[character[_chara].job].moveCells[mapData[_y][_x]];
+//
+//	if (moveCost < 0)	return false;
+//
+//	// 移動するごとにコストを使っていく
+//	if (_move < moveCost)	return false;
+//
+//	return true;
+//}
 
 //--------------------------------------------------------------------------
 //★★★
@@ -248,77 +248,21 @@ void turnMove(float delta_time) {
 			}
 		}
 
-#if 0
 		//敵のAIここから
-		if (g_flagSpace) {//毎回移動してる
+		if (g_flagSpace) {
 
-			//ターゲットのキャラクターを決める
-			int target[2] = { character[0].x,character[0].y };
-
-			for (int i = CHARACTER_MAX - 1; i >= 0; i--) {
-
-				if (i == 15 && character[i].team == TEAM_ALLY && character[i].hp <= 0) { continue; }
-
-				int move = character[i].move;
-
-				while (1) {
-
-					int enemy = i;
-
-					if (checkCanAllyBattle(enemy, g_selectedChara)) {
-
-						if (enemy >= 0)
-							battle(delta_time);
-						break;
-					}
-					else {
-
-						int x = character[i].x;
-						int y = character[i].y;
-
-						if (x < character[0].x)	x++;
-						if (x > character[0].x)	x--;
-						if (y < character[0].y)	y++;
-						if (y < character[0].y)	y--;
-
-						if (checkCanMoveEnemy(i, x, y, move)) {
-
-							int chara = getCharacter(x, y);
-							if (chara < 0) {}
-
-							else { break; }
-						}
-						else { break; }
-					}
-				}
-				if (moveEnemyToAlly(i)) {	//行動範囲内に味方がいた場合
-
-					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-						g_CanAttackMove++;
-						g_flagEnter = true;			//エンターキーが押せるかどうか（戦闘中は戦闘送りのために動かせるようにtrue）
-						g_flagCursor = false;		//カーソルが動かせるか否か（戦闘中は動かせないようにfalse）
-						g_flagBattleAnime = true;	//エフェクトアニメーションの変化フラグ（true→falseで１セット）
-						g_flagBattleHp = true;		//ダメージHP変化のフラグ（true→falseで１セット
-					}
-					battle(delta_time);
-				}
-			}
+			phaseEnemyMove(delta_time);
 		}
-#endif
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
-			if (!moveEnemyToAlly(g_standbyChara)) {
-
-				g_flagEnter = false;
-				g_flagCursor = true;
-				g_flagSpace = false;				//いないから、敵の判断が終了
-				character[0].done = false;
-				character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-				character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-				g_turnMove = TURN_ALLAY;
-			}
+			g_flagEnter = false;
+			g_flagCursor = true;
+			g_flagSpace = false;				//いないから、敵の判断が終了
+			character[0].done = false;
+			character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+			character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+			g_turnMove = TURN_ALLAY;
 		}
 		break;
 	}
@@ -328,21 +272,26 @@ void turnMove(float delta_time) {
 //敵フェーズの動き
 void phaseEnemyMove(float delta_time) {
 
-	static int currentEnemyNumber = 0;
-	constexpr int ENEMY_COUNT = 12;
+	//現在敵何人目か（初期値はインデックスの３）
+	static int currentEnemyNumber = 3;
 
-	int maxDistance = INT_MAX; // 最大距離
-	int distance;
+	//1人検証が終わるごとに増えていく
+	constexpr int ENEMY_COUNT = 15;
 
-	int nearDistanceAlly = -1; // 最小距離の味方取得
-
+	//調査中のNumberを代入
 	int enemyNumber = currentEnemyNumber;
 
-	while (delta_time <= 0.0f && currentEnemyCount < ENEMY_COUNT) {
+	while (delta_time <= 0.0f && currentEnemyNumber <= ENEMY_COUNT) {
+
+		// 最大距離
+		int maxDistance = INT_MAX; 
+
+		// 最小距離の味方取得
+		int nearDistanceAlly = -1; 
 
 		switch (g_phaseEnemy) {
 
-		case PHASE_AI_MOVE_CHARACTER: {
+		case PHASE_AI_SEARCH_CHARACTER: {
 
 			for (int i = 0; i < CHARACTER_ALLAY_MAX; ++i) {
 				
@@ -357,19 +306,22 @@ void phaseEnemyMove(float delta_time) {
 
 				if (_allyX == _enemyX && _allyY == _enemyY) continue;
 
-				distance = abs(_allyX - _enemyX) + abs(_allyY - _enemyY);
+				int distance = abs(_allyX - _enemyX) + abs(_allyY - _enemyY);
 				
 				if (distance < maxDistance) {
-
+					
+					maxDistance = distance;
 					nearDistanceAlly = i;
-
-					if (nearDistanceAlly <= character[enemyNumber].move){
-
-						g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-					}
-					else {g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;}
 				}
 			}
+			//敵と味方の座標比較。移動可動範囲内なら
+			if (nearDistanceAlly <= character[enemyNumber].move) {
+
+				g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+			}
+			//範囲内でなければ次の敵キャラへ
+			else { g_phaseEnemy = PHASE_AI_NEXT_ENEMY; }
+
 			break;
 		}
 		case PHASE_AI_MOVE_CHARACTER: {
@@ -383,24 +335,24 @@ void phaseEnemyMove(float delta_time) {
 			// 場面分けで敵の座標を更新
 			if (enemyX > allyX &&( enemyY > allyY || enemyY < allyY)) {
 					
-				enemyX = allyX ++;
+				enemyX = allyX +1;
 				enemyY = allyY;
 			}
 			else if (enemyX < allyX && (enemyY > allyY || enemyY < allyY)) {
 				
-				enemyX = allyX --;
+				enemyX = allyX -1;
 				enemyY = allyY;
 			}
-			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY --; }
+			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY -1; }
 
-			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY ++; }
+			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY +1; }
 
-			else if (enemyX > allyX && enemyY == allyY) { enemyY = allyX ++; }
+			else if (enemyX > allyX && enemyY == allyY) { enemyX = allyX +1; }
 
-			else if (enemyX < allyX && enemyY == allyY) { enemyY = allyX --; }
+			else if (enemyX < allyX && enemyY == allyY) { enemyX = allyX -1; }
 
 			break;
-		}							//敵と味方の座標比較。移動可動範囲内なら
+		}							
 		case PHASE_AI_SELECT_ATTACK: {
 
 			battle(delta_time);
@@ -426,11 +378,11 @@ void phaseEnemyMove(float delta_time) {
 	}
 	if (enemyNumber >= ENEMY_COUNT) {
 
-		//次の敵キャラのため、リセット
-		currentEnemyNumber = 0;
+		//次の敵キャラターンのため、リセット
+		currentEnemyNumber = 3;
 	}
 	else {
-		// 次の敵キャラクターのターンのため、更新
+		// 次の敵キャラクターのため、更新
 		currentEnemyNumber = enemyNumber;
 	}
 }
@@ -481,7 +433,6 @@ void phaseAllyMove(float delta_time) {
 						int y = character[chara].y + g_directions[dir][1];
 						fillCanMove(chara, x, y, character[chara].move);//どんどん隣り合う場所を調査
 					}
-
 					//描画内にキャラがいたら、そこは描画しない
 					for (int i = 0; i < MAP_HEIGHT; i++) {
 						for (int j = 0; j < MAP_WIDTH; j++) {
@@ -526,7 +477,6 @@ void phaseAllyMove(float delta_time) {
 							break;
 						}
 					}
-				
 					if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK;}
 				
 					else {
@@ -651,7 +601,6 @@ void gameStart() {
 
 	//マップ画面でのターン文字
 	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
-
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -677,31 +626,7 @@ void gameMain(float delta_time) {
 
 		case GAME_START: {
 
-			//動画の画像サイズを取得
-			//int size_x=0;
-			//int size_y=0;
-
-			//GetGraphSize(g_titleMovie, &size_x, &size_y);
-
-			//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
-			//screen_handle = MakeScreen(size_x, size_y, TRUE);
-
-			// 動画の再生開始
-			//PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
-
-			//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
-			//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
-			//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
-			//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
-			//GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, false, GetColor(255, 255, 255), 255);
-			//GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_REPLACEMENT, 0, 0, 0, 255, 0, 0, 0, 0);
-
-			//透過処理された画像を画面いっぱいに描画
-			//DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
-
-			// 動画の再生開始
-			//PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
-
+			//titleMovie();
 			sceneTitle();
 
 			break;

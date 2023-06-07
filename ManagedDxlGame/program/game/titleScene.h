@@ -44,8 +44,10 @@ extern int g_select_cursor_hdl;
 
 extern tnl::Vector3 g_sel_cursor_pos ;
 
+void titleMovie();
+
 void titleSelect();
 
-void rightFlash(float delta_time);
+//void rightFlash(float delta_time);
 
 void sceneTitle();

@@ -76,6 +76,34 @@ void titleSelect() {
 //	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 //}
 
+void titleMovie() {
+
+	//動画の画像サイズを取得
+	int size_x = 0;
+	int size_y = 0;
+
+	GetGraphSize(g_titleMovie, &size_x, &size_y);
+
+	//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
+	screen_handle = MakeScreen(size_x, size_y, TRUE);
+
+	//動画の再生開始
+	PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+
+	//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
+	//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
+	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
+	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
+	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, false, GetColor(255, 255, 255), 255);
+	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_REPLACEMENT, 0, 0, 0, 255, 0, 0, 0, 0);
+
+	//透過処理された画像を画面いっぱいに描画
+	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+
+	//動画の再生開始
+	PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+}
+
 //タイトル文字描画
 void sceneTitle() {
 

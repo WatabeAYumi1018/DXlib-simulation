@@ -91,6 +91,8 @@ void phaseEnd();
 
 void phaseAllyMove(float delta_time);
 
+void phaseEnemyMove(float delta_time);
+
 void gameStart();
 void gameMain( float delta_time );
 void gameEnd();
