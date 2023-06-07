@@ -162,7 +162,7 @@ bool moveEnemyToAlly(int enemy) {
 	return true; // 移動成功
 }
 
- bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move) {
+bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move) {
 	
 	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
 
@@ -331,57 +331,107 @@ void phaseEnemyMove(float delta_time) {
 	static int currentEnemyNumber = 0;
 	constexpr int ENEMY_COUNT = 12;
 
-	while (delta_time <= 0.0f && currentEnemyCount < ENEMY_COUNT) {
+	int maxDistance = INT_MAX; // 最大距離
+	int distance;
 
-		int enemyNumber = currentEnemyNumber;
+	int nearDistanceAlly = -1; // 最小距離の味方取得
+
+	int enemyNumber = currentEnemyNumber;
+
+	while (delta_time <= 0.0f && currentEnemyCount < ENEMY_COUNT) {
 
 		switch (g_phaseEnemy) {
 
 		case PHASE_AI_MOVE_CHARACTER: {
 
-			int maxDistance = INT_MAX; // 最大距離
-			int nearDistanceAlly = -1; // 最小距離
-
 			for (int i = 0; i < CHARACTER_ALLAY_MAX; ++i) {
 				
-				int allyX = character[i].x; // / 32;
-				int allyY = character[i].y; // / 32;
+				int _allyX = character[i].x; // / 32;
+				int _allyY = character[i].y; // / 32;
 
-				int enemyX = character[enemyNumber].x;
-				int enemyY = character[enemyNumber].y;
+				int _enemyX = character[enemyNumber].x;
+				int _enemyY = character[enemyNumber].y;
 
 				//int emx = enemyX / 32;
 				//int emy = enemyY / 32;
 
-				if (allyX == enemyX && allyY == enemyY) continue;
+				if (_allyX == _enemyX && _allyY == _enemyY) continue;
 
-				int distance = abs(allyX - enemyX) + abs(allyY - enemyY);
+				distance = abs(_allyX - _enemyX) + abs(_allyY - _enemyY);
 				
 				if (distance < maxDistance) {
+
 					nearDistanceAlly = i;
+
+					if (nearDistanceAlly <= character[enemyNumber].move){
+
+						g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+					}
+					else {g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;}
 				}
 			}
-
-			g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-
 			break;
 		}
 		case PHASE_AI_MOVE_CHARACTER: {
 
-			int enemyMove = character[enemyNumber].move;
+			int enemyX = character[enemyNumber].x;
+			int enemyY = character[enemyNumber].y;
 
-			if(nearDistanceAlly<= enemyMove)
+			int allyX = character[nearDistanceAlly].x;
+			int allyY = character[nearDistanceAlly].y;
 
+			// 場面分けで敵の座標を更新
+			if (enemyX > allyX &&( enemyY > allyY || enemyY < allyY)) {
+					
+				enemyX = allyX ++;
+				enemyY = allyY;
+			}
+			else if (enemyX < allyX && (enemyY > allyY || enemyY < allyY)) {
+				
+				enemyX = allyX --;
+				enemyY = allyY;
+			}
+			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY --; }
+
+			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY ++; }
+
+			else if (enemyX > allyX && enemyY == allyY) { enemyY = allyX ++; }
+
+			else if (enemyX < allyX && enemyY == allyY) { enemyY = allyX --; }
 
 			break;
 		}							//敵と味方の座標比較。移動可動範囲内なら
 		case PHASE_AI_SELECT_ATTACK: {
 
-			//g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+			battle(delta_time);
+
+			g_phaseEnemy = PHASE_AI_NEXT_ENEMY;
 
 			break;
 		}
+		case PHASE_AI_NEXT_ENEMY: {
+		
+			// 次の敵キャラクターのインデックスを設定
+			enemyNumber++;
+
+			// delta_time が正の値の場合、処理を一時停止して次のフレームで再開する
+			if (delta_time > 0.0f) {
+				
+				g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+				
+				break;
+			}
 		}
+		}
+	}
+	if (enemyNumber >= ENEMY_COUNT) {
+
+		//次の敵キャラのため、リセット
+		currentEnemyNumber = 0;
+	}
+	else {
+		// 次の敵キャラクターのターンのため、更新
+		currentEnemyNumber = enemyNumber;
 	}
 }
 
