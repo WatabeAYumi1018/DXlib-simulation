@@ -405,7 +405,7 @@ void battleEffectGraph(float delta_time, int chara) {
 //ロスト処理
 bool battleLost() {
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) || tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		int static lostCount = 0;
 
@@ -560,7 +560,7 @@ void scoreMove() {
 }
 
 //バトル関数
-void battle(float delta_time) {
+void battle(float delta_time,int attack,int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
 
@@ -568,25 +568,25 @@ void battle(float delta_time) {
 		battleGraph();
 
 		//戦闘画面下情報描画
-		battleInfo(g_selectedChara, g_standbyChara);
+		battleInfo(attack, defence);
 
 		//下画面HP描画（変動する値の描画）
-		battleHpDraw(g_selectedChara, g_standbyChara);
+		battleHpDraw(attack, defence);
 
 		//戦闘画面のキャラアニメーション
-		battleCharaGraph(delta_time, g_selectedChara, g_standbyChara);
+		battleCharaGraph(delta_time, attack, defence);
 
 		if (g_CanAttackMove == 1) {
 
 			//attack側の攻撃エフェクト描画
-			battleEffectGraph(delta_time, g_selectedChara);
+			battleEffectGraph(delta_time, attack);
 		}
 		else if (g_CanAttackMove == 2) {//味方の攻撃
 
 			//ヒット率乱数によるダメージ判定
-			battleHitRandom(delta_time, g_selectedChara, g_standbyChara);
+			battleHitRandom(delta_time, attack, defence);
 
-			if (character[g_standbyChara].hp <= 0) {
+			if (character[defence].hp <= 0) {
 
 				scoreMove();
 				battleExit();
@@ -597,14 +597,14 @@ void battle(float delta_time) {
 		else if (g_CanAttackMove == 3) {
 
 			//defence側の攻撃エフェクト描画
-			battleEffectGraph(delta_time, g_standbyChara);
+			battleEffectGraph(delta_time, defence);
 		}
 		else if (g_CanAttackMove == 4) {
 
 			//ヒット率乱数によるダメージ判定
-			battleHitRandom(delta_time, g_standbyChara, g_selectedChara);
+			battleHitRandom(delta_time, defence, attack);
 
-			if (character[g_selectedChara].hp <= 0) {
+			if (character[attack].hp <= 0) {
 
 				scoreMove();
 				battleExit();
@@ -614,13 +614,13 @@ void battle(float delta_time) {
 		}
 		else if (g_CanAttackMove == 5) {
 
-			if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
+			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
-				battleEffectGraph(delta_time, g_selectedChara);
+				battleEffectGraph(delta_time, attack);
 			}
-			else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
+			else if (character[defence].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
-				battleEffectGraph(delta_time, g_standbyChara);
+				battleEffectGraph(delta_time, defence);
 			}
 			else {
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
@@ -631,20 +631,20 @@ void battle(float delta_time) {
 		}
 		else if (g_CanAttackMove == 6) {
 
-			if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
+			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
 				//ヒット率乱数によるダメージ判定
-				battleHitRandom(delta_time, g_selectedChara, g_standbyChara);
+				battleHitRandom(delta_time, attack, defence);
 			}
-			else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
+			else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
 
 				//ヒット率乱数によるダメージ判定
-				battleHitRandom(delta_time, g_standbyChara, g_selectedChara);
+				battleHitRandom(delta_time, defence, attack);
 			}
 		}
 		else {
 
-			if (character[g_selectedChara].hp <= 0) {scoreMove();}
+			if (character[attack].hp <= 0) {scoreMove();}
 			battleExit();
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }

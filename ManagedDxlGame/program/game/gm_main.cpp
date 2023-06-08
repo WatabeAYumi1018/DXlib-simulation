@@ -206,7 +206,7 @@ void phaseEnemyMove(float delta_time) {
 	static int currentEnemyNumber = 3;
 
 	//1人検証が終わるごとに増えていく
-	constexpr int ENEMY_COUNT = 15;
+ 	constexpr int ENEMY_COUNT = 15;
 
 	//調査中のNumberを代入
 	int enemyNumber = currentEnemyNumber;
@@ -238,7 +238,9 @@ void phaseEnemyMove(float delta_time) {
 				_enemyX = character[enemyNumber].x;
 				_enemyY = character[enemyNumber].y;
 
-				if (_allyX == _enemyX && _allyY == _enemyY) continue;
+				//敵味方の座標が同じ＋どちらかがHPゼロならスルー
+				if (_allyX == _enemyX && _allyY == _enemyY || 
+					character[i].hp<=0 || character[enemyNumber].hp<=0) continue;
 
 				int distance = abs(_allyX - _enemyX) + abs(_allyY - _enemyY);
 				
@@ -258,6 +260,8 @@ void phaseEnemyMove(float delta_time) {
 			}
 			//範囲内でなければ次の敵キャラへ
  			else { g_phaseEnemy = PHASE_AI_NEXT_ENEMY; }
+		
+			break;
 		}
 		case PHASE_AI_MOVE_CHARACTER: {
 
@@ -267,52 +271,71 @@ void phaseEnemyMove(float delta_time) {
 			int allyX = character[nearDistanceAlly].x;
 			int allyY = character[nearDistanceAlly].y;
 
-			// 場面分けで敵の座標を更新
-			if (enemyX > allyX &&( enemyY > allyY || enemyY < allyY)) {
-					
-				enemyX = allyX +1;
-				enemyY = allyY;
+			if (character[nearDistanceAlly].hp > 0 && character[enemyNumber].hp > 0) {
+
+				// 場面分けで敵の座標を更新
+				if (enemyX > allyX && (enemyY > allyY || enemyY < allyY)) {
+
+					enemyX = allyX + 1;
+					enemyY = allyY;
+				}
+				else if (enemyX < allyX && (enemyY > allyY || enemyY < allyY)) {
+
+					enemyX = allyX - 1;
+					enemyY = allyY;
+				}
+				else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY + 1; }
+
+				else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY - 1; }
+
+				else if (enemyX > allyX && enemyY == allyY) { enemyX = allyX + 1; }
+
+				else if (enemyX < allyX && enemyY == allyY) { enemyX = allyX - 1; }
 			}
-			else if (enemyX < allyX && (enemyY > allyY || enemyY < allyY)) {
-				
-				enemyX = allyX -1;
-				enemyY = allyY;
-			}
-			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY +1; }
-
-			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY -1; }
-
-			else if (enemyX > allyX && enemyY == allyY) { enemyX = allyX +1; }
-
-			else if (enemyX < allyX && enemyY == allyY) { enemyX = allyX -1; }
-
 			//座標更新
 			character[enemyNumber].x = enemyX;
 			character[enemyNumber].y = enemyY;
+
+			break;
 		}							
 		case PHASE_AI_SELECT_ATTACK: {
+			
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
-			battle(delta_time);
+					g_flagEnter = true;
+					g_flagCursor = false;
+					g_flagBattleAnime = true;
+					g_flagBattleHp = true;
+					g_CanAttackMove++;
+				}
+				if (character[nearDistanceAlly].hp > 0 && character[enemyNumber].hp > 0 &&
+						character[nearDistanceAlly].team != character[enemyNumber].team) {
 
-			g_phaseEnemy = PHASE_AI_NEXT_ENEMY;
-
+					battle(delta_time, nearDistanceAlly, enemyNumber);
+				}
+				break;
 		}
 		case PHASE_AI_NEXT_ENEMY: {
 		
-			// 次の敵キャラクターのインデックスを設定
+			// 次の敵キャラクターのインデックス設定
 			enemyNumber++;
 			spaceCount++;
 
 			// 次の敵キャラ評価へ移動
-			if (spaceCount==2) {g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;}
+			if (spaceCount==2) {
+				
+				spaceCount = 0;
+				g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
+			}
+			break;
 		}
 		}
+		//敵ターン全員調査完了につき、今ターンは完了。次ターンのためリセット。
+		if (enemyNumber >= ENEMY_COUNT) { currentEnemyNumber = 3; }
+
+		//未調査の次の敵キャラクター判定のため更新
+		else { currentEnemyNumber = enemyNumber; }
 	}
-	//敵ターン全員調査完了につき、今ターンは完了。次ターンのためリセット。
-	if (enemyNumber >= ENEMY_COUNT) {currentEnemyNumber = 3;}
-	
-	//未調査の次の敵キャラクター判定のため更新
-	else {currentEnemyNumber = enemyNumber;}
 }
 
 //カーソルエンター処理について
@@ -429,7 +452,7 @@ void phaseAllyMove(float delta_time) {
 					g_flagBattleHp = true;
 					g_CanAttackMove ++;
 				}	
-				battle(delta_time);
+				battle(delta_time, g_selectedChara, g_standbyChara);
 			}
 		break;
 		}

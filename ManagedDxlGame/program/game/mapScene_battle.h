@@ -73,4 +73,4 @@ void battleExit();
 void scoreMove();
 
 //í“¬ˆ—
-void battle(float delta_time);
+void battle(float delta_time, int attack, int defence);
