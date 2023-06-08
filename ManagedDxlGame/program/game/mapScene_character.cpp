@@ -3,7 +3,6 @@
 #include "mapScene_map.h"
 #include "mapScene_character.h"
 
-
 //キャラクターのデータ二次元配列（マップチップとキャラチップを分けて考える）
 int charaData[MAP_HEIGHT][MAP_WIDTH];
 
@@ -49,7 +48,7 @@ Character character[] = {
 	{"長",		JOB_LEADER,			10, 300,	200,  70,  20,  150,  5,	TEAM_ENEMY,	4,	3}
 };
 
-//charaDateに中身入れる。1人ずつ座標を読み取り、いない場所にはー１を返す
+//charaDate定義。いなければ-１
 int getCharacter(int x, int y) {
 
 	for (int i = 0; i < CHARACTER_MAX; i++) {

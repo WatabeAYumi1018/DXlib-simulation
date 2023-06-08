@@ -257,7 +257,7 @@ void battleHpDraw(int attack, int defence) {
 }
 
 //戦闘画面のキャラアニメ
-void battleCharaGraphic(float delta_time, int attack, int defence) {
+void battleCharaGraph(float delta_time, int attack, int defence) {
 
 	//バトル中のキャラアニメーション座標
 	const int CHARA_ALLAY_X_START = 750;	//味方X始点
@@ -328,7 +328,7 @@ void battleCharaGraphic(float delta_time, int attack, int defence) {
 }
 
 //戦闘エフェクトアニメ
-void battleEffectGraphic(float delta_time, int chara) {
+void battleEffectGraph(float delta_time, int chara) {
 
 	//戦闘エフェクトアニメーション座標
 	const int EFFECT_ALLAY_X_START = 200;	//味方X始点
@@ -559,12 +559,7 @@ void scoreMove() {
 	}
 }
 
-//-------------------------------------------------------------------------------------------------
-//★バトル関数（スペースキーを押すとg_CanAttackMove++でインクリメントされていきます。）
-//一連の流れ
-//味方キャラの攻撃エフェクト→ダメージ計算→敵の攻撃エフェクト→ダメージ計算→素早さが５以上早ければ→早いキャラの攻撃エフェクト→ダメージ計算→戦闘終了
-//もし、途中でHPが０になる　｜｜　素早さが５以上早くなければ、その時点で戦闘は終了する
-
+//バトル関数
 void battle(float delta_time) {
 
 	if (g_flagEnter && !g_flagCursor) {
@@ -579,12 +574,12 @@ void battle(float delta_time) {
 		battleHpDraw(g_selectedChara, g_standbyChara);
 
 		//戦闘画面のキャラアニメーション
-		battleCharaGraphic(delta_time, g_selectedChara, g_standbyChara);
+		battleCharaGraph(delta_time, g_selectedChara, g_standbyChara);
 
 		if (g_CanAttackMove == 1) {
 
 			//attack側の攻撃エフェクト描画
-			battleEffectGraphic(delta_time, g_selectedChara);
+			battleEffectGraph(delta_time, g_selectedChara);
 		}
 		else if (g_CanAttackMove == 2) {//味方の攻撃
 
@@ -602,7 +597,7 @@ void battle(float delta_time) {
 		else if (g_CanAttackMove == 3) {
 
 			//defence側の攻撃エフェクト描画
-			battleEffectGraphic(delta_time, g_standbyChara);
+			battleEffectGraph(delta_time, g_standbyChara);
 		}
 		else if (g_CanAttackMove == 4) {
 
@@ -621,11 +616,11 @@ void battle(float delta_time) {
 
 			if (character[g_selectedChara].speed - character[g_standbyChara].speed >= SPEED_DIFFERENCE) {
 
-				battleEffectGraphic(delta_time, g_selectedChara);
+				battleEffectGraph(delta_time, g_selectedChara);
 			}
 			else if (character[g_standbyChara].speed - character[g_selectedChara].speed >= SPEED_DIFFERENCE) {
 
-				battleEffectGraphic(delta_time, g_standbyChara);
+				battleEffectGraph(delta_time, g_standbyChara);
 			}
 			else {
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||

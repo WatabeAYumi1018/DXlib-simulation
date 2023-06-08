@@ -61,39 +61,18 @@ struct Character {
 	bool done; //行動済み概念
 };
 
-//struct Ally {
-//
-//	int job;
-//	int move;
-//	int x;		//座標
-//	int y;
-//};
-//
-////味方キャラの情報をvectorにて配列管理
-//std::vector<Ally> allyMapList;
-//
-//struct Enemy {
-//
-//	int job;
-//	int move;
-//	int x;		//座標
-//	int y;
-//};
-//
-////敵キャラの情報をvectorにて配列管理
-//std::vector<Enemy> enemyMapList;
-
 //各キャラクターの情報
 extern Character character[];
 
-void mapCharaSwordAnim(float delta_time);
-
+//charaData[][]定義
 int getCharacter(int x, int y);
 
+//キャラ座標を毎フレーム取得
 void getCharaPosition();
 
+//下画面情報描画
 void characterMapInfo(int chara);
 
+//下画面描画時の制御
 void display();
 
-void characterMapInfo(int chara);

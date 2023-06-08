@@ -166,6 +166,7 @@
     <ClCompile Include="program\dxlib_ext\dxlib_ext_mesh.cpp" />
     <ClCompile Include="program\dxlib_ext\dxlib_ext_texture.cpp" />
     <ClCompile Include="program\dxlib_ext\OBJLoader.cpp" />
+    <ClCompile Include="program\game\endScene.cpp" />
     <ClCompile Include="program\game\gm_main.cpp" />
     <ClCompile Include="program\game\mapScene_battle.cpp" />
     <ClCompile Include="program\game\mapScene_character.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="program\game\mapScene_battle.h" />
     <ClInclude Include="program\game\mapScene_character.h" />
     <ClInclude Include="program\game\mapScene_map.h" />
+    <ClInclude Include="program\game\endScene.h" />
     <ClInclude Include="program\game\titleScene.h" />
     <ClInclude Include="program\library\json11.hpp" />
     <ClInclude Include="program\library\stb_image.h" />

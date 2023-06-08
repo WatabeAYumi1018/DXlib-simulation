@@ -6,7 +6,7 @@ const int EFFECT_SIZE = 120;
 //スピード判定定数
 const int SPEED_DIFFERENCE = 5;
 
-//戦闘中の画面ハンドル
+//戦闘中の画面
 extern int g_battleGround ;
 extern int g_battleParaBack ;
 
@@ -30,11 +30,6 @@ extern bool g_flagBattleAnime ;
 //HP減算フラグ
 extern bool g_flagBattleHp ;
 
-//bool checkAllyInFill(int enemy, int ally);
-
-//敵からの攻撃判定
-//bool checkCanEnemyBattle(int attack, int defence);
-
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence);
 
@@ -48,10 +43,10 @@ void battleInfo(int attack, int defence);
 void battleHpDraw(int attack, int defence);
 
 //戦闘画面のキャラアニメ
-void battleCharaGraphic(float delta_time, int attack, int defence);
+void battleCharaGraph(float delta_time, int attack, int defence);
 
 //戦闘エフェクトアニメ
-void battleEffectGraphic(float delta_time, int chara);
+void battleEffectGraph(float delta_time, int chara);
 
 //ロスト処理
 bool battleLost();
@@ -79,6 +74,3 @@ void scoreMove();
 
 //戦闘処理
 void battle(float delta_time);
-
-//スピード比較
-//bool battleSpeed(float delta_time, int attack, int defence);

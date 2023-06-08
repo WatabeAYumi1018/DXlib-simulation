@@ -8,7 +8,7 @@ enum {
 	TITLE_MENU_MAX
 };
 
-//メニューの位置を配列化して
+//メニューの位置を配列化
 const tnl::Vector3 TITLE_SELECT_MENU_POSITION[TITLE_MENU_MAX] = {
 	{450,400,0},
 	{500,500,0},
@@ -44,10 +44,13 @@ extern int g_select_cursor_hdl;
 
 extern tnl::Vector3 g_sel_cursor_pos ;
 
+//タイトル動画再生
 void titleMovie();
 
+//選択カーソル
 void titleSelect();
 
-//void rightFlash(float delta_time);
-
+//タイトル文字描画
 void sceneTitle();
+
+//void rightFlash(float delta_time);

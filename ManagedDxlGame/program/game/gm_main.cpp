@@ -10,22 +10,11 @@
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
-//
-//マップ上での指示出しコード(実装予定処理一覧)
-//
-// -----------------------------------------------------------
-// 
-//★味方全員動いたらターン終了　OK
+ 
 //★敵のターン　OK
 //★敵の動きAI（ボスは動かない）
-//★全員の待機確認　OK
-//★味方ターンへフェーズチェンジ　OK
-//★ボス戦		（下書きOK）
-//★ステージクリア
-//ゲームオーバー	（下書きOK）
 
-
-//長を倒すとエンディング⇒クリア文字⇒タイトルへ
+//クリア文字/ゲームオーバー文字⇒タイトルへ
 
 //地形の上に乗ると、毎ターン体力回復
 
@@ -36,7 +25,6 @@
 //進行フェーズのフラグ変数
 //
 
-//int g_gameScene_id = GAME_START; 本番こっち！！
 int g_gameScene_id = GAME_START;
 
 //サウンド鳴らし方（wav.mp3もおっけ）
@@ -88,104 +76,6 @@ int g_score = 0;
 
 //-------------------------------------------------------------------------------------------
 
-////敵からの攻撃判定
-//bool moveEnemyToAlly(int enemy) {
-//
-//	int enemyX = character[enemy].x;
-//	int enemyY = character[enemy].y;
-//	int enemyMove = character[enemy].move;	//	各キャラの移動数
-//
-//	int ally = 0;	// 最も近くにいる味方キャラの番号
-//	int allyX = -1; // 最も近い味方キャラのX座標
-//	int allyY = -1; // 最も近い味方キャラのY座標
-//	
-//	int maxDistance = INT_MAX; // 最大距離
-//
-//	// マップ上の全ての座標を探索する
-//	for (int i = 0; i < MAP_HEIGHT; i++) {
-//		for (int j = 0; j < MAP_WIDTH; j++) {
-//			
-//			int allyChara = getCharacter(j, i);
-//			
-//			if (allyChara != -1 && character[allyChara].team == TEAM_ALLY) {
-//			
-//				//-------------------------------------------
-//
-//				// 敵キャラとの距離を計算
-//				int distance = abs(character[allyChara].x - enemyX) + 
-//								abs(character[allyChara].y - enemyY);
-//
-//				//地形情報を取り、移動範囲内か判定…？
-//				int moveCost = jobData[character[enemy].job].moveCells[mapData[i][j]];
-//				character[enemy].move -= moveCost;
-//
-//				//--------------------------------------------
-//				//現在地点から目標へ向かっていく
-//
-//				// 最小距離が更新された場合（より近くにいる場合、その距離を最小値とする）
-//				if (distance < maxDistance && moveCost< character[enemy].move) {
-//
-//					ally = allyChara;
-//					allyX = character[allyChara].x;
-//					allyY = character[allyChara].y;
-//					maxDistance = distance;
-//				}
-//			}
-//		}
-//	}
-//	// 最も近い味方の隣に移動
-//	if (allyX != -1 && allyY != -1 &&(ThreeRelation(enemy, ally))) {
-//		int distanceX = allyX - enemyX;
-//		int distanceY = allyY - enemyY;
-//
-//		// 移動可能範囲内かつ一番近くの味方の隣に移動する（これだと地形効果が無視されてる？）
-//		if ((abs(distanceX) + abs(distanceY)) <= enemyMove &&
-//				(abs(distanceX) <= enemyMove && abs(distanceY) <= enemyMove)) {
-//			enemyX = allyX;
-//			enemyY = allyY;
-//
-//			// ★敵の座標を移動先の隣のマスに調整
-//			if (distanceX < 0)
-//				enemyX--;
-//			else if (distanceX > 0)
-//				enemyX++;
-//			else if (distanceY < 0)
-//				enemyY--;
-//			else if (distanceY > 0)
-//				enemyY++;
-//		}
-//	}
-//	// 移動後の座標を設定
-//	character[enemy].x = enemyX;
-//	character[enemy].y = enemyY;
-//
-//	return true; // 移動成功
-//}
-//
-//bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move) {
-//	
-//	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
-//
-//	int chara = getCharacter(_x, _y);
-//	if (chara >= 0 && character[chara].team != character[_chara].team)	return false;
-//
-//	int moveCost = jobData[character[_chara].job].moveCells[mapData[_y][_x]];
-//
-//	if (moveCost < 0)	return false;
-//
-//	// 移動するごとにコストを使っていく
-//	if (_move < moveCost)	return false;
-//
-//	return true;
-//}
-
-//--------------------------------------------------------------------------
-//★★★
-//制御する方法！！
-//ENEMYCHARACTER_MAX定数を作る。
-//もしcharacter[3]==隣判定trueなら…で、14まで全て作って判定する（for分を使わずに、全てのキャラの判定をする）
-//if else ifで管理すれば、順番に見てくれるのでは？？
-
 //一連の流れ
 void turnMove(float delta_time) {
 
@@ -218,11 +108,15 @@ void turnMove(float delta_time) {
 				g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
 			}
 		}
+		//味方移動全般の関数
 		phaseAllyMove(delta_time);
 
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
 			g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
+			character[0].done = true;	//味方全員の行動を行動済みに
+			character[1].done = true;
+			character[2].done = true;
 			g_turnMove = TURN_ENEMY;
 		}
 		break;
@@ -244,7 +138,7 @@ void turnMove(float delta_time) {
 				telopFrame = 0;				//テロップの流れた距離リセット
 				g_telopTimeCount = 0;		//テロップのカウントリセット
 				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
-				g_flagSpace = true;		//敵が自分の隣に味方がいるかを判断するためのフラグ
+				g_flagSpace = true;			//敵が自分の隣に味方がいるかを判断するためのフラグ
 			}
 		}
 
@@ -258,15 +152,51 @@ void turnMove(float delta_time) {
 			g_flagEnter = false;
 			g_flagCursor = true;
 			g_flagSpace = false;				//いないから、敵の判断が終了
-			character[0].done = false;
-			character[1].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
-			character[2].done = false;			//味方ターン移行に際して、味方の行動が未行動にリセットされる
+			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
+			character[1].done = false;			
+			character[2].done = false;			
 			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
 			g_turnMove = TURN_ALLAY;
 		}
 		break;
 	}
 	}
+}
+
+//敵キャラ移動可能判定の起点
+bool enemyCanMove(int _enemy, int _x, int _y, int _move) {
+
+	for (int dir = 0; dir < DIRECTION_MAX; dir++)
+	{
+		int x = _x + g_directions[dir][0];
+		int y = _y + g_directions[dir][1];
+		if (enemyCheckMoveCost(_enemy, x, y, _move)) { return true; }
+	}
+	return false;
+}
+
+//敵が移動できるかどんどん判定してく
+bool enemyCheckMoveCost(int _enemy, int _x, int _y, int _move) {//選択した味方キャラ、座標、移動数
+
+	//画面外はスルー
+	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
+
+	//どのマップチップの上にいるかを判定
+	int moveCost = jobData[character[_enemy].job].moveCells[mapData[_y][_x]];
+
+	//移動可能数が０以下、移動可能数より下なら移動不可で終了
+	if (moveCost < 0 || _move < moveCost) { return false; }
+
+	//移動するごとにコストを使っていく
+	_move -= moveCost;
+
+	for (int dir = 0; dir < DIRECTION_MAX; dir++)
+	{
+		int x = _x + g_directions[dir][0];
+		int y = _y + g_directions[dir][1];
+		if (enemyCheckMoveCost(_enemy, x, y, _move)) {return true;}
+	}
+	return false;
 }
 
 //敵フェーズの動き
@@ -281,13 +211,20 @@ void phaseEnemyMove(float delta_time) {
 	//調査中のNumberを代入
 	int enemyNumber = currentEnemyNumber;
 
-	while (delta_time <= 0.0f && currentEnemyNumber <= ENEMY_COUNT) {
+	int spaceCount = 0;
+
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {spaceCount++;}
+
+	while (spaceCount ==1 && currentEnemyNumber <= ENEMY_COUNT) {
 
 		// 最大距離
 		int maxDistance = INT_MAX; 
 
 		// 最小距離の味方取得
-		int nearDistanceAlly = -1; 
+		int nearDistanceAlly = 0; 
+
+		int _enemyX = 0;
+		int _enemyY = 0;
 
 		switch (g_phaseEnemy) {
 
@@ -295,14 +232,11 @@ void phaseEnemyMove(float delta_time) {
 
 			for (int i = 0; i < CHARACTER_ALLAY_MAX; ++i) {
 				
-				int _allyX = character[i].x; // / 32;
-				int _allyY = character[i].y; // / 32;
+				int _allyX = character[i].x; 
+				int _allyY = character[i].y; 
 
-				int _enemyX = character[enemyNumber].x;
-				int _enemyY = character[enemyNumber].y;
-
-				//int emx = enemyX / 32;
-				//int emy = enemyY / 32;
+				_enemyX = character[enemyNumber].x;
+				_enemyY = character[enemyNumber].y;
 
 				if (_allyX == _enemyX && _allyY == _enemyY) continue;
 
@@ -314,15 +248,16 @@ void phaseEnemyMove(float delta_time) {
 					nearDistanceAlly = i;
 				}
 			}
-			//敵と味方の座標比較。移動可動範囲内なら
-			if (nearDistanceAlly <= character[enemyNumber].move) {
+			//総移動可能数
+			int enemyMove = character[enemyNumber].move;
+
+			//味方までの距離と敵キャラの行動範囲を比較
+			if (maxDistance <= enemyCanMove(enemyNumber, _enemyX, _enemyY, enemyMove)){
 
 				g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
 			}
 			//範囲内でなければ次の敵キャラへ
-			else { g_phaseEnemy = PHASE_AI_NEXT_ENEMY; }
-
-			break;
+ 			else { g_phaseEnemy = PHASE_AI_NEXT_ENEMY; }
 		}
 		case PHASE_AI_MOVE_CHARACTER: {
 
@@ -343,15 +278,17 @@ void phaseEnemyMove(float delta_time) {
 				enemyX = allyX -1;
 				enemyY = allyY;
 			}
-			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY -1; }
+			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY +1; }
 
-			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY +1; }
+			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY -1; }
 
 			else if (enemyX > allyX && enemyY == allyY) { enemyX = allyX +1; }
 
 			else if (enemyX < allyX && enemyY == allyY) { enemyX = allyX -1; }
 
-			break;
+			//座標更新
+			character[enemyNumber].x = enemyX;
+			character[enemyNumber].y = enemyY;
 		}							
 		case PHASE_AI_SELECT_ATTACK: {
 
@@ -359,32 +296,23 @@ void phaseEnemyMove(float delta_time) {
 
 			g_phaseEnemy = PHASE_AI_NEXT_ENEMY;
 
-			break;
 		}
 		case PHASE_AI_NEXT_ENEMY: {
 		
 			// 次の敵キャラクターのインデックスを設定
 			enemyNumber++;
+			spaceCount++;
 
-			// delta_time が正の値の場合、処理を一時停止して次のフレームで再開する
-			if (delta_time > 0.0f) {
-				
-				g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
-				
-				break;
-			}
+			// 次の敵キャラ評価へ移動
+			if (spaceCount==2) {g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;}
 		}
 		}
 	}
-	if (enemyNumber >= ENEMY_COUNT) {
-
-		//次の敵キャラターンのため、リセット
-		currentEnemyNumber = 3;
-	}
-	else {
-		// 次の敵キャラクターのため、更新
-		currentEnemyNumber = enemyNumber;
-	}
+	//敵ターン全員調査完了につき、今ターンは完了。次ターンのためリセット。
+	if (enemyNumber >= ENEMY_COUNT) {currentEnemyNumber = 3;}
+	
+	//未調査の次の敵キャラクター判定のため更新
+	else {currentEnemyNumber = enemyNumber;}
 }
 
 //カーソルエンター処理について
@@ -627,7 +555,7 @@ void gameMain(float delta_time) {
 		case GAME_START: {
 
 			//titleMovie();
-			sceneTitle();
+			sceneTitle();				//タイトル全般
 
 			break;
 		}
@@ -637,25 +565,25 @@ void gameMain(float delta_time) {
 
 		case GAME_MAP: {
 
-			getCharaPosition();
-			mapPosition(delta_time);
-			display();
-			cursorMove();//＜<resetFill()/drawFill())＜getCharacter(,)/return→fillCanMove(,,,)
-			instructions(delta_time);
-			scoreDraw();
-			turnMove(delta_time);
+			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
+			mapPosition(delta_time);	//画像描画
+			display();					//下画面情報描画制御
+			cursorMove();				//カーソル移動手定義
+			instructions(delta_time);	//指示文字描画
+			scoreDraw();				//score描画
+			turnMove(delta_time);		//ゲームの流れ全般
 			
 			break;
 		}
 		case GAME_OVER: {
 
-			gameOver(delta_time);
+			gameOver(delta_time);		//ゲームオーバー全般
 			
 			break;
 		}
 		case GAME_CLEAR: {
 
-			gameClear(delta_time);
+			gameClear(delta_time);		//ゲームクリア全般
 
 		break;
 		}

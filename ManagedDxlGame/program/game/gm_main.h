@@ -85,7 +85,11 @@ extern int g_score;
 //敵からの攻撃判定
 bool moveEnemyToAlly(int enemy);
 
-bool checkCanMoveEnemy(int _chara, int _x, int _y, int _move);
+//敵の移動範囲を判定（起点）
+bool enemyCanMove(int _enemy, int _x, int _y, int _move);
+
+//移動範囲をチェック
+bool enemyCheckMoveCost(int _enemy, int _x, int _y, int _move);
 
 void phaseEnd();
 

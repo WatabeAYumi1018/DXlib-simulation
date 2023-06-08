@@ -20,9 +20,6 @@ int g_gameStartAnim = 0;
 //タイトル動画ハンドル
 int g_titleMovie = 0;
 
-//クリアクラッカー動画
-int g_clearCracker = 0;
-
 //スクリーン(フィルター処理した画像を保存する用)ハンドル
 int screen_handle = 0;	
 
