@@ -60,11 +60,17 @@ extern bool g_flagSpace;
 //バトル進行中か否かの判定フラグ
 extern int g_CanAttackMove;
 
+//現在敵何人目か（初期値はインデックスの３）
+extern int currentEnemyNumber;
+
 //ターン変数
 extern int g_turnMove ;
 
 //ターン切り替えフラグ
 extern bool g_flagTurnAlly;
+
+//現在の敵番号
+extern int currentEnemyNumber;
 
 //ゲームスタート
 extern bool g_flagGameStart;
