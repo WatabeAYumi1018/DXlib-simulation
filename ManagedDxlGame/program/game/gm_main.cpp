@@ -181,14 +181,16 @@ bool enemyCheckMoveCost(int _enemy, int _x, int _y, int _move) {//選択した味方キ
 	//画面外はスルー
 	if (_x < 0 || _x >= MAP_WIDTH || _y < 0 || _y >= MAP_HEIGHT) { return false; }
 
+	if (_move <= 0) { return false; }
+
 	//どのマップチップの上にいるかを判定
 	int moveCost = jobData[character[_enemy].job].moveCells[mapData[_y][_x]];
 
 	//移動可能数が０以下、移動可能数より下なら移動不可で終了
 	if (moveCost < 0 || _move < moveCost) { return false; }
-
-	//移動するごとにコストを使っていく
+	
 	_move -= moveCost;
+
 
 	for (int dir = 0; dir < DIRECTION_MAX; dir++)
 	{
@@ -211,7 +213,7 @@ void phaseEnemyMove(float delta_time) {
 	//調査中のNumberを代入
 	int enemyNumber = currentEnemyNumber;
 
-	int spaceCount = 0;
+	int spaceCount = 1;
 
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {spaceCount++;}
 
@@ -254,14 +256,18 @@ void phaseEnemyMove(float delta_time) {
 			int enemyMove = character[enemyNumber].move;
 
 			//味方までの距離と敵キャラの行動範囲を比較
-			if (maxDistance <= enemyCanMove(enemyNumber, _enemyX, _enemyY, enemyMove)){
+			if (maxDistance > enemyMove || !enemyCanMove(enemyNumber, _enemyX, _enemyY, enemyMove)){
 
 				g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+			
+
+				//g_phaseEnemy = PHASE_AI_NEXT_ENEMY;
 			}
-			//範囲内でなければ次の敵キャラへ
- 			else { g_phaseEnemy = PHASE_AI_NEXT_ENEMY; }
-		
-			break;
+			//範囲内ならキャラクター移動
+			else {
+				g_phaseEnemy = PHASE_AI_NEXT_ENEMY;
+				break;
+			}
 		}
 		case PHASE_AI_MOVE_CHARACTER: {
 
@@ -300,33 +306,28 @@ void phaseEnemyMove(float delta_time) {
 		}							
 		case PHASE_AI_SELECT_ATTACK: {
 			
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
-					g_flagEnter = true;
-					g_flagCursor = false;
-					g_flagBattleAnime = true;
-					g_flagBattleHp = true;
-					g_CanAttackMove++;
-				}
-				if (character[nearDistanceAlly].hp > 0 && character[enemyNumber].hp > 0 &&
-						character[nearDistanceAlly].team != character[enemyNumber].team) {
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
+			}
+			if (character[nearDistanceAlly].hp > 0 && character[enemyNumber].hp > 0 &&
+					character[nearDistanceAlly].team != character[enemyNumber].team) {
 
-					battle(delta_time, nearDistanceAlly, enemyNumber);
-				}
-				break;
+				battle(delta_time, nearDistanceAlly, enemyNumber);
+			}
+			break;
 		}
 		case PHASE_AI_NEXT_ENEMY: {
 		
 			// 次の敵キャラクターのインデックス設定
 			enemyNumber++;
-			spaceCount++;
 
-			// 次の敵キャラ評価へ移動
-			if (spaceCount==2) {
-				
-				spaceCount = 0;
-				g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
-			}
+			g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
+			
 			break;
 		}
 		}
@@ -334,7 +335,11 @@ void phaseEnemyMove(float delta_time) {
 		if (enemyNumber >= ENEMY_COUNT) { currentEnemyNumber = 3; }
 
 		//未調査の次の敵キャラクター判定のため更新
-		else { currentEnemyNumber = enemyNumber; }
+		else { 
+
+			spaceCount = 0;
+			currentEnemyNumber = enemyNumber;
+		}
 	}
 }
 
