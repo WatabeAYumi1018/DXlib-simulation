@@ -82,14 +82,11 @@ extern int sound_se_hdl;
 //スコア変数
 extern int g_score;
 
-//敵からの攻撃判定
-bool moveEnemyToAlly(int enemy);
-
 //敵の移動範囲を判定（起点）
-bool enemyCanMove(int _enemy, int _x, int _y, int _move);
+void enemyCanMove(int _enemy, int _x, int _y, int _move);
 
 //移動範囲をチェック
-bool enemyCheckMoveCost(int _enemy, int _x, int _y, int _move);
+void enemyCheckMoveCost(int _enemy, int _x, int _y, int _move);
 
 void phaseEnd();
 
