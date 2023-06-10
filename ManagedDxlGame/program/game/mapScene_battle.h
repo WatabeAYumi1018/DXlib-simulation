@@ -30,6 +30,9 @@ extern bool g_flagBattleAnime ;
 //HP減算フラグ
 extern bool g_flagBattleHp ;
 
+// バトルフラグ
+extern bool g_battleInProgress;
+
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence);
 

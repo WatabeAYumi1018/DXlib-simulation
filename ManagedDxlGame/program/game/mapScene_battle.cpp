@@ -28,6 +28,9 @@ bool g_flagBattleAnime = true;
 //HP減算フラグ
 bool g_flagBattleHp = true;
 
+// バトルフラグ
+bool g_battleInProgress = false;
+
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence) {
 
@@ -648,6 +651,11 @@ void battle(float delta_time,int attack,int defence) {
 			battleExit();
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
+		}
+
+		// バトルが終了したらフラグを解除する
+  		if (g_CanAttackMove != 0 && g_CanAttackMove != 5 && g_CanAttackMove != 6) {
+			g_battleInProgress = false;
 		}
 	}
 }
