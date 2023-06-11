@@ -76,8 +76,13 @@ int g_gameClear = 0;
 //スコア変数
 int g_score = 0;
 
-bool g_flagBattle = false;
+bool g_enemyCheckFinish = true;
 
+bool g_enemyBattleFinish0 = true;
+bool g_enemyBattleFinish1 = true;
+bool g_enemyBattleFinish2 = true;
+
+int charaAlly = 0;
 
 //-------------------------------------------------------------------------------------------
 
@@ -87,7 +92,7 @@ void turnMove(float delta_time) {
 	const int TELOP_X_END = 700;
 	const int TELOP_Y_START = 100;
 	const int TELOP_Y_END = 200;
-	const int TELOP_SPEED=700;
+	const int TELOP_SPEED = 700;
 	const int TELOP_FRAME_MAX = 1400;
 
 	//テロップアニメーションカウント
@@ -143,55 +148,84 @@ void turnMove(float delta_time) {
 				telopFrame = 0;				//テロップの流れた距離リセット
 				g_telopTimeCount = 0;		//テロップのカウントリセット
 				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
-				g_flagEnemy = true;			//敵が自分の隣に味方がいるかを判断するためのフラグ
 			}
 		}
 
-		//敵のAIここから
-		if (g_flagEnemy) {
 
-			//敵全員が移動する
-			phaseEnemyMove(delta_time, currentEnemyNumber);
+		//敵全員が移動する
+		if (g_enemyCheckFinish) { phaseEnemyMove(delta_time, currentEnemyNumber); }
 
-			const int charaAlly0 = 0;
-			const int charaAlly1 = 1;
-			const int charaAlly2 = 2;
+		const int charaAlly0 = 0;
+		const int charaAlly1 = 1;
+		const int charaAlly2 = 2;
 
-			static int charaEnemy0 = 0;
-			static int charaEnemy1 = 0;
-			static int charaEnemy2 = 0;
+		static int charaEnemy0 = 0;
+		static int charaEnemy1 = 0;
+		static int charaEnemy2 = 0;;
 
-			for (int i = 3; i < CHARACTER_MAX; i++) {
+		for (int i = 3; i < CHARACTER_MAX; i++) {
 
-				if (checkCanAllyBattle(charaAlly0, i)) {charaEnemy0 = i;}
-				else if (checkCanAllyBattle(charaAlly1, i)) {charaEnemy1 = i;}
-				else if (checkCanAllyBattle(charaAlly2, i)) {charaEnemy2 = i;}
+			if (checkCanAllyBattle(charaAlly0, i)) {
+				charaEnemy0 = i;
+			}
+			else if (checkCanAllyBattle(charaAlly1, i)) {
+				charaEnemy1 = i; 
+			}
+			else if (checkCanAllyBattle(charaAlly2, i)) {
+				charaEnemy2 = i; 
 			}
 
-			if (checkCanAllyBattle(charaAlly0, charaEnemy0)) {
+		}
 
-				phaseEnemyBattle(delta_time, charaAlly0, charaEnemy0);
+		if (g_enemyBattleFinish0) {
+
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
 			}
-
-			else if (checkCanAllyBattle(charaAlly1, charaEnemy1)) {
-
-				phaseEnemyBattle(delta_time, charaAlly1, charaEnemy1);
-
-			}
-
-			else if (checkCanAllyBattle(charaAlly2, charaEnemy2)) {
-
-				phaseEnemyBattle(delta_time, charaAlly2, charaEnemy2);
+			if (g_enemyBattleFinish0) {
+				battleEnemy(delta_time, charaAlly0, charaEnemy0);
 			}
 		}
+		else if (g_enemyBattleFinish1) { 
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
+			}
+			battleEnemy(delta_time, charaAlly1, charaEnemy1);
+		}
+		else if (g_enemyBattleFinish2) {
+
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
+			}
+			battleEnemy(delta_time, charaAlly2, charaEnemy2);
+		}
+	
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
+			g_enemyBattleFinish0 = true;
+			g_enemyBattleFinish1 = true;
+			g_enemyBattleFinish2 = true;
+			g_enemyCheckFinish = true;
 			g_flagEnter = false;
 			g_flagCursor = true;
-			g_flagEnemy = false;				//いないから、敵の判断が終了
 			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
-			character[1].done = false;			
-			character[2].done = false;			
+			character[1].done = false;
+			character[2].done = false;
 			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
 			g_turnMove = TURN_ALLAY;
 		}
@@ -199,6 +233,8 @@ void turnMove(float delta_time) {
 	}
 	}
 }
+
+//敵からの攻撃処理まとめ
 void phaseEnemyBattle(float delta_time,int charaAlly,int charaEnemy) {
 
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
@@ -208,13 +244,9 @@ void phaseEnemyBattle(float delta_time,int charaAlly,int charaEnemy) {
 		g_flagBattleAnime = true;
 		g_flagBattleHp = true;
 		g_CanAttackMove++;
-		g_flagBattle = true;
 	}
 	battleEnemy(delta_time, charaAlly, charaEnemy);
-
-	g_flagBattle = false;
 }
-
 
 //敵フェーズの動き
 void phaseEnemyMove(float delta_time,int currentEnemyNumber) {
@@ -316,6 +348,7 @@ void phaseEnemyMove(float delta_time,int currentEnemyNumber) {
 
 	if (enemyNumber >= ENEMY_COUNT) {
 
+		g_enemyCheckFinish = false;
 		resetFill();
 		return;
 	}

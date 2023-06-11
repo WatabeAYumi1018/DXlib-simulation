@@ -88,19 +88,16 @@ extern int sound_se_hdl;
 //スコア変数
 extern int g_score;
 
-//バトルフラグ
-extern bool	g_flagBattle;
+extern bool g_enemyBattleFinish0;
+extern bool g_enemyBattleFinish1;
+extern bool g_enemyBattleFinish2;
 
-extern int g_enemyBattleMove;
+extern int charaAlly;
 
 
-//敵の移動範囲を判定（起点）
-void enemyCanMove(int _enemy, int _x, int _y, int _move);
+extern bool g_enemyCheckFinish;
 
-//移動範囲をチェック
-void enemyCheckMoveCost(int _enemy, int _x, int _y, int _move);
-
-void phaseEnd();
+bool isPairInBattlePairs(const std::vector<std::pair<int, int>>& battlePairs, int allyIndex, int enemyIndex);
 
 void phaseAllyMove(float delta_time);
 

@@ -43,7 +43,6 @@ bool checkCanAllyBattle(int attack, int defence) {
 		
 		if ((distanceX == 0 && distanceY == 1) || (distanceX == 1 && distanceY == 0)) { 
 			
-			g_flagBattle = true;
 			return true; 
 		}
 		return false;
@@ -661,8 +660,6 @@ void battle(float delta_time,int attack,int defence) {
 
 void battleEnemy(float delta_time, int attack, int defence) {
 
-	if (g_flagEnter && !g_flagCursor && g_flagBattle) {
-
 		//戦闘画面下グラフィック描画
 		battleGraph();
 
@@ -687,6 +684,10 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[defence].hp <= 0) {
 
+				if (attack == 0) { g_enemyBattleFinish0 = false; }
+				if (attack == 1) { g_enemyBattleFinish1 = false; }
+				if (attack == 2) { g_enemyBattleFinish2 = false; }
+				g_CanAttackMove = 0;
 				scoreMove();
 				battleExit();
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
@@ -705,6 +706,10 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[attack].hp <= 0) {
 
+				if (attack == 0) { g_enemyBattleFinish0 = false; }
+				if (attack == 1) { g_enemyBattleFinish1 = false; }
+				if (attack == 2) { g_enemyBattleFinish2 = false; }
+				g_CanAttackMove = 0;
 				scoreMove();
 				battleExit();
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
@@ -724,6 +729,11 @@ void battleEnemy(float delta_time, int attack, int defence) {
 			else {
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
 					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+					if (attack == 0) { g_enemyBattleFinish0 = false; }
+					if (attack == 1) { g_enemyBattleFinish1 = false; }
+					if (attack == 2) { g_enemyBattleFinish2 = false; }
+					g_CanAttackMove = 0;
 					battleExit();
 				}
 			}
@@ -743,11 +753,19 @@ void battleEnemy(float delta_time, int attack, int defence) {
 		}
 		else {
 
-			if (character[attack].hp <= 0) { scoreMove(); }
+			if (character[attack].hp <= 0) {
+
+				if (attack == 0) { g_enemyBattleFinish0 = false; }
+				if (attack == 1) { g_enemyBattleFinish1 = false; }
+				if (attack == 2) { g_enemyBattleFinish2 = false; }
+				g_CanAttackMove = 0;
+				scoreMove(); 
+			}
+			
 			battleExit();
+			
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 		}
-	}
 }
 
