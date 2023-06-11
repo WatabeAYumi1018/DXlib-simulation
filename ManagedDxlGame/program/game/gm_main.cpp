@@ -44,13 +44,16 @@ bool g_flagCursor = true;
 bool g_flagEnter = false;
 
 //スペース押しフラグ
-bool g_flagSpace=false;
+bool g_flagEnemy=false;
 
 //バトル進行中か否かの判定フラグ
 int g_CanAttackMove = 0;
 
 //現在敵何人目か（初期値はインデックスの３）
 int currentEnemyNumber = 3;
+
+// 最小距離の味方取得
+int nearDistanceAlly = 0;
 
 //味方ターン切り替え
 bool g_flagTurnAlly = true;
@@ -72,6 +75,11 @@ int g_gameClear = 0;
 
 //スコア変数
 int g_score = 0;
+
+bool g_flagBattle = false;
+
+
+int g_enemyBattleMove=0;
 
 //-------------------------------------------------------------------------------------------
 
@@ -137,20 +145,81 @@ void turnMove(float delta_time) {
 				telopFrame = 0;				//テロップの流れた距離リセット
 				g_telopTimeCount = 0;		//テロップのカウントリセット
 				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
-				g_flagSpace = true;			//敵が自分の隣に味方がいるかを判断するためのフラグ
+				g_flagEnemy = true;			//敵が自分の隣に味方がいるかを判断するためのフラグ
 			}
 		}
 
 		//敵のAIここから
-		if (g_flagSpace) {
+		if (g_flagEnemy) {
 
-			phaseEnemyMove(delta_time,3);
+			//敵全員が移動する
+			phaseEnemyMove(delta_time, currentEnemyNumber);
+
+			static int chara = 0;
+
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
+
+				if (g_enemyBattleMove == 0) { g_enemyBattleMove++; }
+			}			
+
+			if (g_enemyBattleMove == 1) {
+
+				for (int i = 3; i < CHARACTER_MAX; i++) {
+
+					if (checkCanAllyBattle(0, i)) { 
+						
+						chara = i;
+						g_enemyBattleMove = 2;
+					}
+				}
+				if (character[0].team != character[chara].team) { 
+					
+					battle(delta_time, 0, chara);
+				}
+			}
+			if (g_enemyBattleMove == 2) {
+
+				for (int i = 3; i < CHARACTER_MAX; i++) {
+
+					if (checkCanAllyBattle(1, i)) {
+
+						chara = i;
+						g_enemyBattleMove = 3;
+					}
+				}
+				if (character[1].team != character[chara].team) { 
+
+
+					battle(delta_time, 1, chara);
+				}
+			}
+			if (g_enemyBattleMove == 3) {
+
+				for (int i = 3; i < CHARACTER_MAX; i++) {
+
+					if (checkCanAllyBattle(2, i)) {
+
+						chara = i;
+					}
+				}
+				if (character[2].team != character[chara].team) { 
+				
+					battle(delta_time, 2, chara);
+				}
+			}
+			g_enemyBattleMove = 0;
 		}
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB) && currentEnemyNumber == 14) {
 
 			g_flagEnter = false;
 			g_flagCursor = true;
-			g_flagSpace = false;				//いないから、敵の判断が終了
+			g_flagEnemy = false;				//いないから、敵の判断が終了
 			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
 			character[1].done = false;			
 			character[2].done = false;			
@@ -166,26 +235,13 @@ void turnMove(float delta_time) {
 void phaseEnemyMove(float delta_time,int currentEnemyNumber) {
 
 	//1人検証が終わるごとに増えていく
- 	constexpr int ENEMY_COUNT = 15;
+ 	const int ENEMY_COUNT = 15;
 
 	//調査中のNumberを代入
 	int enemyNumber = currentEnemyNumber;
 
-	int spaceCount = 0;
-
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {spaceCount++;}
-
- 	if (spaceCount!=1 && currentEnemyNumber >= ENEMY_COUNT) {
-	
-		resetFill();
-		return;
-	}
-
 	// 最大距離
 	int maxDistance = INT_MAX;
-
-	// 最小距離の味方取得
-	int nearDistanceAlly = 0;
 
 	int _enemyX = 0;
 	int _enemyY = 0;
@@ -267,33 +323,32 @@ void phaseEnemyMove(float delta_time,int currentEnemyNumber) {
 		character[enemyNumber].x = enemyX;
 		character[enemyNumber].y = enemyY;
 
-		g_phaseEnemy = PHASE_AI_SELECT_ATTACK;
-	}
-	case PHASE_AI_SELECT_ATTACK: {
-
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-			g_flagEnter = true;
-			g_flagCursor = false;
-			g_flagBattleAnime = true;
-			g_flagBattleHp = true;
-			g_CanAttackMove++;
-		}
-		battle(delta_time, nearDistanceAlly, enemyNumber);		
+		break;
 	}
 	}
 	// 次の敵キャラクターのインデックス設定
-	spaceCount = 0;
+	enemyNumber++;
 
-	//敵ターン全員調査完了につき、今ターンは完了。次ターンのためリセット。
-	if (enemyNumber >= ENEMY_COUNT) { return; }
+	if (enemyNumber >= ENEMY_COUNT) {
 
-	//未調査の次の敵キャラクター判定のため更新
-	else {
-		//currentEnemyNumber = enemyNumber;
-		g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
-		phaseEnemyMove(delta_time, enemyNumber + 1);
+		resetFill();
+		return;
 	}
+
+	else {//未調査の次の敵キャラクター判定のため更新
+		g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
+		phaseEnemyMove(delta_time, enemyNumber);
+	}
+}
+
+//敵からのバトル関数
+void phaseEnemyBattle(float delta_time,int nearDistanceAlly, int currentEnemyNumber) {
+
+	if (g_flagBattle) {
+
+		battle(delta_time, nearDistanceAlly, currentEnemyNumber);
+	}
+	g_flagBattle = false;
 }
 
 //カーソルエンター処理について

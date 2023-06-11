@@ -55,7 +55,7 @@ extern bool g_flagCursor ;
 extern bool g_flagEnter ;
 
 //スペース押しフラグ
-extern bool g_flagSpace;
+extern bool g_flagEnemy;
 
 //バトル進行中か否かの判定フラグ
 extern int g_CanAttackMove;
@@ -88,6 +88,12 @@ extern int sound_se_hdl;
 //スコア変数
 extern int g_score;
 
+//バトルフラグ
+extern bool	g_flagBattle;
+
+extern int g_enemyBattleMove;
+
+
 //敵の移動範囲を判定（起点）
 void enemyCanMove(int _enemy, int _x, int _y, int _move);
 
@@ -99,6 +105,8 @@ void phaseEnd();
 void phaseAllyMove(float delta_time);
 
 void phaseEnemyMove(float delta_time, int enemyNumber);
+
+void phaseEnemyBattle(float delta_time, int nearDistanceAlly, int currentEnemyNumber);
 
 
 void gameStart();
