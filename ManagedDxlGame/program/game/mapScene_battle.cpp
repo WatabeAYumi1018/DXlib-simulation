@@ -551,6 +551,22 @@ void battleExit() {
 	}
 }
 
+//敵からの戦闘終了
+void battledExit(int attack,int defence){
+
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
+		tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+		g_flagEnter = false;
+		g_flagCursor = true;
+		g_CanAttackMove = 0;
+	}
+
+	if (attack == 0) { g_enemyBattleFinish0 = false; }
+	if (attack == 1) { g_enemyBattleFinish1 = false; }
+	if (attack == 2) { g_enemyBattleFinish2 = false; }
+}
+
 //スコア変動処理
 void scoreMove() {
 
@@ -660,6 +676,8 @@ void battle(float delta_time,int attack,int defence) {
 
 void battleEnemy(float delta_time, int attack, int defence) {
 
+	if (g_flagEnter && !g_flagCursor) {
+
 		//戦闘画面下グラフィック描画
 		battleGraph();
 
@@ -684,12 +702,8 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[defence].hp <= 0) {
 
-				if (attack == 0) { g_enemyBattleFinish0 = false; }
-				if (attack == 1) { g_enemyBattleFinish1 = false; }
-				if (attack == 2) { g_enemyBattleFinish2 = false; }
-				g_CanAttackMove = 0;
 				scoreMove();
-				battleExit();
+				battledExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
@@ -706,12 +720,9 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[attack].hp <= 0) {
 
-				if (attack == 0) { g_enemyBattleFinish0 = false; }
-				if (attack == 1) { g_enemyBattleFinish1 = false; }
-				if (attack == 2) { g_enemyBattleFinish2 = false; }
-				g_CanAttackMove = 0;
+
 				scoreMove();
-				battleExit();
+				battledExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
@@ -730,11 +741,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
 					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
-					if (attack == 0) { g_enemyBattleFinish0 = false; }
-					if (attack == 1) { g_enemyBattleFinish1 = false; }
-					if (attack == 2) { g_enemyBattleFinish2 = false; }
-					g_CanAttackMove = 0;
-					battleExit();
+					battledExit(attack, defence);
 				}
 			}
 		}
@@ -755,17 +762,14 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[attack].hp <= 0) {
 
-				if (attack == 0) { g_enemyBattleFinish0 = false; }
-				if (attack == 1) { g_enemyBattleFinish1 = false; }
-				if (attack == 2) { g_enemyBattleFinish2 = false; }
-				g_CanAttackMove = 0;
-				scoreMove(); 
+				scoreMove();
 			}
-			
-			battleExit();
-			
+
+			battledExit(attack, defence);
+
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 		}
+	}
 }
 

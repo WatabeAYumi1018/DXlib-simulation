@@ -72,10 +72,14 @@ void battleHpMove(float delta_time, int attack, int defence);
 //戦闘処理終了
 void battleExit();
 
+//敵からの戦闘終了
+void battledExit(int attack, int defence);
+
 //戦闘によるスコア変動
 void scoreMove();
 
 //戦闘処理
 void battle(float delta_time, int attack, int defence);
 
+//敵からの戦闘処理
 void battleEnemy(float delta_time, int attack, int defence);

@@ -82,8 +82,6 @@ bool g_enemyBattleFinish0 = true;
 bool g_enemyBattleFinish1 = true;
 bool g_enemyBattleFinish2 = true;
 
-int charaAlly = 0;
-
 //-------------------------------------------------------------------------------------------
 
 //一連の流れ
@@ -100,137 +98,141 @@ void turnMove(float delta_time) {
 
 	switch (g_turnMove) {
 
-	case TURN_ALLAY: {
+		case TURN_ALLAY: {
 
-		if (g_flagTurnAlly) {
+			if (g_flagTurnAlly) {
 
-			//毎フレーム足していく処理
-			g_telopTimeCount += delta_time;
+				//毎フレーム足していく処理
+				g_telopTimeCount += delta_time;
 
-			int telopFrame = g_telopTimeCount * TELOP_SPEED;
+				int telopFrame = g_telopTimeCount * TELOP_SPEED;
 
-			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][10], true);
+				DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][10], true);
 
-			if (telopFrame >= TELOP_FRAME_MAX) {
+				if (telopFrame >= TELOP_FRAME_MAX) {
 
-				telopFrame = 0;			//テロップの流れた距離リセット
-				g_telopTimeCount = 0;	//テロップのカウントリセット
-				g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
+					telopFrame = 0;			//テロップの流れた距離リセット
+					g_telopTimeCount = 0;	//テロップのカウントリセット
+					g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
+				}
 			}
-		}
-		//味方移動全般の関数
-		phaseAllyMove(delta_time);
 
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+			//味方移動全般の関数
+			phaseAllyMove(delta_time);
 
-			g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
-			character[0].done = true;	//味方全員の行動を行動済みに
-			character[1].done = true;
-			character[2].done = true;
-			g_turnMove = TURN_ENEMY;
-		}
-		break;
-	}
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
-	case TURN_ENEMY: {
-
-		if (g_flagTurnEnemy) {
-
-			//毎フレーム足していく処理
-			g_telopTimeCount += delta_time;
-
-			int telopFrame = g_telopTimeCount * TELOP_SPEED;
-
-			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][9], true);
-
-			if (telopFrame >= TELOP_FRAME_MAX) {
-
-				telopFrame = 0;				//テロップの流れた距離リセット
-				g_telopTimeCount = 0;		//テロップのカウントリセット
-				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
+				g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
+				character[0].done = true;	//味方全員の行動を行動済みに
+				character[1].done = true;
+				character[2].done = true;
+				g_turnMove = TURN_ENEMY;
 			}
+			break;
 		}
 
+		case TURN_ENEMY: {
 
-		//敵全員が移動する
-		if (g_enemyCheckFinish) { phaseEnemyMove(delta_time, currentEnemyNumber); }
+			if (g_flagTurnEnemy) {
 
-		const int charaAlly0 = 0;
-		const int charaAlly1 = 1;
-		const int charaAlly2 = 2;
+				//毎フレーム足していく処理
+				g_telopTimeCount += delta_time;
 
-		static int charaEnemy0 = 0;
-		static int charaEnemy1 = 0;
-		static int charaEnemy2 = 0;;
+				int telopFrame = g_telopTimeCount * TELOP_SPEED;
 
-		for (int i = 3; i < CHARACTER_MAX; i++) {
+				DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][9], true);
 
-			if (checkCanAllyBattle(charaAlly0, i)) {
-				charaEnemy0 = i;
-			}
-			else if (checkCanAllyBattle(charaAlly1, i)) {
-				charaEnemy1 = i; 
-			}
-			else if (checkCanAllyBattle(charaAlly2, i)) {
-				charaEnemy2 = i; 
+				if (telopFrame >= TELOP_FRAME_MAX) {
+
+					telopFrame = 0;				//テロップの流れた距離リセット
+					g_telopTimeCount = 0;		//テロップのカウントリセット
+					g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
+				}
 			}
 
-		}
 
-		if (g_enemyBattleFinish0) {
+			//敵全員が移動する
+			if (g_enemyCheckFinish) { phaseEnemyMove(delta_time, currentEnemyNumber); }
 
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+			const int charaAlly0 = 0;
+			const int charaAlly1 = 1;
+			const int charaAlly2 = 2;
 
-				g_flagEnter = true;
-				g_flagCursor = false;
-				g_flagBattleAnime = true;
-				g_flagBattleHp = true;
-				g_CanAttackMove++;
+			static int charaEnemy0 = 0;
+			static int charaEnemy1 = 0;
+			static int charaEnemy2 = 0;;
+
+			for (int i = 3; i < CHARACTER_MAX; i++) {
+
+				if (checkCanAllyBattle(charaAlly0, i)) {
+					charaEnemy0 = i;
+				}
+			
+				else if (checkCanAllyBattle(charaAlly1, i)) {
+					charaEnemy1 = i; 
+				}
+			
+				else if (checkCanAllyBattle(charaAlly2, i)) {
+					charaEnemy2 = i; 
+				}
 			}
+
 			if (g_enemyBattleFinish0) {
-				battleEnemy(delta_time, charaAlly0, charaEnemy0);
-			}
-		}
-		else if (g_enemyBattleFinish1) { 
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
-				g_flagEnter = true;
-				g_flagCursor = false;
-				g_flagBattleAnime = true;
-				g_flagBattleHp = true;
-				g_CanAttackMove++;
-			}
-			battleEnemy(delta_time, charaAlly1, charaEnemy1);
-		}
-		else if (g_enemyBattleFinish2) {
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-				g_flagEnter = true;
-				g_flagCursor = false;
-				g_flagBattleAnime = true;
-				g_flagBattleHp = true;
-				g_CanAttackMove++;
+					g_flagEnter = true;
+					g_flagCursor = false;
+					g_flagBattleAnime = true;
+					g_flagBattleHp = true;
+					g_CanAttackMove++;
+				}
+				battleEnemy(delta_time, charaAlly0, charaEnemy0);			
 			}
-			battleEnemy(delta_time, charaAlly2, charaEnemy2);
-		}
+
+			else if (g_enemyBattleFinish1) { 
+			
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+					g_flagEnter = true;
+					g_flagCursor = false;
+					g_flagBattleAnime = true;
+					g_flagBattleHp = true;
+					g_CanAttackMove++;
+				}
+				battleEnemy(delta_time, charaAlly1, charaEnemy1);
+			}
+
+
+			else if (g_enemyBattleFinish2) {
+
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+					g_flagEnter = true;
+					g_flagCursor = false;
+					g_flagBattleAnime = true;
+					g_flagBattleHp = true;
+					g_CanAttackMove++;
+				}
+				battleEnemy(delta_time, charaAlly2, charaEnemy2);
+			}
 	
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
-			g_enemyBattleFinish0 = true;
-			g_enemyBattleFinish1 = true;
-			g_enemyBattleFinish2 = true;
-			g_enemyCheckFinish = true;
-			g_flagEnter = false;
-			g_flagCursor = true;
-			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
-			character[1].done = false;
-			character[2].done = false;
-			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-			g_turnMove = TURN_ALLAY;
+				g_enemyBattleFinish0 = true;
+				g_enemyBattleFinish1 = true;
+				g_enemyBattleFinish2 = true;
+				g_enemyCheckFinish = true;
+				g_flagEnter = false;
+				g_flagCursor = true;
+				character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
+				character[1].done = false;
+				character[2].done = false;
+				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+				g_turnMove = TURN_ALLAY;
+			}
+			break;
 		}
-		break;
-	}
 	}
 }
 
