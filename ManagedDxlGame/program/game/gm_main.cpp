@@ -78,10 +78,6 @@ int g_score = 0;
 
 bool g_enemyCheckFinish = true;
 
-bool g_enemyBattleFinish0 = true;
-bool g_enemyBattleFinish1 = true;
-bool g_enemyBattleFinish2 = true;
-
 //-------------------------------------------------------------------------------------------
 
 //一連の流れ
@@ -116,7 +112,6 @@ void turnMove(float delta_time) {
 					g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
 				}
 			}
-
 			//味方移動全般の関数
 			phaseAllyMove(delta_time);
 
@@ -149,10 +144,8 @@ void turnMove(float delta_time) {
 					g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
 				}
 			}
-
-
 			//敵全員が移動する
-			if (g_enemyCheckFinish) { phaseEnemyMove(delta_time, currentEnemyNumber); }
+			 phaseEnemyMove(delta_time, currentEnemyNumber); 
 
 			const int charaAlly0 = 0;
 			const int charaAlly1 = 1;
@@ -160,68 +153,28 @@ void turnMove(float delta_time) {
 
 			static int charaEnemy0 = 0;
 			static int charaEnemy1 = 0;
-			static int charaEnemy2 = 0;;
+			static int charaEnemy2 = 0;
 
-			for (int i = 3; i < CHARACTER_MAX; i++) {
+			static int countBattle = 0;
 
-				if (checkCanAllyBattle(charaAlly0, i)) {
-					charaEnemy0 = i;
-				}
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_LSHIFT)) { countBattle++; }
 			
-				else if (checkCanAllyBattle(charaAlly1, i)) {
-					charaEnemy1 = i; 
-				}
+			if (countBattle == 1) {
+				
+				enemyAttack(delta_time, charaAlly0, charaEnemy0);
+			}
+			else if (countBattle == 2) {
+				
+				enemyAttack(delta_time, charaAlly1, charaEnemy1);
+			}
+			else if (countBattle == 3) {
+				
+				enemyAttack(delta_time, charaAlly2, charaEnemy2);
+			}
 			
-				else if (checkCanAllyBattle(charaAlly2, i)) {
-					charaEnemy2 = i; 
-				}
-			}
-
-			if (g_enemyBattleFinish0) {
-
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-					g_flagEnter = true;
-					g_flagCursor = false;
-					g_flagBattleAnime = true;
-					g_flagBattleHp = true;
-					g_CanAttackMove++;
-				}
-				battleEnemy(delta_time, charaAlly0, charaEnemy0);			
-			}
-
-			else if (g_enemyBattleFinish1) { 
-			
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-					g_flagEnter = true;
-					g_flagCursor = false;
-					g_flagBattleAnime = true;
-					g_flagBattleHp = true;
-					g_CanAttackMove++;
-				}
-				battleEnemy(delta_time, charaAlly1, charaEnemy1);
-			}
-
-
-			else if (g_enemyBattleFinish2) {
-
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-					g_flagEnter = true;
-					g_flagCursor = false;
-					g_flagBattleAnime = true;
-					g_flagBattleHp = true;
-					g_CanAttackMove++;
-				}
-				battleEnemy(delta_time, charaAlly2, charaEnemy2);
-			}
-	
 			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
-				g_enemyBattleFinish0 = true;
-				g_enemyBattleFinish1 = true;
-				g_enemyBattleFinish2 = true;
+				countBattle = 0;
 				g_enemyCheckFinish = true;
 				g_flagEnter = false;
 				g_flagCursor = true;
@@ -233,11 +186,17 @@ void turnMove(float delta_time) {
 			}
 			break;
 		}
+
 	}
 }
 
-//敵からの攻撃処理まとめ
-void phaseEnemyBattle(float delta_time,int charaAlly,int charaEnemy) {
+//敵の攻撃流れ
+void enemyAttack(float delta_time,int ally,int enemy) {
+
+	for (int i = 3; i < CHARACTER_MAX; i++) {
+
+		if (checkCanAllyBattle(ally, i)) { enemy = i;}
+	}
 
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
@@ -247,7 +206,7 @@ void phaseEnemyBattle(float delta_time,int charaAlly,int charaEnemy) {
 		g_flagBattleHp = true;
 		g_CanAttackMove++;
 	}
-	battleEnemy(delta_time, charaAlly, charaEnemy);
+	battleEnemy(delta_time, ally, enemy);	
 }
 
 //敵フェーズの動き
@@ -396,7 +355,7 @@ void phaseAllyMove(float delta_time) {
 				if (chara < 0) { break; } //負の値だったらいない
 				
 				//行動済みなら座標動かない
-				//if (character[chara].done) {resetFill();}
+				if (character[chara].done) {resetFill();}
 				
 				//キャラがいれば(それ以外は)塗りつぶし
 				else {

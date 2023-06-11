@@ -561,10 +561,6 @@ void battledExit(int attack,int defence){
 		g_flagCursor = true;
 		g_CanAttackMove = 0;
 	}
-
-	if (attack == 0) { g_enemyBattleFinish0 = false; }
-	if (attack == 1) { g_enemyBattleFinish1 = false; }
-	if (attack == 2) { g_enemyBattleFinish2 = false; }
 }
 
 //ƒXƒRƒA•Ï“®ˆ—

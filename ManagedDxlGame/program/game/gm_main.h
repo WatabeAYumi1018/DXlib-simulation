@@ -88,23 +88,12 @@ extern int sound_se_hdl;
 //ÉXÉRÉAïœêî
 extern int g_score;
 
-extern bool g_enemyBattleFinish0;
-extern bool g_enemyBattleFinish1;
-extern bool g_enemyBattleFinish2;
-
-extern int charaAlly;
-
-
-extern bool g_enemyCheckFinish;
-
-bool isPairInBattlePairs(const std::vector<std::pair<int, int>>& battlePairs, int allyIndex, int enemyIndex);
 
 void phaseAllyMove(float delta_time);
 
 void phaseEnemyMove(float delta_time, int enemyNumber);
 
-void phaseEnemyBattle(float delta_time, int nearDistanceAlly, int currentEnemyNumber);
-
+void enemyAttack(float delta_time, int ally, int enemy);
 
 void gameStart();
 void gameMain( float delta_time );
