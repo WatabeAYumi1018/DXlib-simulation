@@ -659,10 +659,9 @@ void battle(float delta_time,int attack,int defence) {
 	}
 }
 
-//バトル関数
 void battleEnemy(float delta_time, int attack, int defence) {
 
-	if (g_flagEnter && !g_flagCursor) {
+	if (g_flagEnter && !g_flagCursor && g_flagBattle) {
 
 		//戦闘画面下グラフィック描画
 		battleGraph();
@@ -681,7 +680,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 			//attack側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, attack);
 		}
-		if (g_CanAttackMove == 2) {//味方の攻撃
+		else if (g_CanAttackMove == 2) {//味方の攻撃
 
 			//ヒット率乱数によるダメージ判定
 			battleHitRandom(delta_time, attack, defence);
@@ -694,12 +693,12 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
 		}
-		if (g_CanAttackMove == 3) {
+		else if (g_CanAttackMove == 3) {
 
 			//defence側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, defence);
 		}
-		if (g_CanAttackMove == 4) {
+		else if (g_CanAttackMove == 4) {
 
 			//ヒット率乱数によるダメージ判定
 			battleHitRandom(delta_time, defence, attack);
@@ -712,7 +711,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
 		}
-		if (g_CanAttackMove == 5) {
+		else if (g_CanAttackMove == 5) {
 
 			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
@@ -729,7 +728,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				}
 			}
 		}
-		if (g_CanAttackMove == 6) {
+		else if (g_CanAttackMove == 6) {
 
 			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
@@ -751,3 +750,4 @@ void battleEnemy(float delta_time, int attack, int defence) {
 		}
 	}
 }
+

@@ -79,8 +79,6 @@ int g_score = 0;
 bool g_flagBattle = false;
 
 
-int g_enemyBattleMove=0;
-
 //-------------------------------------------------------------------------------------------
 
 //一連の流れ
@@ -155,67 +153,38 @@ void turnMove(float delta_time) {
 			//敵全員が移動する
 			phaseEnemyMove(delta_time, currentEnemyNumber);
 
-			static int chara = 0;
+			const int charaAlly0 = 0;
+			const int charaAlly1 = 1;
+			const int charaAlly2 = 2;
 
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+			static int charaEnemy0 = 0;
+			static int charaEnemy1 = 0;
+			static int charaEnemy2 = 0;
 
-				g_flagEnter = true;
-				g_flagCursor = false;
-				g_flagBattleAnime = true;
-				g_flagBattleHp = true;
-				g_CanAttackMove++;
+			for (int i = 3; i < CHARACTER_MAX; i++) {
 
-				if (g_enemyBattleMove == 0) { g_enemyBattleMove++; }
-			}			
-
-			if (g_enemyBattleMove == 1) {
-
-				for (int i = 3; i < CHARACTER_MAX; i++) {
-
-					if (checkCanAllyBattle(0, i)) { 
-						
-						chara = i;
-						g_enemyBattleMove = 2;
-					}
-				}
-				if (character[0].team != character[chara].team) { 
-					
-					battle(delta_time, 0, chara);
-				}
+				if (checkCanAllyBattle(charaAlly0, i)) {charaEnemy0 = i;}
+				else if (checkCanAllyBattle(charaAlly1, i)) {charaEnemy1 = i;}
+				else if (checkCanAllyBattle(charaAlly2, i)) {charaEnemy2 = i;}
 			}
-			if (g_enemyBattleMove == 2) {
 
-				for (int i = 3; i < CHARACTER_MAX; i++) {
+			if (checkCanAllyBattle(charaAlly0, charaEnemy0)) {
 
-					if (checkCanAllyBattle(1, i)) {
-
-						chara = i;
-						g_enemyBattleMove = 3;
-					}
-				}
-				if (character[1].team != character[chara].team) { 
-
-
-					battle(delta_time, 1, chara);
-				}
+				phaseEnemyBattle(delta_time, charaAlly0, charaEnemy0);
 			}
-			if (g_enemyBattleMove == 3) {
 
-				for (int i = 3; i < CHARACTER_MAX; i++) {
+			else if (checkCanAllyBattle(charaAlly1, charaEnemy1)) {
 
-					if (checkCanAllyBattle(2, i)) {
+				phaseEnemyBattle(delta_time, charaAlly1, charaEnemy1);
 
-						chara = i;
-					}
-				}
-				if (character[2].team != character[chara].team) { 
-				
-					battle(delta_time, 2, chara);
-				}
 			}
-			g_enemyBattleMove = 0;
+
+			else if (checkCanAllyBattle(charaAlly2, charaEnemy2)) {
+
+				phaseEnemyBattle(delta_time, charaAlly2, charaEnemy2);
+			}
 		}
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB) && currentEnemyNumber == 14) {
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
 			g_flagEnter = false;
 			g_flagCursor = true;
@@ -230,6 +199,22 @@ void turnMove(float delta_time) {
 	}
 	}
 }
+void phaseEnemyBattle(float delta_time,int charaAlly,int charaEnemy) {
+
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+		g_flagEnter = true;
+		g_flagCursor = false;
+		g_flagBattleAnime = true;
+		g_flagBattleHp = true;
+		g_CanAttackMove++;
+		g_flagBattle = true;
+	}
+	battleEnemy(delta_time, charaAlly, charaEnemy);
+
+	g_flagBattle = false;
+}
+
 
 //敵フェーズの動き
 void phaseEnemyMove(float delta_time,int currentEnemyNumber) {
@@ -339,16 +324,6 @@ void phaseEnemyMove(float delta_time,int currentEnemyNumber) {
 		g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
 		phaseEnemyMove(delta_time, enemyNumber);
 	}
-}
-
-//敵からのバトル関数
-void phaseEnemyBattle(float delta_time,int nearDistanceAlly, int currentEnemyNumber) {
-
-	if (g_flagBattle) {
-
-		battle(delta_time, nearDistanceAlly, currentEnemyNumber);
-	}
-	g_flagBattle = false;
 }
 
 //カーソルエンター処理について
