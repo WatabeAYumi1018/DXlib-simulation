@@ -6,7 +6,7 @@
 int g_select_player_menu = TITLE_MENU_FIRST;
 
 //カーソルを見える化するための変数を作成
-int g_select_cursor_hdl = 0;				
+int g_select_cursor = 0;				
 
 //選択カーソルのポジション
 tnl::Vector3 g_sel_cursor_pos = TITLE_SELECT_MENU_POSITION[g_select_player_menu];
@@ -25,6 +25,9 @@ int screen_handle = 0;
 
 //明るさクリップフィルターに使用する閾値
 int bright_border = 150; 
+
+//ストーリー日差しブレンド
+int g_titleRight = 0;
 
 //タイトルメニューで選択
 void titleSelect() {
@@ -47,31 +50,20 @@ void titleSelect() {
 			if (g_select_player_menu == TITLE_MENU_CHARACTER) { g_gameScene_id = GAME_OVER; }
 		}
 		//選択カーソル位置の描画
-		DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor_hdl, true);
+		DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor, true);
 }
 
-//void rightFlash(float delta_time) {
-//
-//	float static sin_count = 0;
-//	float static cos_count = 0;
-//
-//	sin_count += tnl::ToRadian(2.0f);
-//	cos_count += tnl::ToRadian(2.0f);
-//
-//	int alphaSin = static_cast<int>(sin(sin_count) * 255);
-//	int alphaCos = static_cast<int>(cos(cos_count) * 255);
-//
-//
-//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaSin);
-//	DrawExtendGraph(60, 120, 80, 140, g_gameStartAnim, true);
-//	DrawExtendGraph(200,500,300,600, g_gameStartAnim, true);
-//
-//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaCos);
-//	DrawExtendGraph(560, 300, 660, 400, g_gameStartAnim, true);
-//	DrawExtendGraph(1000, 700, 1400, 740, g_gameStartAnim, true);
-//
-//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
-//}
+//タイトル画像ブレンド
+void TitleBlendRight() {
+
+	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_gameStart, TRUE);
+
+	SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
+
+	DrawGraph(0, 0, g_titleRight, TRUE);
+
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+}
 
 void titleMovie() {
 
@@ -91,8 +83,7 @@ void titleMovie() {
 	//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
 	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
 	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
-	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, false, GetColor(255, 255, 255), 255);
-	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_REPLACEMENT, 0, 0, 0, 255, 0, 0, 0, 0);
+	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, true, GetColor(0, 0, 0), 0);
 
 	//透過処理された画像を画面いっぱいに描画
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);

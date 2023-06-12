@@ -89,6 +89,7 @@ extern int sound_se_hdl;
 extern int g_score;
 
 
+
 void phaseAllyMove(float delta_time);
 
 void phaseEnemyMove(float delta_time, int enemyNumber);

@@ -40,9 +40,12 @@ const tnl::Vector3 TITLE_LOGO_NAMEPOS = { 350,100,0 };
 extern int g_select_player_menu;
 
 //カーソルを見える化するための変数を作成
-extern int g_select_cursor_hdl;			
+extern int g_select_cursor;			
 
 extern tnl::Vector3 g_sel_cursor_pos ;
+
+//ストーリー日差しブレンド
+extern int g_titleRight;
 
 //タイトル動画再生
 void titleMovie();
@@ -53,4 +56,5 @@ void titleSelect();
 //タイトル文字描画
 void sceneTitle();
 
-//void rightFlash(float delta_time);
+//タイトル画像ブレンド
+void TitleBlendRight();

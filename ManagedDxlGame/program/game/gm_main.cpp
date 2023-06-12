@@ -40,6 +40,7 @@ int g_gameOver = 0;
 //ゲームクリア画面
 int g_gameClear = 0;
 
+
 //-------------------------------------------------------------------------------------------
 //起動時に一回のみ実行されます
 void gameStart() {
@@ -60,14 +61,17 @@ void gameStart() {
 	g_gameStart = LoadGraph("graphics/GameStart.jpg");
 	
 	//ゲームスタート画面アニメーション
-	g_gameStartAnim = LoadGraph("graphics/titleSakura.png");
+	g_titleRight = LoadGraph("graphics/titleAnim.png");
 
 	//動画のロード
-	g_titleMovie = LoadGraph("graphics/titleMovie.mp4");
+	g_titleMovie = LoadGraph("graphics/titleFlower.mp4");
 	g_clearCracker = LoadGraph("graphics/clearCracker.mp4");
 
 	//タイトル選択画像
-	g_select_cursor_hdl = LoadGraph("graphics/flowerSelect.png");
+	g_select_cursor = LoadGraph("graphics/flowerSelect.png");
+
+	//ストーリーシーン背景
+	//g_storyBack= LoadGraph("graphics/flowerSelect.png");
 
 	//マップデータ
 	LoadDivGraph("graphics/pipo-map001.png", 88, 8, 11, CHIP_SIZE, CHIP_SIZE, map_chips[0]);
@@ -153,12 +157,16 @@ void gameMain(float delta_time) {
 
 		case GAME_START: {
 
-			//titleMovie();
+
+			TitleBlendRight();
+			titleMovie();
 			sceneTitle();				//タイトル全般
 
 			break;
 		}
 		case GAME_STORY:
+
+
 
 			break;
 
