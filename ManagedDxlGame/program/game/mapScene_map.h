@@ -43,6 +43,45 @@ extern int g_map_turn[1][15];
 //東西南北のベクトル
 extern int g_directions[][2];
 
+//味方フェーズ変数
+extern int g_phaseAlly ;
+
+//敵フェーズ変数
+extern int g_phaseEnemy;
+
+//ターン変数
+extern int g_turnMove ;
+
+//カーソルフラグ
+extern bool g_flagCursor;
+
+//エンター押しフラグ
+extern bool g_flagEnter ;
+
+//スペース押しフラグ
+extern bool g_flagEnemy ;
+
+//バトル進行中か否かの判定フラグ
+extern int g_CanAttackMove ;
+
+//現在敵何人目か（初期値はインデックスの３）
+extern int currentEnemyNumber ;
+
+// 最小距離の味方取得
+extern int nearDistanceAlly ;
+
+//味方ターン切り替え
+extern bool g_flagTurnAlly ;
+
+//敵ターン切り替え
+extern bool g_flagTurnEnemy;
+
+//スコア変数
+extern int g_score ;
+
+//敵一斉移動フラグ
+extern bool g_enemyCheckFinish ;
+
 //地形種類
 enum {
 	CELL_GROUND,              //草地0
@@ -68,6 +107,16 @@ enum {
 	DIRECTION_WEST,
 	DIRECTION_MAX
 };
+
+
+//一連の流れ
+void turnMove(float delta_time);
+
+//敵フェーズの動き
+void phaseEnemyMove(float delta_time, int currentEnemyNumber);
+
+//カーソルエンター処理について
+void phaseAllyMove(float delta_time);
 
 //score表示
 void scoreDraw();

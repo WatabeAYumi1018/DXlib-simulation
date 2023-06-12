@@ -3,6 +3,7 @@
 #include "mapScene_map.h"
 #include "mapScene_character.h"
 #include "titleScene.h"
+#include "mapScene_battle.h"
 
 //----------------------------------------------------------------------------
 //マップ全般の変数
@@ -72,9 +73,394 @@ int g_relation_back = 0;
 //マップ画面でのターン文字
 int g_map_turn[1][15];
 
+//味方フェーズ変数
+int g_phaseAlly = PHASE_SELECT_CHARACTER;
+
+//敵フェーズ変数
+int g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
+
+//ターン変数
+int g_turnMove = TURN_ALLAY;
+
+//カーソルフラグ
+bool g_flagCursor = true;
+
+//エンター押しフラグ
+bool g_flagEnter = false;
+
+//スペース押しフラグ
+bool g_flagEnemy = false;
+
+//バトル進行中か否かの判定フラグ
+int g_CanAttackMove = 0;
+
+//現在敵何人目か（初期値はインデックスの３）
+int currentEnemyNumber = 3;
+
+// 最小距離の味方取得
+int nearDistanceAlly = 0;
+
+//味方ターン切り替え
+bool g_flagTurnAlly = true;
+
+//敵ターン切り替え
+bool g_flagTurnEnemy = false;
+
+//スコア変数
+int g_score = 0;
+
+//敵一斉移動フラグ
+bool g_enemyCheckFinish = true;
+
 //----------------------------------------------------------------------------
 //マップ全般に関わる関数
 //
+
+//一連の流れ
+void turnMove(float delta_time) {
+
+	const int TELOP_X_END = 700;
+	const int TELOP_Y_START = 100;
+	const int TELOP_Y_END = 200;
+	const int TELOP_SPEED = 700;
+	const int TELOP_FRAME_MAX = 1400;
+
+	//テロップアニメーションカウント
+	float static telopTimeCount = 0;
+
+	switch (g_turnMove) {
+
+	case TURN_ALLAY: {
+
+		if (g_flagTurnAlly) {
+
+			//毎フレーム足していく処理
+			telopTimeCount += delta_time;
+
+			int telopFrame = telopTimeCount * TELOP_SPEED;
+
+			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][10], true);
+
+			//回復地形の上にいたら、ターン開始時に全回復
+			for (int i = 0; i < CHARACTER_ALLAY_MAX; i++) {
+
+				if (mapData[character[i].y][character[i].x] == CELL_HOUSE ||
+					mapData[character[i].y][character[i].x] == CELL_FORT) {
+
+					if (character[i].hp > 0 && character[i].hp < character[i].maxHp) {
+
+						character[i].hp = character[i].maxHp;
+
+						if (character[i].hp >= character[i].maxHp) { character[i].hp = character[i].maxHp; }
+					}
+				}
+			}
+
+			if (telopFrame >= TELOP_FRAME_MAX) {
+
+				telopFrame = 0;			//テロップの流れた距離リセット
+				telopTimeCount = 0;		//テロップのカウントリセット
+				g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
+			}
+		}
+		//味方移動全般の関数
+		phaseAllyMove(delta_time);
+
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+
+			g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
+			character[0].done = true;	//味方全員の行動を行動済みに
+			character[1].done = true;
+			character[2].done = true;
+			g_turnMove = TURN_ENEMY;
+		}
+		break;
+	}
+
+	case TURN_ENEMY: {
+
+		if (g_flagTurnEnemy) {
+
+			//毎フレーム足していく処理
+			telopTimeCount += delta_time;
+
+			int telopFrame = telopTimeCount * TELOP_SPEED;
+
+			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][9], true);
+
+			if (telopFrame >= TELOP_FRAME_MAX) {
+
+				telopFrame = 0;				//テロップの流れた距離リセット
+				telopTimeCount = 0;		//テロップのカウントリセット
+				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
+			}
+		}
+		//敵全員が移動する
+		phaseEnemyMove(delta_time, currentEnemyNumber);
+
+		const int charaAlly0 = 0;
+		const int charaAlly1 = 1;
+		const int charaAlly2 = 2;
+
+		static int charaEnemy0 = 0;
+		static int charaEnemy1 = 0;
+		static int charaEnemy2 = 0;
+
+		static int countBattle = 0;
+
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_LSHIFT)) { countBattle++; }
+
+		//★敵がいない場合の処理がない！
+		if (countBattle == 1) {
+
+			enemyAttack(delta_time, charaAlly0, charaEnemy0);
+		}
+		else if (countBattle == 2) {
+
+			enemyAttack(delta_time, charaAlly1, charaEnemy1);
+		}
+		else if (countBattle == 3) {
+
+			enemyAttack(delta_time, charaAlly2, charaEnemy2);
+		}
+
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+
+			countBattle = 0;
+			g_enemyCheckFinish = true;
+			g_flagEnter = false;
+			g_flagCursor = true;
+			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
+			character[1].done = false;
+			character[2].done = false;
+			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+			g_turnMove = TURN_ALLAY;
+		}
+		break;
+	}
+
+	}
+}
+
+//敵フェーズの動き
+void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
+
+	//1人検証が終わるごとに増えていく
+	const int ENEMY_COUNT = 15;
+
+	//調査中のNumberを代入
+	int enemyNumber = currentEnemyNumber;
+
+	// 最大距離
+	int maxDistance = INT_MAX;
+
+	int _enemyX = 0;
+	int _enemyY = 0;
+
+	int _allyX = 0;
+	int _allyY = 0;
+
+	switch (g_phaseEnemy) {
+
+	case PHASE_AI_SEARCH_CHARACTER: {
+
+
+		for (int i = 0; i < CHARACTER_ALLAY_MAX; ++i) {
+
+			_allyX = character[i].x;
+			_allyY = character[i].y;
+
+			_enemyX = character[enemyNumber].x;
+			_enemyY = character[enemyNumber].y;
+
+			//敵味方の座標が同じ＋どちらかがHPゼロならスルー
+			if (_allyX == _enemyX && _allyY == _enemyY ||
+				character[i].hp <= 0 || character[enemyNumber].hp <= 0) continue;
+
+			int distance = abs(_allyX - _enemyX) + abs(_allyY - _enemyY);
+
+			if (distance < maxDistance) {
+
+				maxDistance = distance;
+				nearDistanceAlly = i;
+			}
+		}
+
+		for (int dir = 0; dir < DIRECTION_MAX; dir++)
+		{
+			int _x = character[enemyNumber].x + g_directions[dir][0];
+			int _y = character[enemyNumber].y + g_directions[dir][1];
+			fillCanMove(enemyNumber, _x, _y, character[enemyNumber].move);
+		}
+
+		//味方までの距離と敵キャラの行動範囲を比較
+		if (maxDistance <= character[enemyNumber].move && fill[_enemyY][_enemyX]) {
+
+			g_phaseEnemy = PHASE_AI_MOVE_CHARACTER;
+		}
+		//範囲内ならキャラクター移動
+		else { break; }
+	}
+	case PHASE_AI_MOVE_CHARACTER: {
+
+		int enemyX = character[enemyNumber].x;
+		int enemyY = character[enemyNumber].y;
+
+		int allyX = character[nearDistanceAlly].x;
+		int allyY = character[nearDistanceAlly].y;
+
+		if (character[nearDistanceAlly].hp > 0 && character[enemyNumber].hp > 0) {
+
+			// 場面分けで敵の座標を更新
+			if (enemyX > allyX && (enemyY > allyY || enemyY < allyY)) {
+
+				enemyX = allyX + 1;
+				enemyY = allyY;
+			}
+			else if (enemyX < allyX && (enemyY > allyY || enemyY < allyY)) {
+
+				enemyX = allyX - 1;
+				enemyY = allyY;
+			}
+			else if (enemyX == allyX && enemyY > allyY) { enemyY = allyY + 1; }
+
+			else if (enemyX == allyX && enemyY < allyY) { enemyY = allyY - 1; }
+
+			else if (enemyX > allyX && enemyY == allyY) { enemyX = allyX + 1; }
+
+			else if (enemyX < allyX && enemyY == allyY) { enemyX = allyX - 1; }
+		}
+		//座標更新
+		character[enemyNumber].x = enemyX;
+		character[enemyNumber].y = enemyY;
+
+		break;
+	}
+	}
+	// 次の敵キャラクターのインデックス設定
+	enemyNumber++;
+
+	if (enemyNumber >= ENEMY_COUNT) {
+
+		g_enemyCheckFinish = false;
+		resetFill();
+		return;
+	}
+
+	else {//未調査の次の敵キャラクター判定のため更新
+		g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
+		phaseEnemyMove(delta_time, enemyNumber);
+	}
+}
+
+//カーソルエンター処理について
+void phaseAllyMove(float delta_time) {
+
+	switch (g_phaseAlly) {
+
+	case PHASE_SELECT_CHARACTER: {
+		
+		if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
+
+			resetFill();
+
+			//選択したキャラクターを囲って東西南北に1マスずつ塗りつぶし
+			int chara = getCharacter(cursorX, cursorY);
+			if (chara < 0) { break; } //負の値だったらいない
+
+			//行動済みなら座標動かない
+			//if (character[chara].done) { resetFill(); }
+
+			//キャラがいれば(それ以外は)塗りつぶし
+			else {
+
+				for (int dir = 0; dir < DIRECTION_MAX; dir++)
+				{
+					int x = character[chara].x + g_directions[dir][0];
+					int y = character[chara].y + g_directions[dir][1];
+					fillCanMove(chara, x, y, character[chara].move);//どんどん隣り合う場所を調査
+				}
+				//描画内にキャラがいたら、そこは描画しない
+				for (int i = 0; i < MAP_HEIGHT; i++) {
+					for (int j = 0; j < MAP_WIDTH; j++) {
+
+						int standChara = getCharacter(j, i);
+						if (standChara >= 0 && fill[i][j]) { fill[i][j] = false; }
+					}
+				}
+				drawFill();
+
+				//キャラを選択したら、移動フェーズへ
+				if (character[chara].team == TEAM_ALLY) {
+
+					g_selectedChara = chara; //味方キャラを代入
+					g_phaseAlly = PHASE_SET_MOVE_POSITION;
+				}
+				break;
+			}
+		}
+	}
+	case PHASE_SET_MOVE_POSITION: {
+
+		drawFill();
+
+		if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
+
+			//移動先の選択、完了したら選択フェーズに戻る
+			if (fill[cursorY][cursorX]) {
+
+				//移動による座標の変化
+				character[g_selectedChara].x = cursorX;
+				character[g_selectedChara].y = cursorY;
+
+				bool checkBattleFlag = false;
+
+				for (int i = 0; i < CHARACTER_MAX; i++) {
+
+					if (checkCanAllyBattle(g_selectedChara, i)) {
+
+						g_standbyChara = i;
+						checkBattleFlag = true;
+						break;
+					}
+				}
+				if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK; }
+
+				else {
+					//攻撃可能キャラがいなければ、待機
+					character[g_selectedChara].done = true;
+					resetFill();
+					g_phaseAlly = PHASE_SELECT_CHARACTER;
+				}
+			}
+		}
+		break;
+	}
+	case PHASE_SELECT_ATTACK: {
+
+		if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
+
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
+			}
+			battleAlly(delta_time, g_selectedChara, g_standbyChara);
+		}
+		break;
+	}
+	}
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+		//攻撃可能キャラがいなければ、待機
+		character[g_selectedChara].done = true;
+		resetFill();
+		g_phaseAlly = PHASE_SELECT_CHARACTER;
+	}
+}
 
 //score表示
 void scoreDraw() {

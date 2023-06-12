@@ -79,7 +79,7 @@ void battledExit(int attack, int defence);
 void scoreMove();
 
 //í“¬ˆ—
-void battle(float delta_time, int attack, int defence);
+void battleAlly(float delta_time, int attack, int defence);
 
 //“G‚©‚ç‚Ìí“¬ˆ—
 void battleEnemy(float delta_time, int attack, int defence);

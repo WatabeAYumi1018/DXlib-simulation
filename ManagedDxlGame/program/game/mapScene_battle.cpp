@@ -49,6 +49,8 @@ bool checkCanAllyBattle(int attack, int defence) {
 	}
 }
 
+//------------------------------------------------------
+
 //戦闘下画面のグラフィック描画
 void battleGraph() {
 
@@ -369,7 +371,6 @@ void battleEffectGraph(float delta_time, int chara) {
 				g_flagBattleAnime = false;
 			}
 		}
-
 		//味方＋剣
 		if (character[chara].team == TEAM_ALLY && character[chara].job == JOB_SWORDMASTER) {
 
@@ -481,7 +482,7 @@ void battleHitRandom(float delta_time,int attack, int defence) {
 	if (hit < hitRandom) {
 
 		//攻撃ミスの描画
-		DrawRotaGraph(800, 300, 1.0f, 45, g_battleMiss, TRUE);
+		//DrawRotaGraph(800, 300, 1.0f, 45, g_battleMiss, TRUE);
 		
 		g_CanAttackMove++;
 	}
@@ -508,8 +509,10 @@ int battleDamage(int attack, int defence) {
 		damage =(character[attack].attack - character[defence].defence)/2;	
 	}
 	//それ以外（３すくみの影響なし）
-	else if(ThreeRelation(attack, defence) == 2){damage = character[attack].attack - character[defence].defence;}
-
+	else if(ThreeRelation(attack, defence) == 2){
+	
+		damage = character[attack].attack - character[defence].defence;
+	}
 	return damage;
 }
 
@@ -528,6 +531,7 @@ void battleHpMove(float delta_time, int attack, int defence) {
 
 			int damage = battleDamage(attack, defence);
 			character[defence].hp -= damage;
+
 			if (character[defence].hp <= 0) { character[defence].hp = 0; }
 
 			g_HpTimeCount = 0;
@@ -539,8 +543,7 @@ void battleHpMove(float delta_time, int attack, int defence) {
 //戦闘処理終了
 void battleExit() {
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
-		tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
 		character[g_selectedChara].done = true;
 		g_phaseAlly = PHASE_SELECT_CHARACTER;
@@ -554,8 +557,7 @@ void battleExit() {
 //敵からの戦闘終了
 void battledExit(int attack,int defence){
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
-		tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
 
 		g_flagEnter = false;
 		g_flagCursor = true;
@@ -578,7 +580,7 @@ void scoreMove() {
 }
 
 //バトル関数
-void battle(float delta_time,int attack,int defence) {
+void battleAlly(float delta_time,int attack,int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
 
@@ -641,10 +643,7 @@ void battle(float delta_time,int attack,int defence) {
 				battleEffectGraph(delta_time, defence);
 			}
 			else {
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
-					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-					battleExit();
-				}
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {battleExit();}
 			}
 		}
 		else if (g_CanAttackMove == 6) {
@@ -670,6 +669,7 @@ void battle(float delta_time,int attack,int defence) {
 	}
 }
 
+//敵からのバトル関数
 void battleEnemy(float delta_time, int attack, int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
@@ -716,7 +716,6 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[attack].hp <= 0) {
 
-
 				scoreMove();
 				battledExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
@@ -734,11 +733,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				battleEffectGraph(delta_time, defence);
 			}
 			else {
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) ||
-					tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-					battledExit(attack, defence);
-				}
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {battledExit(attack, defence);}
 			}
 		}
 		else if (g_CanAttackMove == 6) {
@@ -756,10 +751,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 		}
 		else {
 
-			if (character[attack].hp <= 0) {
-
-				scoreMove();
-			}
+			if (character[attack].hp <= 0) {scoreMove();}
 
 			battledExit(attack, defence);
 
@@ -769,3 +761,20 @@ void battleEnemy(float delta_time, int attack, int defence) {
 	}
 }
 
+//敵フェーズの攻撃流れ
+void enemyAttack(float delta_time, int ally, int enemy) {
+
+	for (int i = 3; i < CHARACTER_MAX; i++) {
+
+		if (checkCanAllyBattle(ally, i)) { enemy = i; }
+	}
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+		g_flagEnter = true;
+		g_flagCursor = false;
+		g_flagBattleAnime = true;
+		g_flagBattleHp = true;
+		g_CanAttackMove++;
+	}
+	battleEnemy(delta_time, ally, enemy);
+}
