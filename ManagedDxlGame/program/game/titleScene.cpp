@@ -45,16 +45,16 @@ void titleSelect() {
 		//エンターを押した場所によってシーンが変わる
 		if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
 
-			if (g_select_player_menu == TITLE_MENU_FIRST) { g_gameScene_id = GAME_MAP; }
+			if (g_select_player_menu == TITLE_MENU_FIRST) { g_gameScene_id = GAME_STORY; }
 			if (g_select_player_menu == TITLE_MENU_CONTINUE) { g_gameScene_id = GAME_MAP; }
-			if (g_select_player_menu == TITLE_MENU_CHARACTER) { g_gameScene_id = GAME_OVER; }
+			if (g_select_player_menu == TITLE_MENU_CHARACTER) { g_gameScene_id = GAME_TUTORIAL; }
 		}
 		//選択カーソル位置の描画
 		DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor, true);
 }
 
-//タイトル画像ブレンド
-void TitleBlendRight() {
+//タイトル画像
+void titleBackDraw() {
 
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_gameStart, TRUE);
 
@@ -65,6 +65,7 @@ void TitleBlendRight() {
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
+//タイトルでの動画流し
 void titleMovie() {
 
 	//動画の画像サイズを取得
@@ -79,17 +80,14 @@ void titleMovie() {
 	//動画の再生開始
 	PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
 
-	//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
-	//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
+	//透過する方法として明るさクリップフィルターがある
+	//「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
 	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
 	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
 	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, true, GetColor(0, 0, 0), 0);
 
 	//透過処理された画像を画面いっぱいに描画
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
-
-	//動画の再生開始
-	PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
 }
 
 //タイトル文字描画
@@ -98,11 +96,12 @@ void sceneTitle() {
 	titleSelect();
 
 	//タイトル文字
-	SetFontSize(100);
-	DrawStringEx(TITLE_LOGO_NAMEPOS.x, TITLE_LOGO_NAMEPOS.y, 1, TITLE_LOGO_NAME.c_str());
+	DrawExtendGraph(200, 50, 1100, 300, g_title, TRUE);
 
-	SetFontSize(50);
+	ChangeFont("PixelMplus12", DX_CHARSET_DEFAULT);
+
+	SetFontSize(70);
 	DrawStringEx(TITLE_SELECT_MENU_POSITION[0].x, TITLE_SELECT_MENU_POSITION[0].y, -TEXT_COLOR_WHITE, "NEWGAME START");
-	DrawStringEx(TITLE_SELECT_MENU_POSITION[1].x, TITLE_SELECT_MENU_POSITION[1].y, -TEXT_COLOR_WHITE, "LOADGAME");
-	DrawStringEx(TITLE_SELECT_MENU_POSITION[2].x, TITLE_SELECT_MENU_POSITION[2].y, -TEXT_COLOR_WHITE, "BACK");
+	DrawStringEx(TITLE_SELECT_MENU_POSITION[1].x, TITLE_SELECT_MENU_POSITION[1].y, -TEXT_COLOR_WHITE, "MAP GAME");
+	DrawStringEx(TITLE_SELECT_MENU_POSITION[2].x, TITLE_SELECT_MENU_POSITION[2].y, -TEXT_COLOR_WHITE, "TUTORIAL");
 }

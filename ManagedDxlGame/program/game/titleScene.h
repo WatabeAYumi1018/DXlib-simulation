@@ -10,9 +10,9 @@ enum {
 
 //メニューの位置を配列化
 const tnl::Vector3 TITLE_SELECT_MENU_POSITION[TITLE_MENU_MAX] = {
-	{450,400,0},
-	{500,500,0},
-	{550,600,0}
+	{400,400,0},
+	{490,500,0},
+	{490,600,0}
 };
 
 //ゲームスタート画面
@@ -32,9 +32,6 @@ extern int screen_handle;
 
 //明るさクリップフィルターに使用する閾値
 extern int bright_border;
-
-const std::string TITLE_LOGO_NAME = "GREEN OCEAN";
-const tnl::Vector3 TITLE_LOGO_NAMEPOS = { 350,100,0 };
 
 // カーソル初期位置をはじめからへ
 extern int g_select_player_menu;
@@ -57,4 +54,4 @@ void titleSelect();
 void sceneTitle();
 
 //タイトル画像ブレンド
-void TitleBlendRight();
+void titleBackDraw();

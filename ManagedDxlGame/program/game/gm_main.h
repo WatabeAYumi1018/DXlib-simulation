@@ -10,7 +10,7 @@ enum {
 	GAME_MAP,
 	GAME_OVER,
 	GAME_CLEAR,
-	GAME_RESTART
+	GAME_TUTORIAL
 };
 
 //文字の色
@@ -88,8 +88,21 @@ extern int sound_se_hdl;
 //スコア変数
 extern int g_score;
 
+//タイトル文字
+extern int g_title;
 
+//----------------------------
+//ストーリー背景
+extern int g_storyBack;
 
+//ストーリーウィンドウ
+extern int g_storyWindow;
+
+void storyDraw();
+
+void storyMessage();
+
+//----------------------------
 void phaseAllyMove(float delta_time);
 
 void phaseEnemyMove(float delta_time, int enemyNumber);
