@@ -62,26 +62,20 @@ void storyMessage() {
 
 	SetFontSize(40);
 
-	//メッセージ行数（行が進むと増加）
 	static int messageLine = 0;
-	//メッセージの文字数（一文字ずつ増加）
 	static int messageCount = 0;
-	//メッセージ数
-	const int MESSAGE_NUM = 2;
-	//テキスト数
+	const int MESSAGE_LINE = 7;  // 行の数
+	const int MESSAGE_NUM = 2;   // 列の数
+	const int TEXT_LINE = 7;
 	const int TEXT_NUM = 2;
-	//メッセージの最大行数
-	const int MAX_LINE_NUM = 2;
-	//メッセージが増加する際の文字数の増加量(全角１文字ずつ)
-	int addMessageNumber = 2;
-	
+	int addMessageNumber = 1;  // 1文字ずつ処理するために1文字ずつ増加
 	//テキスト格納する文字列
-	std::string text[TEXT_NUM];
+	std::string text[TEXT_LINE][TEXT_NUM];
 	//メッセージ格納する文字列
-	std::string message[MESSAGE_NUM] = {
+	std::string message[MESSAGE_LINE][MESSAGE_NUM] = {
 
-		{"あなたが　有名な軍師さまですね", "" },
-		{"ようこそ　人里離れた森海","GREEN OCEANへ"},
+		{"あなたが　有名な軍師さまですね", "遠路はるばる　ありがとうございます" },
+		{"ようこそ　人里離れた","新緑の海原 へ"},
 		{"まさか軍師さまに　直接ご指導いただけるなんて","皆　本日を心待ちにしていたのですよ"},
 		{"ご活躍は　こちらでも耳にします","数多の英雄を導いた　伝説の軍師さま"},
 		{"かく言う私も　楽しみで昨夜は中々…"},
@@ -89,26 +83,35 @@ void storyMessage() {
 		{"あなた様の采配","楽しみにしていますわ"}
 	};
 
-	//メッセージ配列の文字を一文字ずつ取り出し、コピーしていく（永遠どんどんコピー）
-	//文字が何行でも全て取り出せる利点がある
-	for (int i = 0; i < messageLine; ++i) {text[i] = message[i];}
-
-	//substr(取り出したい部分の開始位置,取り出す文字数)⇒文字列の一部分を取り出す関数
-	//二行全て終わったらメッセージから取り出した文字全てをテキスト配列へ
-	if( messageLine < MAX_LINE_NUM) text[messageLine] = message[messageLine].substr(0, messageCount);
-	
-	//messageCountでメッセージは一文字ずつ増加していく。
-	//
-	if (message[ messageLine ].length() > messageCount) {messageCount += addMessageNumber;}
-
-	else {
-		messageCount = 0;
-		if (messageLine < MAX_LINE_NUM) messageLine++;
+	for (int i = 0; i < MESSAGE_LINE; ++i) {
+		for (int j = 0; j < MESSAGE_NUM; ++j) {
+			if (i < messageLine) {
+				text[i][j] = message[i][j];  // すでに描画された行のメッセージをコピー
+			}
+			else if (i == messageLine) {
+				text[i][j] = message[i][j].substr(0, messageCount);  // 現在描画中の行のメッセージを部分的にコピー
+			}
+			else {
+				text[i][j] = "";  // 未描画の行のメッセージは空にする
+			}
+		}
 	}
 
-	for (int i = 0; i < MAX_LINE_NUM; ++i) {DrawStringEx(200, 540 + i*80, -TEXT_COLOR_WHITE, "%s", text[i].c_str());}
+	if (messageLine < MESSAGE_LINE) {
+		if (message[messageLine][0].length() > messageCount) {
+			messageCount += addMessageNumber;
+		}
+		else {
+			messageCount = 0;
+			messageLine++;
+		}
+	}
 
-
+	for (int i = 0; i < TEXT_LINE; ++i) {
+		for (int j = 0; j < TEXT_NUM; ++j) {
+			DrawStringEx(200, 540 + i * 80, -TEXT_COLOR_WHITE, "%s", text[i][j].c_str());
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------

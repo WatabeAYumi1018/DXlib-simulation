@@ -76,7 +76,7 @@ void titleMovie() {
 
 	//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
 	screen_handle = MakeScreen(size_x, size_y, TRUE);
-
+ 
 	//動画の再生開始
 	PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
 
