@@ -57,9 +57,6 @@ int graphic_cell_ground = 0;
 //ƒ}ƒbƒv‰º‰æ‘œ
 int display_map = 0;
 
-//ƒ{ƒ^ƒ“‘€ì•`‰æ
-int g_bottonLayout=0;
-
 //ƒJ[ƒ\ƒ‹‰æ‘œ
 int g_cursor = 0;
 
@@ -166,6 +163,11 @@ void turnMove(float delta_time) {
 		//–¡•ûˆÚ“®‘S”Ê‚ÌŠÖ”
 		phaseAllyMove(delta_time);
 
+		if (!g_flagEnter && g_flagCursor) {
+
+			//ƒ{ƒ^ƒ“‘€ì•`‰æ
+			leafBottonDrawAllyTurnMap(delta_time);
+		}
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
 			g_flagTurnEnemy = true;		//“Gƒ^[ƒ“‚Ìƒeƒƒbƒv‚ğ—¬‚·‚½‚ß‚Étrue
@@ -236,9 +238,13 @@ void turnMove(float delta_time) {
 			g_flagTurnAlly = true;				//–¡•ûƒ^[ƒ“‚Ìƒeƒƒbƒv‚ğ—¬‚·‚½‚ß‚Étrue
 			g_turnMove = TURN_ALLAY;
 		}
+
+		if (!g_flagEnter && g_flagCursor) {
+			//“Gƒ^[ƒ“ƒ{ƒ^ƒ“•`‰æ
+			leafBottonDrawEnemyTurnMap(delta_time);
+		}
 		break;
 	}
-
 	}
 }
 
@@ -263,7 +269,6 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 	switch (g_phaseEnemy) {
 
 	case PHASE_AI_SEARCH_CHARACTER: {
-
 
 		for (int i = 0; i < CHARACTER_ALLAY_MAX; ++i) {
 
@@ -518,7 +523,7 @@ void fillCanMove(int _chara, int _x, int _y, int _move) {//‘I‘ğ‚µ‚½–¡•ûƒLƒƒƒ‰A
 	}
 }
 
-//î•ñ‚âŠeƒtƒF[ƒY‚Å‚Ìw¦•¶š•`‰æˆ—i‚±‚±‚É“_–Åˆ—‚ğ‰Á‚¦‚æ‚¤j
+//î•ñ‚âŠeƒtƒF[ƒY‚Å‚Ìw¦•¶š•`‰æˆ—
 void instructions(float delta_time) {
 
 	//–½—ß•¶‚ÌÀ•W
@@ -528,7 +533,7 @@ void instructions(float delta_time) {
 	float static instructionsTimeCount = 0;
 	bool static instructionsDraw = true;
 
-	//–ˆƒtƒŒ[ƒ€‘«‚µ‚Ä‚¢‚­ˆ—
+	//“_–Åˆ—
 	instructionsTimeCount += delta_time;
 
 	if (instructionsTimeCount > 1.0f) {
@@ -686,9 +691,6 @@ void mapPosition(float delta_time) {
 			//ƒ}ƒbƒvã‚Å‚ÌƒLƒƒƒ‰î•ñ‰æ–Ê•`‰æ
 			DrawExtendGraph(0, 500, 1400, 730, display_map, true);
 			
-			//ƒ{ƒ^ƒ“à–¾•`‰æ
-			DrawGraph(1060, 490, g_bottonLayout, TRUE);
-			
 			//O‚·‚­‚İŠÖ˜A‰æ‘œ•`‰æ
 			DrawExtendGraph(0, 370, 125, 480, g_relation_back, true);
 			DrawGraph(15, 370, g_relation, TRUE);
@@ -699,6 +701,62 @@ void mapPosition(float delta_time) {
 			//Œ»İ‚Ì‘I‘ğƒJ[ƒ\ƒ‹‚ÌˆÊ’u‚ğ•`‰æ
 			if (j == cursorX && i == cursorY) { DrawGraph(j * CHIP_SIZE, i * CHIP_SIZE, g_cursor, TRUE); }
 		}
+	}
+}
+
+//–¡•ûƒ^[ƒ“ƒ}ƒbƒv‰æ–Ê‚Ìƒ{ƒ^ƒ“•\‹L
+void leafBottonDrawAllyTurnMap(float delta_time) {
+
+	SetFontSize(20);
+
+	float static leafBottonTimeCount = 0;
+	bool static leafBottonDraw = true;
+
+	//–ˆƒtƒŒ[ƒ€‘«‚µ‚Ä‚¢‚­ˆ—
+	leafBottonTimeCount += delta_time;
+
+	if (leafBottonTimeCount > 1.0f) {
+		leafBottonDraw = !leafBottonDraw;
+		leafBottonTimeCount = 0;
+	}
+	if (leafBottonDraw) {
+		DrawExtendGraph(890, 400, 970, 480, g_bottonCursor, true);
+		DrawStringEx(970, 430, TEXT_COLOR_WHITE, "ˆÚ“®\n");
+		DrawExtendGraph(1140, 400, 1220, 480, g_bottonEnter, true);
+		DrawStringEx(1220, 430, TEXT_COLOR_WHITE, "Œˆ’è\n");
+		DrawExtendGraph(1010, 400, 1090, 480, g_bottonSpace, true);
+		DrawStringEx(1090, 430, TEXT_COLOR_WHITE, "‘Ò‹@\n");
+	}
+	if (!leafBottonDraw) {
+		DrawExtendGraph(980, 400, 1060, 480, g_bottonTab, true);
+		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "–¡•ûƒ^[ƒ“I—¹\n");
+	}
+}
+
+//“Gƒ^[ƒ“ƒ}ƒbƒv‰æ–Ê‚Ìƒ{ƒ^ƒ“•\‹L
+void leafBottonDrawEnemyTurnMap(float delta_time) {
+
+	SetFontSize(20);
+
+	float static leafBottonTimeCount = 0;
+	bool static leafBottonDraw = true;
+
+	//–ˆƒtƒŒ[ƒ€‘«‚µ‚Ä‚¢‚­ˆ—
+	leafBottonTimeCount += delta_time;
+
+	if (leafBottonTimeCount > 1.0f) {
+		leafBottonDraw = !leafBottonDraw;
+		leafBottonTimeCount = 0;
+	}
+	if (leafBottonDraw) {
+		DrawExtendGraph(980, 400, 1060, 480, g_bottonShift, true);
+		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "í“¬ŒÄ‚Ñ\n");
+		DrawExtendGraph(1140, 400, 1220, 480, g_bottonSpace, true);
+		DrawStringEx(1220, 430, TEXT_COLOR_WHITE, "í“¬\n");
+	}
+	if (!leafBottonDraw) {
+		DrawExtendGraph(980, 400, 1060, 480, g_bottonTab, true);
+		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "“Gƒ^[ƒ“I—¹\n");
 	}
 }
 

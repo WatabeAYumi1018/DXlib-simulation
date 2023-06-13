@@ -31,6 +31,8 @@ bool g_flagBattleHp = true;
 // バトルフラグ
 bool g_battleInProgress = false;
 
+//------------------------------------------------------
+
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence) {
 
@@ -48,8 +50,6 @@ bool checkCanAllyBattle(int attack, int defence) {
 		return false;
 	}
 }
-
-//------------------------------------------------------
 
 //戦闘下画面のグラフィック描画
 void battleGraph() {
@@ -596,6 +596,9 @@ void battleAlly(float delta_time,int attack,int defence) {
 		//戦闘画面のキャラアニメーション
 		battleCharaGraph(delta_time, attack, defence);
 
+		//ボタン描画
+		leafBottonDrawAllyBattle(delta_time);
+
 		if (g_CanAttackMove == 1) {
 
 			//attack側の攻撃エフェクト描画
@@ -685,6 +688,9 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 		//戦闘画面のキャラアニメーション
 		battleCharaGraph(delta_time, attack, defence);
+
+		//ボタン描画
+		leafBottonDrawEnemyBattle(delta_time);
 
 		if (g_CanAttackMove == 1) {
 
@@ -777,4 +783,46 @@ void enemyAttack(float delta_time, int ally, int enemy) {
 		g_CanAttackMove++;
 	}
 	battleEnemy(delta_time, ally, enemy);
+}
+
+//味方戦闘中ボタン描画
+void leafBottonDrawAllyBattle(float delta_time) {
+
+	SetFontSize(20);
+
+	float static leafBottonTimeCount = 0;
+	bool static leafBottonDraw = true;
+
+	//毎フレーム足していく処理
+	leafBottonTimeCount += delta_time;
+
+	if (leafBottonTimeCount > 1.0f) {
+		leafBottonDraw = !leafBottonDraw;
+		leafBottonTimeCount = 0;
+	}
+	if (!leafBottonDraw) {
+		DrawExtendGraph(1050, 400, 1130, 480, g_bottonEnter, true);
+		DrawStringEx(1130, 430, TEXT_COLOR_WHITE, "戦闘おくり\n");
+	}
+}
+
+//敵戦闘中ボタン描画
+void leafBottonDrawEnemyBattle(float delta_time) {
+	
+	SetFontSize(20);
+
+	float static leafBottonTimeCount = 0;
+	bool static leafBottonDraw = true;
+
+	//毎フレーム足していく処理
+	leafBottonTimeCount += delta_time;
+
+	if (leafBottonTimeCount > 1.0f) {
+		leafBottonDraw = !leafBottonDraw;
+		leafBottonTimeCount = 0;
+	}
+	if (!leafBottonDraw) {
+		DrawExtendGraph(1050, 400, 1130, 480, g_bottonSpace, true);
+		DrawStringEx(1130, 430, TEXT_COLOR_WHITE, "戦闘おくり\n");
+	}
 }

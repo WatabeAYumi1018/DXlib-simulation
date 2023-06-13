@@ -5,15 +5,13 @@
 #include "../dxlib_ext/dxlib_ext.h"
 #include "gm_main.h"
 #include "titleScene.h"
+#include "storyScene.h"
 #include "mapScene_map.h"
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
 
 //クリア文字/ゲームオーバー文字⇒タイトルへ
-//地形の上に乗ると、毎ターン体力回復
-
-
 
 //-------------------------------------------------------------------------------------------
 //進行フェーズのフラグ変数
@@ -42,77 +40,24 @@ int g_gameClear = 0;
 //タイトル文字
 int g_title = 0;
 
+//エンターボタン
+int g_bottonEnter = 0;
+//カーソルボタン
+int g_bottonCursor = 0;
+//タブボタン
+int g_bottonTab = 0;
+//スペースボタン
+int g_bottonSpace = 0;
+//シフトボタン
+int g_bottonShift = 0;
+
 //-----------------
 // 
-//ストーリー背景
-int g_storyBack = 0;
 
-//ストーリーウィンドウ
-int g_storyWindow = 0;
 
-void storyDraw() {
 
-	//ストーリー背景
-	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_storyBack, TRUE);
-	//ストーリー会話ウィンドウ
-	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
-}
+//void tutorialDraw
 
-void storyMessage() {
-
-	SetFontSize(40);
-
-	static int messageLine = 0;
-	static int messageCount = 0;
-	const int MESSAGE_LINE = 7;  // 行の数
-	const int MESSAGE_NUM = 2;   // 列の数
-	const int TEXT_LINE = 7;
-	const int TEXT_NUM = 2;
-	int addMessageNumber = 1;  // 1文字ずつ処理するために1文字ずつ増加
-	//テキスト格納する文字列
-	std::string text[TEXT_LINE][TEXT_NUM];
-	//メッセージ格納する文字列
-	std::string message[MESSAGE_LINE][MESSAGE_NUM] = {
-
-		{"あなたが　有名な軍師さまですね", "遠路はるばる　ありがとうございます" },
-		{"ようこそ　人里離れた","新緑の海原 へ"},
-		{"まさか軍師さまに　直接ご指導いただけるなんて","皆　本日を心待ちにしていたのですよ"},
-		{"ご活躍は　こちらでも耳にします","数多の英雄を導いた　伝説の軍師さま"},
-		{"かく言う私も　楽しみで昨夜は中々…"},
-		{"と　失礼いたしました","早速　訓練場へ案内いたしますね"},
-		{"あなた様の采配","楽しみにしていますわ"}
-	};
-
-	for (int i = 0; i < MESSAGE_LINE; ++i) {
-		for (int j = 0; j < MESSAGE_NUM; ++j) {
-			if (i < messageLine) {
-				text[i][j] = message[i][j];  // すでに描画された行のメッセージをコピー
-			}
-			else if (i == messageLine) {
-				text[i][j] = message[i][j].substr(0, messageCount);  // 現在描画中の行のメッセージを部分的にコピー
-			}
-			else {
-				text[i][j] = "";  // 未描画の行のメッセージは空にする
-			}
-		}
-	}
-
-	if (messageLine < MESSAGE_LINE) {
-		if (message[messageLine][0].length() > messageCount) {
-			messageCount += addMessageNumber;
-		}
-		else {
-			messageCount = 0;
-			messageLine++;
-		}
-	}
-
-	for (int i = 0; i < TEXT_LINE; ++i) {
-		for (int j = 0; j < TEXT_NUM; ++j) {
-			DrawStringEx(200, 540 + i * 80, -TEXT_COLOR_WHITE, "%s", text[i][j].c_str());
-		}
-	}
-}
 
 //-------------------------------------------------------------------------------------------
 //起動時に一回のみ実行されます
@@ -156,7 +101,6 @@ void gameStart() {
 	//ストーリーシーン会話ウィンドウ
 	g_storyWindow = LoadGraph("graphics/storyWindow.png");
 
-
 	//マップデータ
 	LoadDivGraph("graphics/pipo-map001.png", 88, 8, 11, CHIP_SIZE, CHIP_SIZE, map_chips[0]);
 
@@ -174,9 +118,6 @@ void gameStart() {
 	
 	//マップ上での情報表示用（下画面）
 	display_map = LoadGraph("graphics/mapInfo.png"); 
-	
-	//マップ下のボタン描画
-	g_bottonLayout = LoadGraph("graphics/bottonLayout.png");
 
 	//マップ上での行動可能範囲
 	fill_map = LoadGraph("graphics/canMoveTile.png"); 
@@ -216,6 +157,17 @@ void gameStart() {
 
 	//マップ画面でのターン文字
 	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
+
+	//エンターボタン
+	g_bottonEnter = LoadGraph("graphics/leafEnter.png");
+	//カーソルボタン
+	g_bottonCursor = LoadGraph("graphics/leafCursor.png");
+	//タブボタン
+	g_bottonTab= LoadGraph("graphics/leafTab.png");
+	//スペースボタン
+	g_bottonSpace= LoadGraph("graphics/leafSpace.png");
+	//シフトボタン
+	g_bottonShift= LoadGraph("graphics/leafShift.png");
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -231,7 +183,7 @@ void gameMain(float delta_time) {
 	//}
 
 	//if (tnl::Input::IsKeyDownTrigger(eKeys::KB_X)) {
-	//	PlaySoundMem(sound_bgm_hdl, DX_PLAYTYPE_LOOP); //X押すと途中から再生がはじまる
+	//	PlaySoundMem(sound_bgm_hl, DX_PLAYTYPE_LOOP); //X押すと途中から再生がはじまる
 	//}
 
 	//曲を途中から再生する
@@ -251,6 +203,7 @@ void gameMain(float delta_time) {
 
 			storyDraw();				//ストーリー背景描画
 			storyMessage();				//ストーリーメッセージ描画
+			leafBottonDrawStory(delta_time);
 
 			break;
 

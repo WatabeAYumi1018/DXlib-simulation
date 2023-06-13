@@ -91,6 +91,17 @@ extern int g_score;
 //タイトル文字
 extern int g_title;
 
+//エンターボタン
+extern int g_bottonEnter;
+//カーソルボタン
+extern int g_bottonCursor;
+//タブボタン
+extern int g_bottonTab;
+//スペースボタン
+extern int g_bottonSpace;
+//シフトボタン
+extern int g_bottonShift;
+
 //----------------------------
 //ストーリー背景
 extern int g_storyBack;

@@ -83,3 +83,9 @@ void battleAlly(float delta_time, int attack, int defence);
 
 //“G‚©‚ç‚Ìí“¬ˆ—
 void battleEnemy(float delta_time, int attack, int defence);
+
+//–¡•ûí“¬’†ƒ{ƒ^ƒ“•`‰æ
+void leafBottonDrawAllyBattle(float delta_time);
+
+//“Gí“¬’†ƒ{ƒ^ƒ“•`‰æ
+void leafBottonDrawEnemyBattle(float delta_time);
