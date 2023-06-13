@@ -160,6 +160,8 @@ void gameStart() {
 	g_bottonSpace= LoadGraph("graphics/leafSpace.png");
 	//シフトボタン
 	g_bottonShift= LoadGraph("graphics/leafShift.png");
+
+	g_girl= LoadGraph("graphics/swordGirl.png");
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -184,11 +186,10 @@ void gameMain(float delta_time) {
 	switch (g_gameScene_id) {
 
 		case GAME_START: {
-			gameClear(delta_time);		//ゲームクリア全般
 
-			//titleBackDraw();			//タイトル背景画像
-			//movieDraw();				//タイトルアニメーション動画
-			//sceneTitle();				//タイトル全般
+			titleBackDraw();			//タイトル背景画像
+			movieDraw();				//タイトルアニメーション動画
+			sceneTitle();				//タイトル全般
 
 			break;
 		}
@@ -204,6 +205,7 @@ void gameMain(float delta_time) {
 
 			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_battleGround, TRUE);
 
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_gameScene_id = GAME_MAP; }
 
 			break;
 		}

@@ -9,6 +9,9 @@ extern int g_storyWindow;
 //メッセージ流し
 extern int g_messageRun;
 
+//少女立ち絵（仮）
+extern int g_girl;
+
 //ストーリーシーンでの背景描画
 void storyDraw();
 

@@ -8,3 +8,5 @@ extern int g_clearFlower;
 void gameOver(float delta_time);
 
 void gameClear(float delta_time);
+
+void scoreResult(float delta_time);

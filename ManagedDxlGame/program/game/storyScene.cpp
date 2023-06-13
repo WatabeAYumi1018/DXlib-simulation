@@ -12,11 +12,17 @@ int g_storyWindow = 0;
 //メッセージ流し
 int g_messageRun = 0;
 
+//少女立ち絵（仮）
+int g_girl = 0;
+
+
 //ストーリーシーンでの背景描画
 void storyDraw() {
 
 	//ストーリー背景
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_storyBack, TRUE);
+	//少女立ち絵
+	DrawExtendGraph(100, 100, 500, 500, g_girl, TRUE);
 	//ストーリー会話ウィンドウ
 	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
 }
