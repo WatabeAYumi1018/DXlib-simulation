@@ -4,11 +4,19 @@
 #include "mapScene_map.h"
 #include "endScene.h"
 
+//ゲームオーバー画面
+int g_gameOver = 0;
+
+//ゲームクリア画面
+int g_gameClear = 0;
+
 //クリアクラッカー動画
-int g_clearCracker = 0;
+int g_clearFlower = 0;
 
 //ゲームオーバー画面描画
 void gameOver(float delta_time) {
+
+	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_gameOver, TRUE);
 
 	const int BACK_START_X_Y = 0;
 	const int BACK_END_X = 1300;
@@ -29,7 +37,6 @@ void gameOver(float delta_time) {
 		g_gameOverTimeCount = 0;
 	}
 
-	DrawExtendGraph(BACK_START_X_Y, BACK_START_X_Y, BACK_END_X, BACK_END_Y, g_gameOver, true);
 	DrawExtendGraph(TEXT_START_X_Y, TEXT_START_X_Y, TEXT_END_X, TEXT_END_Y, g_map_turn[0][3], true);
 
 	if (g_gameOver_write) {
@@ -38,34 +45,16 @@ void gameOver(float delta_time) {
 	}
 }
 
+//ゲームクリア画面描画
 void gameClear(float delta_time) {
 
-	//動画の画像サイズを取得
-	int size_x;
-	int size_y;
-
-	GetGraphSize(g_clearCracker, &size_x, &size_y);
-
-	//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
-	screen_handle = MakeScreen(size_x, size_y, TRUE);
-
-	// 動画の再生開始
-	PlayMovieToGraph(g_clearCracker, DX_PLAYTYPE_LOOP);
-
-	//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
-	//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
-	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
-	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
-	GraphFilterBlt(g_clearCracker, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, TRUE, GetColor(0, 0, 0), 0);
-
-	//透過処理された画像を画面いっぱいに描画
-	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_gameClear, TRUE);
 
 	const int TELOP_X_END = 700;
 	const int TELOP_Y_START = 100;
 	const int TELOP_Y_END = 200;
 	const int TELOP_SPEED = 700;
-	const int TELOP_FRAME_MAX = 500;
+	const int TELOP_FRAME_MAX = 300;
 
 	//テロップアニメーションカウント
 	float static g_gameClearTimeCount = 0;
@@ -75,22 +64,32 @@ void gameClear(float delta_time) {
 
 	int telopFrame = g_gameClearTimeCount * TELOP_SPEED;
 
-	//高得点ハイスコア！
-	if (g_score >= 500) {
-		DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][12], true);
-	}
-	//上出来クリア！
-	else if (g_score <= 300 && g_score >= 100) {
-		DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][1], true);
-	}
-
-	//クリア！
-	else { DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][7], true); }
-
 	if (telopFrame >= TELOP_FRAME_MAX) {
 
 		telopFrame = TELOP_FRAME_MAX;			//テロップの流れた距離リセット
-		g_gameClearTimeCount = 0;				//テロップのカウントリセット
-		//g_flagTurnAlly = false;					//味方ターンのテロップ流しは一回で完了のためfalse
+		g_gameClearTimeCount = 0;				//テロップのカウントリセット	
+	}
+
+	//高得点ハイスコア！
+	if (g_score >= 500) {
+		
+		DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][12], true);
+		DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][12], true);
+
+		movieDraw();
+	}
+	//上出来クリア！
+	else if (g_score <= 300 && g_score >= 100) {
+
+		DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][1], true);
+		DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][1], true); 
+
+		movieDraw();
+	}
+	//クリア！
+	else {
+
+		DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][7], true);
+		DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][7], true); 
 	}
 }

@@ -412,23 +412,17 @@ void battleEffectGraph(float delta_time, int chara) {
 //ƒƒXƒgˆ—
 bool battleLost() {
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN) || tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+	int static lostCount = 0;
 
-		int static lostCount = 0;
+	if (character[g_selectedChara].hp <= 0 && character[g_selectedChara].team == TEAM_ALLY) {
 
-		if (character[g_selectedChara].hp <= 0 && character[g_selectedChara].team == TEAM_ALLY) {
+		lostCount++;
 
-			lostCount++;
+		if (lostCount == CHARACTER_ALLAY_MAX) {return true;}
 
-			if (lostCount == CHARACTER_ALLAY_MAX) {
-
-				g_flagGameOver = true;
-				
-				return true;
-			}
-		}
 		return false;
 	}
+	return false;
 }
 
 //O‚·‚­‚İ‚ÌŠÖŒW
@@ -707,7 +701,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				scoreMove();
 				battledExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
+				if (character[15].hp <= 0) {g_gameScene_id = GAME_CLEAR; }			
 			}
 		}
 		else if (g_CanAttackMove == 3) {
@@ -725,7 +719,13 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				scoreMove();
 				battledExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
+				if (character[15].hp <= 0) {
+
+					clearCracker();
+
+					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_gameScene_id = GAME_CLEAR; }
+					if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
+				}
 			}
 		}
 		else if (g_CanAttackMove == 5) {

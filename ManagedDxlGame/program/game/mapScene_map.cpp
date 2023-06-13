@@ -238,11 +238,9 @@ void turnMove(float delta_time) {
 			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
 			g_turnMove = TURN_ALLAY;
 		}
-
-		if (!g_flagEnter && g_flagCursor) {
-			//敵ターンボタン描画
-			leafBottonDrawEnemyTurnMap(delta_time);
-		}
+		//敵ターンボタン描画
+		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
+		
 		break;
 	}
 	}
@@ -760,3 +758,27 @@ void leafBottonDrawEnemyTurnMap(float delta_time) {
 	}
 }
 
+//クラッカー描画
+void clearCracker(){
+
+	//動画の画像サイズを取得
+	int size_x;
+	int size_y;
+
+	GetGraphSize(g_clearFlower, &size_x, &size_y);
+
+	//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
+	screen_handle = MakeScreen(size_x, size_y, TRUE);
+
+	// 動画の再生開始
+	PlayMovieToGraph(g_clearFlower, DX_MOVIEPLAYTYPE_NORMAL);
+
+	//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
+	//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
+	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
+	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
+	GraphFilterBlt(g_clearFlower, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, TRUE, GetColor(0, 0, 0), 0);
+
+	//透過処理された画像を画面いっぱいに描画
+	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+}

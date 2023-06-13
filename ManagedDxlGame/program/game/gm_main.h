@@ -7,10 +7,10 @@ extern int g_gameScene_id;
 enum {
 	GAME_START,
 	GAME_STORY,
+	GAME_TUTORIAL,
 	GAME_MAP,
 	GAME_OVER,
-	GAME_CLEAR,
-	GAME_TUTORIAL
+	GAME_CLEAR
 };
 
 //文字の色
@@ -75,11 +75,11 @@ extern int currentEnemyNumber;
 //ゲームスタート
 extern bool g_flagGameStart;
 
-//ゲームオーバーフラグ
-extern bool g_flagGameOver;
-
-//ゲームオーバー画面ハンドル
+//ゲームオーバー画面
 extern int g_gameOver ;
+
+//ゲームクリア画面
+extern int g_gameClear;
 
 //サウンド
 extern int sound_bgm_hdl;

@@ -9,6 +9,7 @@
 #include "mapScene_map.h"
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
+#include "endScene.h"
 
 
 //クリア文字/ゲームオーバー文字⇒タイトルへ
@@ -27,15 +28,6 @@ int sound_se_hdl = 0;
 
 //ゲームスタート
 bool g_flagGameStart = false;
-
-//ゲームオーバーフラグ
-bool g_flagGameOver = false;
-
-//ゲームオーバー画面
-int g_gameOver = 0;
-
-//ゲームクリア画面
-int g_gameClear = 0;
 
 //タイトル文字
 int g_title = 0;
@@ -86,8 +78,8 @@ void gameStart() {
 	g_titleRight = LoadGraph("graphics/titleAnim.png");
 
 	//動画のロード
-	g_titleMovie = LoadGraph("graphics/titleFlower.mp4");
-	g_clearCracker = LoadGraph("graphics/clearCracker.mp4");
+	g_titleMovie = LoadGraph("graphics/titleLeaf.mp4");
+	g_clearFlower = LoadGraph("graphics/clearEndFlower.mp4");
 
 	//タイトル選択画像
 	g_select_cursor = LoadGraph("graphics/flowerSelect.png");
@@ -132,7 +124,7 @@ void gameStart() {
 	g_gameOver = LoadGraph("graphics/GameOver.jpg");
 	
 	//ゲームクリア背景
-	g_gameClear = LoadGraph("graphics/GameClear.jpg");
+	g_gameClear = LoadGraph("graphics/GameClear.png");
 
 	//攻撃中の下画面
 	LoadDivGraph("graphics/battleHp.png",		35, 5, 7, 120, 60, g_battle_hp[0]);
@@ -192,21 +184,29 @@ void gameMain(float delta_time) {
 	switch (g_gameScene_id) {
 
 		case GAME_START: {
+			gameClear(delta_time);		//ゲームクリア全般
 
-			titleBackDraw();			//タイトル背景画像
-			titleMovie();				//タイトルアニメーション動画
-			sceneTitle();				//タイトル全般
-			
+			//titleBackDraw();			//タイトル背景画像
+			//movieDraw();				//タイトルアニメーション動画
+			//sceneTitle();				//タイトル全般
+
 			break;
 		}
-		case GAME_STORY:
+		case GAME_STORY: {
 
 			storyDraw();				//ストーリー背景描画
 			storyMessage();				//ストーリーメッセージ描画
 			leafBottonDrawStory(delta_time);
 
 			break;
+		}
+		case GAME_TUTORIAL: {
 
+			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_battleGround, TRUE);
+
+
+			break;
+		}
 		case GAME_MAP: {
 
 			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
@@ -223,16 +223,13 @@ void gameMain(float delta_time) {
 
 			gameOver(delta_time);		//ゲームオーバー全般
 			
+
 			break;
 		}
 		case GAME_CLEAR: {
 
 			gameClear(delta_time);		//ゲームクリア全般
 
-			break;
-		}
-		case GAME_TUTORIAL: {
-		
 			break;
 		}
 	}

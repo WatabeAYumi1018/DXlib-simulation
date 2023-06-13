@@ -142,6 +142,5 @@ void leafBottonDrawAllyTurnMap(float delta_time);
 //敵ターンマップ画面のボタン表記
 void leafBottonDrawEnemyTurnMap(float delta_time);
 
-void gameOver(float delta_time);
-
-void gameClear(float delta_time);
+//クラッカー描画
+void clearCracker();

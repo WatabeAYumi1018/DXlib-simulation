@@ -25,7 +25,7 @@ extern int g_gameStartAnim;
 extern int g_titleMovie;
 
 //クリアクラッカー動画
-extern int g_clearCracker;
+extern int g_clearFlower;
 
 //スクリーン(フィルター処理した画像を保存する用)ハンドル
 extern int screen_handle;
@@ -45,7 +45,7 @@ extern tnl::Vector3 g_sel_cursor_pos ;
 extern int g_titleRight;
 
 //タイトル動画再生
-void titleMovie();
+void movieDraw();
 
 //選択カーソル
 void titleSelect();

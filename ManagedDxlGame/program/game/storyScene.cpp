@@ -45,37 +45,38 @@ void storyMessage() {
 
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_messageRun++; }
 
-	if (g_messageRun == 1) {
+	if (g_messageRun == 0) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなたが 有名な軍師さまですね\n");
 	}
-	else if (g_messageRun == 2) {
+	else if (g_messageRun == 1) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ようこそ 人里離れた\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "緑の海原 へ\n");
 	}
-	else if (g_messageRun == 3) {
+	else if (g_messageRun == 2) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "この度は 直接ご指導いただけると\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "皆 心待ちにしていたのですよ\n");
 	}
-	else if (g_messageRun == 4) {
+	else if (g_messageRun == 3) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ご活躍は こちらでも耳にします\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "数多の英雄を導いた 伝説の軍師さま\n");
 	}
-	else if (g_messageRun == 5) {
+	else if (g_messageRun == 4) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "かく言う私も 楽しみで\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "昨夜は中々…\n");
 	}
-	else if (g_messageRun == 6) {
+	else if (g_messageRun == 5) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "と 失礼いたしました\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "早速 訓練場へ案内いたしますね\n");
 	}
-	else if (g_messageRun == 7) {
+	else if (g_messageRun == 6) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなた様の采配　楽しみにしていますわ\n");
 	}
+	else if (g_messageRun == 7) { g_gameScene_id = GAME_TUTORIAL; }
 }

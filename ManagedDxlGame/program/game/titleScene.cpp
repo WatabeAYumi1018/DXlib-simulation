@@ -66,28 +66,49 @@ void titleBackDraw() {
 }
 
 //タイトルでの動画流し
-void titleMovie() {
+void movieDraw() {
 
 	//動画の画像サイズを取得
 	int size_x = 0;
 	int size_y = 0;
 
-	GetGraphSize(g_titleMovie, &size_x, &size_y);
+	if (g_gameScene_id == GAME_START) {
+		
+		GetGraphSize(g_titleMovie, &size_x, &size_y);
 
-	//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
-	screen_handle = MakeScreen(size_x, size_y, TRUE);
- 
-	//動画の再生開始
-	PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
+		//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
+		screen_handle = MakeScreen(size_x, size_y, TRUE);
 
-	//透過する方法として明るさクリップフィルターがある
-	//「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
-	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
-	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
-	GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, true, GetColor(0, 0, 0), 0);
+		//動画の再生開始
+		PlayMovieToGraph(g_titleMovie, DX_PLAYTYPE_LOOP);
 
-	//透過処理された画像を画面いっぱいに描画
-	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+		//透過する方法として明るさクリップフィルターがある
+		//「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
+		//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
+		//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
+		GraphFilterBlt(g_titleMovie, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, true, GetColor(0, 0, 0), 0);
+
+		//透過処理された画像を画面いっぱいに描画
+		DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+	}
+
+	if (g_gameScene_id == GAME_CLEAR) {
+	
+		GetGraphSize(g_clearFlower, &size_x, &size_y);
+
+		//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
+		screen_handle = MakeScreen(size_x, size_y, TRUE);
+
+		//動画の再生開始
+		PlayMovieToGraph(g_clearFlower, DX_PLAYTYPE_LOOP);
+
+		//透過処理
+		GraphFilterBlt(g_clearFlower, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, true, GetColor(0, 0, 0), 0);
+
+		//透過処理された画像を画面いっぱいに描画
+		DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+
+	}
 }
 
 //タイトル文字描画
