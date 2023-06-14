@@ -412,16 +412,8 @@ void battleEffectGraph(float delta_time, int chara) {
 //ƒƒXƒgˆ—
 bool battleLost() {
 
-	int static lostCount = 0;
+	if (character[0].hp <= 0 && character[1].hp <= 0 && character[2].hp <= 0) {return true;}
 
-	if (character[g_selectedChara].hp <= 0 && character[g_selectedChara].team == TEAM_ALLY) {
-
-		lostCount++;
-
-		if (lostCount == CHARACTER_ALLAY_MAX) {return true;}
-
-		return false;
-	}
 	return false;
 }
 

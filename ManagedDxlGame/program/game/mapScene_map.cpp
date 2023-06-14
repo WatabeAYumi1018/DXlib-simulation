@@ -359,6 +359,8 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 //カーソルエンター処理について
 void phaseAllyMove(float delta_time) {
 
+	bool checkBattleFlag = false;
+
 	switch (g_phaseAlly) {
 
 	case PHASE_SELECT_CHARACTER: {
@@ -372,7 +374,7 @@ void phaseAllyMove(float delta_time) {
 			if (chara < 0) { break; } //負の値だったらいない
 
 			//行動済みなら座標動かない
-			//if (character[chara].done) { resetFill(); }
+			if (character[chara].done) { resetFill(); }
 
 			//キャラがいれば(それ以外は)塗りつぶし
 			else {
@@ -415,8 +417,6 @@ void phaseAllyMove(float delta_time) {
 				//移動による座標の変化
 				character[g_selectedChara].x = cursorX;
 				character[g_selectedChara].y = cursorY;
-
-				bool checkBattleFlag = false;
 
 				for (int i = 0; i < CHARACTER_MAX; i++) {
 
@@ -463,6 +463,25 @@ void phaseAllyMove(float delta_time) {
 		resetFill();
 		g_phaseAlly = PHASE_SELECT_CHARACTER;
 	}
+	if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {
+
+		if (character[g_selectedChara].x == cursorX && character[g_selectedChara].y == cursorY) {
+
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+				if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
+				
+					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+						checkBattleFlag = true;
+						g_phaseAlly = PHASE_SELECT_ATTACK;
+					}
+				}
+			}
+		}
+		else {g_phaseAlly = PHASE_SELECT_CHARACTER;}
+	}
+	
 }
 
 //score表示

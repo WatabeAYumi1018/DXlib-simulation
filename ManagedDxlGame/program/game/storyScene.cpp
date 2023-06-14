@@ -15,7 +15,6 @@ int g_messageRun = 0;
 //少女立ち絵（仮）
 int g_girl = 0;
 
-
 //ストーリーシーンでの背景描画
 void storyDraw() {
 
