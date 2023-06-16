@@ -33,3 +33,10 @@ extern int g_tutorialScore;
 
 //長立ち絵
 extern int g_bossNormal;
+
+//チュートリアルでのメッセージおくり
+extern int g_tutorialRun;
+
+void tutorialDraw();
+
+void tutorialMessage();
