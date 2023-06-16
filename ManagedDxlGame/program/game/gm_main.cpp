@@ -12,7 +12,6 @@
 #include "mapScene_battle.h"
 #include "endScene.h"
 
-//クリア文字/ゲームオーバー文字⇒タイトルへ
 
 //-------------------------------------------------------------------------------------------
 //進行フェーズのフラグ変数
@@ -27,12 +26,6 @@ int g_bgmTitle_hdl = 0;
 int g_bgmMap_hdl = 0;
 
 //int sound_se_hdl = 0;
-
-//ゲームスタート
-bool g_flagGameStart = false;
-
-//タイトル文字
-int g_title = 0;
 
 //エンターボタン
 int g_bottonEnter = 0;
@@ -258,9 +251,7 @@ void gameMain(float delta_time) {
 		}
 		case GAME_MAP: {
 
-			DeleteSoundMem(g_bgmTitle_hdl);	//タイトル～チュートリアルまでのBGM削除
-			
-			if (CheckSoundMem(g_bgmMap_hdl) == 0) {PlaySoundMem(g_bgmMap_hdl, DX_PLAYTYPE_LOOP, TRUE);}
+			playMusic();				//音声関連
 
 			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
 			mapPosition(delta_time);	//画像描画

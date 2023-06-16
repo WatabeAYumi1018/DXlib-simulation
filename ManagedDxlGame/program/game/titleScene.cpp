@@ -2,6 +2,10 @@
 #include "gm_main.h"
 #include "titleScene.h"
 
+
+//タイトル文字
+int g_title = 0;
+
 //カーソル初期位置をはじめからへ
 int g_select_player_menu = TITLE_MENU_FIRST;
 

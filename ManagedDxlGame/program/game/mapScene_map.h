@@ -105,6 +105,8 @@ enum {
 	DIRECTION_MAX
 };
 
+//‰¹ºŠÖ˜A
+void playMusic();
 
 //ˆê˜A‚Ì—¬‚ê
 void turnMove(float delta_time);

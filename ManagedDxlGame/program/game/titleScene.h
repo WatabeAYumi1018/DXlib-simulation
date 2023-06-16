@@ -1,5 +1,8 @@
 #pragma once
 
+//タイトル文字
+extern int g_title;
+
 //タイトル画面でのメニュー数
 enum {
 	TITLE_MENU_FIRST,

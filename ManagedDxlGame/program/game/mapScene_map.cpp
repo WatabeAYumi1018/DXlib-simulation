@@ -113,6 +113,13 @@ bool g_enemyCheckFinish = true;
 //マップ全般に関わる関数
 //
 
+//音声関連
+void playMusic() {
+
+	DeleteSoundMem(g_bgmTitle_hdl);	//タイトル～チュートリアルまでのBGM削除
+
+	if (CheckSoundMem(g_bgmMap_hdl) == 0) { PlaySoundMem(g_bgmMap_hdl, DX_PLAYTYPE_LOOP, TRUE); }
+}
 //一連の流れ
 void turnMove(float delta_time) {
 
@@ -801,3 +808,4 @@ void clearCracker(){
 	//透過処理された画像を画面いっぱいに描画
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
 }
+

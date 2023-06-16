@@ -46,54 +46,6 @@ enum {
 	PHASE_AI_NEXT_ENEMY
 };
 
-//フェーズ変数を作成
-extern int g_allyPhase ;
-
-//味方フェーズ変数
-extern int g_phaseAlly;
-
-//敵フェーズ変数
-extern int g_phaseEnemy;
-
-//カーソルフラグ
-extern bool g_flagCursor ;
-
-//エンター押しフラグ
-extern bool g_flagEnter ;
-
-//スペース押しフラグ
-extern bool g_flagEnemy;
-
-//バトル進行中か否かの判定フラグ
-extern int g_CanAttackMove;
-
-//現在敵何人目か（初期値はインデックスの３）
-extern int currentEnemyNumber;
-
-//ターン変数
-extern int g_turnMove ;
-
-//ターン切り替えフラグ
-extern bool g_flagTurnAlly;
-
-//現在の敵番号
-extern int currentEnemyNumber;
-
-//ゲームスタート
-extern bool g_flagGameStart;
-
-//ゲームオーバー画面
-extern int g_gameOver ;
-
-//ゲームクリア画面
-extern int g_gameClear;
-
-//スコア変数
-extern int g_score;
-
-//タイトル文字
-extern int g_title;
-
 //エンターボタン
 extern int g_bottonEnter;
 //カーソルボタン
