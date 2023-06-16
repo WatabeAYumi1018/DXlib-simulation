@@ -30,9 +30,9 @@ int icon_boss = 0;
 //各キャラクターの情報
 Character character[] = {
 	//キャラ名		職業				HP　maxHp	攻撃 防御 速さ 命中 移動	チーム		X	 Y
-	{"ミモザ",		JOB_SWORDMASTER,	10, 300,	150,  80,  15,  100,  6,	TEAM_ALLY,	36, 4},
-	{"アネモネ",	JOB_SNIPER,			10, 250,	100,  60,  20,  100,  5,	TEAM_ALLY,	34, 4},
-	{"アナベル",	JOB_MAGICIAN,		10, 200,	200,  70,  10,  100,  4,	TEAM_ALLY,	35, 6},
+	{"ミモザ",		JOB_SWORDMASTER,	300, 300,	150,  80,  15,  100,  6,	TEAM_ALLY,	36, 4},
+	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  60,  20,  100,  5,	TEAM_ALLY,	34, 4},
+	{"アナベル",	JOB_MAGICIAN,		200, 200,	200,  70,  10,  100,  4,	TEAM_ALLY,	35, 6},
 	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 6},
 	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	33, 11},
 	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	27, 1},

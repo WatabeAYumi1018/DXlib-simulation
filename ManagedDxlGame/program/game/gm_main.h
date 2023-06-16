@@ -3,6 +3,13 @@
 //ゲームシーン
 extern int g_gameScene_id;
 
+//サウンド　タイトル
+extern int g_bgmTitle_hdl;
+//サウンド　マップ
+extern int g_bgmMap_hdl;
+
+extern int sound_se_hdl;
+
 //ゲームシーン分け
 enum {
 	GAME_START,
@@ -81,10 +88,6 @@ extern int g_gameOver ;
 //ゲームクリア画面
 extern int g_gameClear;
 
-//サウンド
-extern int sound_bgm_hdl;
-extern int sound_se_hdl;
-
 //スコア変数
 extern int g_score;
 
@@ -103,15 +106,6 @@ extern int g_bottonSpace;
 extern int g_bottonShift;
 
 //----------------------------
-//ストーリー背景
-extern int g_storyBack;
-
-//ストーリーウィンドウ
-extern int g_storyWindow;
-
-void storyDraw();
-
-void storyMessage();
 
 //----------------------------
 void phaseAllyMove(float delta_time);

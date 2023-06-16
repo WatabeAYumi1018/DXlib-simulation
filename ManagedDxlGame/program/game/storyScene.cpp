@@ -12,16 +12,31 @@ int g_storyWindow = 0;
 //メッセージ流し
 int g_messageRun = 0;
 
-//少女立ち絵（仮）
-int g_girl = 0;
+//少女立ち絵普通
+int g_girlNormal = 0;
+//少女立ち絵笑顔
+int g_girlSmile = 0;
+//少女立ち絵困り
+int g_girlTroubled = 0;
 
 //ストーリーシーンでの背景描画
 void storyDraw() {
 
 	//ストーリー背景
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_storyBack, TRUE);
-	//少女立ち絵
-	DrawExtendGraph(100, 100, 500, 500, g_girl, TRUE);
+
+	if (g_messageRun==0 || g_messageRun == 2 || g_messageRun == 3 || g_messageRun == 6) {
+		//少女立ち絵普通
+		DrawExtendGraph(100, 100, 500, 500, g_girlNormal, TRUE);
+	}
+	if (g_messageRun == 1 || g_messageRun==4) {
+		//少女立ち絵笑顔
+		DrawExtendGraph(100, 100, 500, 500, g_girlSmile, TRUE);
+	}
+	if (g_messageRun==5) {
+		// 少女立ち絵困り
+		DrawExtendGraph(100, 100, 500, 500, g_girlTroubled, TRUE);
+	}
 	//ストーリー会話ウィンドウ
 	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
 }
@@ -53,6 +68,7 @@ void storyMessage() {
 	if (g_messageRun == 0) {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなたが 有名な軍師さまですね\n");
+
 	}
 	else if (g_messageRun == 1) {
 
@@ -83,5 +99,8 @@ void storyMessage() {
 
 		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなた様の采配　楽しみにしていますわ\n");
 	}
-	else if (g_messageRun == 7) { g_gameScene_id = GAME_TUTORIAL; }
+	else if (g_messageRun == 7) { 
+		
+		g_messageRun = 0;
+		g_gameScene_id = GAME_TUTORIAL; }
 }

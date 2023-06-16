@@ -11,7 +11,6 @@
 #include "mapScene_battle.h"
 #include "endScene.h"
 
-
 //クリア文字/ゲームオーバー文字⇒タイトルへ
 
 //-------------------------------------------------------------------------------------------
@@ -21,10 +20,12 @@
 //ゲーム全体のシーン移行
 int g_gameScene_id = GAME_START;
 
-//サウンド鳴らし方（wav.mp3もおっけ）
-//一回だけ再生命令を出す（毎フレーム命令出すと使えない）
-int sound_bgm_hdl = 0;
-int sound_se_hdl = 0;
+//サウンド　タイトル
+int g_bgmTitle_hdl = 0;
+//サウンド　マップ
+int g_bgmMap_hdl = 0;
+
+//int sound_se_hdl = 0;
 
 //ゲームスタート
 bool g_flagGameStart = false;
@@ -43,12 +44,17 @@ int g_bottonSpace = 0;
 //シフトボタン
 int g_bottonShift = 0;
 
+bool bgmTitlePlay = false;
+bool bgmMapPlay = false;
+
 //-----------------
 // 
 
+void tutorialDraw() {
 
 
-//void tutorialDraw
+
+}
 
 
 //-------------------------------------------------------------------------------------------
@@ -59,8 +65,12 @@ void gameStart() {
 	SetWindowText("GREEN OCEAN");
 
 	//音楽の出力--------------------------------------------
-	//sound_bgm_hdl = LoadSoundMem("sound/test_bgm.wav");
-	//PlaySoundMem(sound_bgm_hdl, DX_PLAYTYPE_LOOP); //DXlibリファレンス、ループ処理の引数
+	g_bgmTitle_hdl = LoadSoundMem("sound/title.mp3");
+	g_bgmMap_hdl = LoadSoundMem("sound/map.mp3");
+
+
+	//タイトル～チュートリアルにて再生
+	PlaySoundMem(g_bgmTitle_hdl, DX_PLAYTYPE_LOOP, TRUE); //DXlibリファレンス、ループ処理の引数
 
 	//SEの出力
 	//sound_se_hdl = LoadSoundMem("sound/test_se.wav");
@@ -73,7 +83,7 @@ void gameStart() {
 
 	//ゲームスタート画面
 	g_gameStart = LoadGraph("graphics/GameStartBack.jpg");
-	
+
 	//ゲームスタート画面アニメーション
 	g_titleRight = LoadGraph("graphics/titleAnim.png");
 
@@ -161,7 +171,15 @@ void gameStart() {
 	//シフトボタン
 	g_bottonShift= LoadGraph("graphics/leafShift.png");
 
-	g_girl= LoadGraph("graphics/swordGirl.png");
+	//女性立ち絵
+	g_girlNormal= LoadGraph("graphics/swordGirl.png");
+	g_girlSmile= LoadGraph("graphics/girlSmile.png");
+	g_girlTroubled= LoadGraph("graphics/girl_troubled.png");
+
+	//チュートリアル関係-----------------------------
+	//
+	
+
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -183,9 +201,12 @@ void gameMain(float delta_time) {
 	//曲を途中から再生する
 	//PlaySoundMem(sound_bgm_hdl,DX_PLAYTYPE_LOOP,false);
 
+
 	switch (g_gameScene_id) {
 
 		case GAME_START: {
+
+			StopSoundMem(g_bgmMap_hdl);
 
 			titleBackDraw();			//タイトル背景画像
 			movieDraw();				//タイトルアニメーション動画
@@ -195,6 +216,8 @@ void gameMain(float delta_time) {
 		}
 		case GAME_STORY: {
 
+			StopSoundMem(g_bgmMap_hdl);
+
 			storyDraw();				//ストーリー背景描画
 			storyMessage();				//ストーリーメッセージ描画
 			leafBottonDrawStory(delta_time);
@@ -203,6 +226,8 @@ void gameMain(float delta_time) {
 		}
 		case GAME_TUTORIAL: {
 
+			StopSoundMem(g_bgmMap_hdl);
+
 			DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_battleGround, TRUE);
 
 			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_gameScene_id = GAME_MAP; }
@@ -210,6 +235,10 @@ void gameMain(float delta_time) {
 			break;
 		}
 		case GAME_MAP: {
+
+			DeleteSoundMem(g_bgmTitle_hdl);	//タイトル～チュートリアルまでのBGM削除
+			
+			if (CheckSoundMem(g_bgmMap_hdl) == 0) {PlaySoundMem(g_bgmMap_hdl, DX_PLAYTYPE_LOOP, TRUE);}
 
 			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
 			mapPosition(delta_time);	//画像描画
@@ -223,8 +252,7 @@ void gameMain(float delta_time) {
 		}
 		case GAME_OVER: {
 
-			gameOver(delta_time);		//ゲームオーバー全般
-			
+			gameOver(delta_time);		//ゲームオーバー全般	
 
 			break;
 		}
