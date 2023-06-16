@@ -49,13 +49,12 @@ void leafBottonDrawStory(float delta_time) {
 	//点滅処理
 	leafBottonTimeCount += delta_time;
 
-	if (leafBottonTimeCount > 1.0f) {
+	if (leafBottonTimeCount > 0.5f) {
 		leafBottonDraw = !leafBottonDraw;
 		leafBottonTimeCount = 0;
 	}
-	if (leafBottonDraw) {
-		DrawExtendGraph(1050, 580, 1150, 680, g_bottonEnter, true);
-	}
+	if (leafBottonDraw) {DrawExtendGraph(1050, 580, 1150, 680, g_bottonEnter, true);}
+	else {DrawExtendGraph(1050, 580+5, 1150, 680+5, g_bottonEnter, true);}
 }
 
 //会話メッセージ
