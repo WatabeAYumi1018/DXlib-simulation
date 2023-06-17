@@ -12,7 +12,6 @@
 #include "mapScene_battle.h"
 #include "endScene.h"
 
-
 //-------------------------------------------------------------------------------------------
 //進行フェーズのフラグ変数
 //
@@ -219,21 +218,6 @@ void gameStart() {
 //------------------------------------------------------------------------------------------------------------
 // 毎フレーム実行されます,60FPS
 void gameMain(float delta_time) {
-
-	//if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-	//	PlaySoundMem(sound_bgm_hdl, DX_PLAYTYPE_BACK); //DXlibリファレンス、ループ処理の引数
-	//}//サウンドで選ぶのは、ループかバックのみ！ノーマルは選ばないで！！（ノーマルはプログラム処理を止めてしまう）
-
-	//if (tnl::Input::IsKeyDownTrigger(eKeys::KB_A)) {
-	//	StopSoundMem(sound_bgm_hdl);//Aを押すとサウンドが止まる
-	//}
-
-	//if (tnl::Input::IsKeyDownTrigger(eKeys::KB_X)) {
-	//	PlaySoundMem(sound_bgm_hl, DX_PLAYTYPE_LOOP); //X押すと途中から再生がはじまる
-	//}
-
-	//曲を途中から再生する
-	//PlaySoundMem(sound_bgm_hdl,DX_PLAYTYPE_LOOP,false);
 
 	switch (g_gameScene_id) {
 

@@ -92,3 +92,6 @@ void leafBottonDrawEnemyBattle(float delta_time);
 
 //バトル中のSE
 void seBattle(int chara);
+
+//バトルinのse再生
+void playSeBattle();

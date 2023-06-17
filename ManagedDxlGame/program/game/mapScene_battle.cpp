@@ -558,6 +558,7 @@ void scoreMove() {
 		if (ThreeRelation(g_selectedChara, g_standbyChara) == 0) { g_score += 30; }
 		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 1) { g_score += 100; }
 		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 2) { g_score += 70; }
+	 
 	}
 	if (character[g_selectedChara].team == TEAM_ALLY ) {
 	
@@ -569,9 +570,6 @@ void scoreMove() {
 void battleAlly(float delta_time,int attack,int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
-
-		//SE再生
-		playSE();
 
 		//戦闘画面下グラフィック描画
 		battleGraph();
@@ -589,7 +587,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 		leafBottonDrawAllyBattle(delta_time);
 
 		if (g_CanAttackMove == 1) {
-
+			
 			//attack側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, attack);
 			seBattle(attack);
@@ -670,9 +668,6 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
 
-		//SE再生
-		playSE();
-
 		//戦闘画面下グラフィック描画
 		battleGraph();
 
@@ -723,13 +718,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				scoreMove();
 				battledExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) {
-
-					clearCracker();
-
-					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_gameScene_id = GAME_CLEAR; }
-					if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
-				}
+				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
 		}
 		else if (g_CanAttackMove == 5) {
@@ -787,6 +776,7 @@ void enemyAttack(float delta_time, int ally, int enemy) {
 		g_flagBattleAnime = true;
 		g_flagBattleHp = true;
 		g_CanAttackMove++;
+		g_sePlay = true;
 	}
 	battleEnemy(delta_time, ally, enemy);
 }
@@ -845,19 +835,28 @@ void leafBottonDrawEnemyBattle(float delta_time) {
 //バトル中のSE
 void seBattle(int chara) {
 
-	if (character[chara].job == JOB_SWORDMASTER) {
+	if (g_sePlay && character[chara].job == JOB_SWORDMASTER) {
 		if (CheckSoundMem(g_seEffectSword) == 0)  PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE); 
 	}
-	if (character[chara].job == JOB_SNIPER) {
+	if (g_sePlay && character[chara].job == JOB_SNIPER) {
 
 		if (CheckSoundMem(g_seEffectAllow) == 0) PlaySoundMem(g_seEffectAllow, DX_PLAYTYPE_BACK, TRUE); 
 	}
-	if (character[chara].job == JOB_MAGICIAN) {
+	if (g_sePlay && character[chara].job == JOB_MAGICIAN) {
 
 		if (CheckSoundMem(g_seEffectMagic) == 0) PlaySoundMem(g_seEffectMagic, DX_PLAYTYPE_BACK, TRUE); 
 	}
-	if (character[chara].job == JOB_BOSS) {
+	if (g_sePlay && character[chara].job == JOB_BOSS) {
 
 		if (CheckSoundMem(g_seEffectBoss) == 0) PlaySoundMem(g_seEffectBoss, DX_PLAYTYPE_BACK, TRUE);
 	}
+	g_sePlay = false;
+}
+
+//se再生
+void playSeBattle() {
+
+	if (g_sePlay && CheckSoundMem(g_seMoveBattle) == 0) PlaySoundMem(g_seMoveBattle, DX_PLAYTYPE_BACK, TRUE);
+
+	g_sePlay = false;
 }

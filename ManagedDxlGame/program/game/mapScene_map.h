@@ -79,6 +79,9 @@ extern int g_score ;
 //敵一斉移動フラグ
 extern bool g_enemyCheckFinish ;
 
+//SE再生フラグ
+extern bool g_sePlay;
+
 //地形種類
 enum {
 	CELL_GROUND,              //草地0
@@ -104,12 +107,6 @@ enum {
 	DIRECTION_WEST,
 	DIRECTION_MAX
 };
-
-//音声関連
-void playMusic();
-
-//se再生
-void playSE();
 
 //一連の流れ
 void turnMove(float delta_time);
@@ -153,5 +150,8 @@ void cellHeal();
 //回復情報描画
 void cellInfoDisplay();
 
-//クラッカー描画
-void clearCracker();
+//音声関連
+void playMusic();
+
+//se再生
+void playSeTurnMove();

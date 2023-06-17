@@ -109,26 +109,12 @@ int g_score = 0;
 //敵一斉移動フラグ
 bool g_enemyCheckFinish = true;
 
+//SE再生フラグ
+bool g_sePlay = true;
+
 //----------------------------------------------------------------------------
 //マップ全般に関わる関数
 //
-
-//音声関連
-void playMusic() {
-
-	StopSoundMem(g_bgmGameOver);
-	StopSoundMem(g_bgmEnding);
-
-	DeleteSoundMem(g_bgmTitle);	//タイトル～チュートリアルまでのBGM削除
-
-	if (CheckSoundMem(g_bgmMap) == 0) { PlaySoundMem(g_bgmMap, DX_PLAYTYPE_LOOP, TRUE); }
-}
-
-//se再生
-void playSE() {
-
-	if (CheckSoundMem(g_seMoveBattle) == 0) { PlaySoundMem(g_seMoveBattle, DX_PLAYTYPE_BACK, TRUE); }
-}
 
 //一連の流れ
 void turnMove(float delta_time) {
@@ -149,7 +135,7 @@ void turnMove(float delta_time) {
 		if (g_flagTurnAlly) {
 
 			//SE再生
-			playSE();
+			playSeTurnMove();
 
 			//毎フレーム足していく処理
 			telopTimeCount += delta_time;
@@ -165,6 +151,7 @@ void turnMove(float delta_time) {
 				telopFrame = 0;			//テロップの流れた距離リセット
 				telopTimeCount = 0;		//テロップのカウントリセット
 				g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
+				g_sePlay = true;
 			}
 		}
 		//味方移動全般の関数
@@ -190,8 +177,7 @@ void turnMove(float delta_time) {
 
 		if (g_flagTurnEnemy) {
 
-			//SE再生
-			playSE();
+			playSeTurnMove();
 
 			//毎フレーム足していく処理
 			telopTimeCount += delta_time;
@@ -205,6 +191,7 @@ void turnMove(float delta_time) {
 				telopFrame = 0;				//テロップの流れた距離リセット
 				telopTimeCount = 0;			//テロップのカウントリセット
 				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
+				g_sePlay = true;
 			}
 		}
 		//敵全員が移動する
@@ -460,6 +447,7 @@ void phaseAllyMove(float delta_time) {
 				g_flagBattleAnime = true;
 				g_flagBattleHp = true;
 				g_CanAttackMove++;
+				g_sePlay = true;
 			}
 			battleAlly(delta_time, g_selectedChara, g_standbyChara);
 		}
@@ -813,40 +801,33 @@ void cellInfoDisplay() {
 		//ここから情報開示のための文字描画
 		SetFontSize(30);
 
-		if (mapData[cursorY][cursorX] == CELL_FORT) {
+		if (mapData[cursorY][cursorX] == CELL_FORT && charaData[cursorY][cursorX]==-1) {
 
 			DrawStringEx(100, 530, TEXT_COLOR_WHITE, "砦　　：　待機で次ターン開始時に全回復\n");
 		}
-		if (mapData[cursorY][cursorX] == CELL_HOUSE) {
+		if (mapData[cursorY][cursorX] == CELL_HOUSE && charaData[cursorY][cursorX] == -1) {
 		
 			DrawStringEx(100, 530, TEXT_COLOR_WHITE, "民家　：　待機で次ターン開始時に全回復\n");
 		}
 	}
 }
 
+//音声関連
+void playMusic() {
 
-//クラッカー描画
-void clearCracker(){
+	StopSoundMem(g_bgmGameOver);
+	StopSoundMem(g_bgmEnding);
 
-	//動画の画像サイズを取得
-	int size_x;
-	int size_y;
+	DeleteSoundMem(g_bgmTitle);	//タイトル～チュートリアルまでのBGM削除
 
-	GetGraphSize(g_clearFlower, &size_x, &size_y);
+	if (CheckSoundMem(g_bgmMap) == 0) { PlaySoundMem(g_bgmMap, DX_PLAYTYPE_LOOP, TRUE); }
+}
 
-	//動画と同サイズのスクリーンを作成(透明なピクセルを扱うため三つ目の引数はTRUE)
-	screen_handle = MakeScreen(size_x, size_y, TRUE);
+//ターン切り替えse再生
+void playSeTurnMove() {
 
-	// 動画の再生開始
-	PlayMovieToGraph(g_clearFlower, DX_MOVIEPLAYTYPE_NORMAL);
+	if (g_sePlay && CheckSoundMem(g_seMoveBattle) == 0) PlaySoundMem(g_seMoveBattle, DX_PLAYTYPE_BACK, TRUE);
 
-	//もう一つ透過する方法として明るさクリップフィルターがある　先ほどの置換フィルターはいわゆるGBのように透過に適した素材じゃないとうまくいかない
-	//こちらは「一定以上/以下の明るさの色をすべて塗りつぶす」という力強い処理ができる
-	//FilterType以降の引数...比較方法（LESS/GREATER),比較する値,該当する色を塗りつぶすか,
-	//塗りつぶした後の色,塗りつぶした後の色の不透明度(透明にしたいので0)
-	GraphFilterBlt(g_clearFlower, screen_handle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, bright_border, TRUE, GetColor(0, 0, 0), 0);
-
-	//透過処理された画像を画面いっぱいに描画
-	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
+	g_sePlay = false;
 }
 
