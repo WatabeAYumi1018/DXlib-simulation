@@ -128,3 +128,9 @@ void sceneTitle() {
 	DrawStringEx(TITLE_SELECT_MENU_POSITION[1].x, TITLE_SELECT_MENU_POSITION[1].y, -TEXT_COLOR_WHITE, "MAP GAME");
 	DrawStringEx(TITLE_SELECT_MENU_POSITION[2].x, TITLE_SELECT_MENU_POSITION[2].y, -TEXT_COLOR_WHITE, "TUTORIAL");
 }
+
+//タイトル画面でのサウンド制御
+void soundTitle() {
+	StopSoundMem(g_bgmMap);
+	StopSoundMem(g_bgmGameOver);
+}

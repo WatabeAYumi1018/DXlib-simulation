@@ -7,13 +7,21 @@ extern int g_gameScene_id;
 extern int g_bgmTitle;
 //サウンド　マップ
 extern int g_bgmMap;
-//サウンド　クリアファンファーレ
-extern int g_bgmClear;
 //サウンド　エンディング
 extern int g_bgmEnding;
+//サウンド　ゲームオーバー
+extern int g_bgmGameOver;
 
-
-extern int sound_se_hdl;
+//攻撃SE　弓
+extern int g_seEffectAllow;
+//攻撃SE　剣
+extern int g_seEffectSword;
+//攻撃SE　魔法
+extern int g_seEffectMagic;
+//攻撃SE　長
+extern int g_seEffectBoss ;
+//ターン移行　&&　バトル開始
+extern int g_seMoveBattle ;
 
 //ゲームシーン分け
 enum {

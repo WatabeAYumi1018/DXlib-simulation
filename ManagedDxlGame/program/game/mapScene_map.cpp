@@ -116,11 +116,18 @@ bool g_enemyCheckFinish = true;
 //音声関連
 void playMusic() {
 
+	StopSoundMem(g_bgmGameOver);
 	StopSoundMem(g_bgmEnding);
 
 	DeleteSoundMem(g_bgmTitle);	//タイトル～チュートリアルまでのBGM削除
 
 	if (CheckSoundMem(g_bgmMap) == 0) { PlaySoundMem(g_bgmMap, DX_PLAYTYPE_LOOP, TRUE); }
+}
+
+//se再生
+void playSE() {
+
+	if (CheckSoundMem(g_seMoveBattle) == 0) { PlaySoundMem(g_seMoveBattle, DX_PLAYTYPE_BACK, TRUE); }
 }
 
 //一連の流れ
@@ -140,6 +147,9 @@ void turnMove(float delta_time) {
 	case TURN_ALLAY: {
 
 		if (g_flagTurnAlly) {
+
+			//SE再生
+			playSE();
 
 			//毎フレーム足していく処理
 			telopTimeCount += delta_time;
@@ -179,6 +189,9 @@ void turnMove(float delta_time) {
 	case TURN_ENEMY: {
 
 		if (g_flagTurnEnemy) {
+
+			//SE再生
+			playSE();
 
 			//毎フレーム足していく処理
 			telopTimeCount += delta_time;

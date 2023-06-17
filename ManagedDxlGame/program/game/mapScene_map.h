@@ -108,6 +108,9 @@ enum {
 //‰¹ºŠÖ˜A
 void playMusic();
 
+//seÄ¶
+void playSE();
+
 //ˆê˜A‚Ì—¬‚ê
 void turnMove(float delta_time);
 

@@ -15,7 +15,7 @@ enum {
 	JOB_SWORDMASTER, //Œ•Žm
 	JOB_SNIPER, //‹|
 	JOB_MAGICIAN, //–‚“¹
-	JOB_LEADER, //’·
+	JOB_BOSS, //’·
 	JOB_MAX
 };
 

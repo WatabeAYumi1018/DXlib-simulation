@@ -89,3 +89,6 @@ void leafBottonDrawAllyBattle(float delta_time);
 
 //敵戦闘中ボタン描画
 void leafBottonDrawEnemyBattle(float delta_time);
+
+//バトル中のSE
+void seBattle(int chara);

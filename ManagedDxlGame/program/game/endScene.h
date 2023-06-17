@@ -22,4 +22,7 @@ void scoreResult();
 void clearMessage();
 
 //クリア音楽再生
-void endSound();
+void soundClear();
+
+//ゲームオーバー音楽再生
+void soundOver();

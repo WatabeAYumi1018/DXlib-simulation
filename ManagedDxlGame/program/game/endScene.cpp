@@ -220,9 +220,19 @@ void clearMessage() {
 }
 
 //クリア音楽再生
-void endSound() {
+void soundClear() {
 
 	DeleteSoundMem(g_bgmMap);	//タイトル～チュートリアルまでのBGM削除
 
 	if (CheckSoundMem(g_bgmEnding) == 0) { PlaySoundMem(g_bgmEnding, DX_PLAYTYPE_LOOP, TRUE); }
+}
+
+//ゲームオーバー音楽再生
+void soundOver() {
+
+	DeleteSoundMem(g_bgmMap);	//タイトル～チュートリアルまでのBGM削除
+
+	if (CheckSoundMem(g_bgmGameOver) == 0) { PlaySoundMem(g_bgmGameOver, DX_PLAYTYPE_LOOP, TRUE); }
+
+
 }

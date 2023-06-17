@@ -237,7 +237,7 @@ void battleInfo(int attack, int defence) {
 	else if (character[defence].job == JOB_MAGICIAN) {
 		DrawExtendGraph(ENEMY_ICON_START_X, ICON_START_Y, ENEMY_ICON_END_X, ICON_END_Y, icon_magic, true);
 	}
-	else if (character[defence].job == JOB_LEADER) {
+	else if (character[defence].job == JOB_BOSS) {
 		DrawExtendGraph(ENEMY_ICON_START_X, ICON_START_Y, ENEMY_ICON_END_X, ICON_END_Y, icon_boss, true);
 	}
 }
@@ -402,7 +402,7 @@ void battleEffectGraph(float delta_time, int chara) {
 			DrawExtendGraph(EFFECT_ENEMY_X_START, EFFECT_Y_START, EFFECT_ENEMY_X_END, EFFECT_Y_END, g_battle_effect_magic[0][g_effectFrame], true);
 		}
 		//敵＋長
-		if (character[chara].team == TEAM_ENEMY && character[chara].job == JOB_LEADER) {
+		if (character[chara].team == TEAM_ENEMY && character[chara].job == JOB_BOSS) {
 
 			DrawExtendGraph(EFFECT_ENEMY_X_START, EFFECT_Y_START, EFFECT_ENEMY_X_END, EFFECT_Y_END, g_battle_effect_leader[0][g_effectFrame], true);
 		}
@@ -565,10 +565,13 @@ void scoreMove() {
 	}
 }
 
-//バトル関数
+//味方バトル関数
 void battleAlly(float delta_time,int attack,int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
+
+		//SE再生
+		playSE();
 
 		//戦闘画面下グラフィック描画
 		battleGraph();
@@ -589,6 +592,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 
 			//attack側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, attack);
+			seBattle(attack);
 		}
 		else if (g_CanAttackMove == 2) {//味方の攻撃
 
@@ -607,6 +611,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 
 			//defence側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, defence);
+			seBattle(defence);
 		}
 		else if (g_CanAttackMove == 4) {
 
@@ -626,10 +631,12 @@ void battleAlly(float delta_time,int attack,int defence) {
 			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
 				battleEffectGraph(delta_time, attack);
+				seBattle(attack);
 			}
 			else if (character[defence].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
 				battleEffectGraph(delta_time, defence);
+				seBattle(defence);
 			}
 			else {
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {battleExit();}
@@ -663,6 +670,9 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
 
+		//SE再生
+		playSE();
+
 		//戦闘画面下グラフィック描画
 		battleGraph();
 
@@ -682,6 +692,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			//attack側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, attack);
+			seBattle(attack);
 		}
 		else if (g_CanAttackMove == 2) {//味方の攻撃
 
@@ -700,6 +711,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			//defence側の攻撃エフェクト描画
 			battleEffectGraph(delta_time, defence);
+			seBattle(defence);
 		}
 		else if (g_CanAttackMove == 4) {
 
@@ -725,10 +737,12 @@ void battleEnemy(float delta_time, int attack, int defence) {
 			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
 				battleEffectGraph(delta_time, attack);
+				seBattle(attack);
 			}
 			else if (character[defence].speed - character[defence].speed >= SPEED_DIFFERENCE) {
 
 				battleEffectGraph(delta_time, defence);
+				seBattle(defence);
 			}
 			else {
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {battledExit(attack, defence);}
@@ -792,9 +806,13 @@ void leafBottonDrawAllyBattle(float delta_time) {
 		leafBottonDraw = !leafBottonDraw;
 		leafBottonTimeCount = 0;
 	}
-	if (!leafBottonDraw) {
+	if (leafBottonDraw) {
 		DrawExtendGraph(1050, 400, 1130, 480, g_bottonEnter, true);
 		DrawStringEx(1130, 430, TEXT_COLOR_WHITE, "戦闘おくり\n");
+	}
+	else {
+		DrawExtendGraph(1050, 400+5, 1130, 480+5, g_bottonEnter, true);
+		DrawStringEx(1130, 430 + 5, TEXT_COLOR_WHITE, "戦闘おくり\n");
 	}
 }
 
@@ -813,8 +831,33 @@ void leafBottonDrawEnemyBattle(float delta_time) {
 		leafBottonDraw = !leafBottonDraw;
 		leafBottonTimeCount = 0;
 	}
-	if (!leafBottonDraw) {
+	if (leafBottonDraw) {
 		DrawExtendGraph(1050, 400, 1130, 480, g_bottonSpace, true);
 		DrawStringEx(1130, 430, TEXT_COLOR_WHITE, "戦闘おくり\n");
+	}
+	else { 
+		DrawExtendGraph(1050, 400 + 5, 1130, 480 + 5, g_bottonSpace, true);
+		DrawStringEx(1130, 430 + 5, TEXT_COLOR_WHITE, "戦闘おくり\n");
+	}
+
+}
+
+//バトル中のSE
+void seBattle(int chara) {
+
+	if (character[chara].job == JOB_SWORDMASTER) {
+		if (CheckSoundMem(g_seEffectSword) == 0)  PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE); 
+	}
+	if (character[chara].job == JOB_SNIPER) {
+
+		if (CheckSoundMem(g_seEffectAllow) == 0) PlaySoundMem(g_seEffectAllow, DX_PLAYTYPE_BACK, TRUE); 
+	}
+	if (character[chara].job == JOB_MAGICIAN) {
+
+		if (CheckSoundMem(g_seEffectMagic) == 0) PlaySoundMem(g_seEffectMagic, DX_PLAYTYPE_BACK, TRUE); 
+	}
+	if (character[chara].job == JOB_BOSS) {
+
+		if (CheckSoundMem(g_seEffectBoss) == 0) PlaySoundMem(g_seEffectBoss, DX_PLAYTYPE_BACK, TRUE);
 	}
 }

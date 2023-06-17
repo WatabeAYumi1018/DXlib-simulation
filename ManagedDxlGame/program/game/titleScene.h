@@ -58,3 +58,6 @@ void sceneTitle();
 
 //タイトル画像ブレンド
 void titleBackDraw();
+
+//タイトル画面でのサウンド制御
+void soundTitle();

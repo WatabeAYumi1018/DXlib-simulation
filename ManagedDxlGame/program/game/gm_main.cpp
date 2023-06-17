@@ -24,12 +24,21 @@ int g_gameScene_id = GAME_START;
 int g_bgmTitle = 0;
 //サウンド　マップ
 int g_bgmMap = 0;
-//サウンド　クリアファンファーレ
-int g_bgmClear = 0;
 //サウンド　エンディング
 int g_bgmEnding = 0;
+//サウンド　ゲームオーバー
+int g_bgmGameOver = 0;
 
-//int sound_se_hdl = 0;
+//攻撃SE　弓
+int g_seEffectAllow = 0;
+//攻撃SE　剣
+int g_seEffectSword = 0;
+//攻撃SE　魔法
+int g_seEffectMagic = 0;
+//攻撃SE　長
+int g_seEffectBoss = 0;
+//ターン移行　&&　バトル開始
+int g_seMoveBattle = 0;
 
 //エンターボタン
 int g_bottonEnter = 0;
@@ -55,16 +64,22 @@ void gameStart() {
 	SetWindowText("GREEN OCEAN");
 
 	//音楽の出力--------------------------------------------
+	// 
+	//BGMの出力
 	g_bgmTitle = LoadSoundMem("sound/title.mp3");
 	g_bgmMap = LoadSoundMem("sound/map.mp3");
-	g_bgmClear= LoadSoundMem("sound/clear.wav");
 	g_bgmEnding= LoadSoundMem("sound/ending.mp3");
+	g_bgmGameOver=LoadSoundMem("sound/gameOver.mp3");
 	
-		//タイトル～チュートリアルにて再生
-	PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE); //DXlibリファレンス、ループ処理の引数
+	//タイトル～チュートリアルにて再生
+	PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE); 
 
-	//SEの出力
-	//sound_se_hdl = LoadSoundMem("sound/test_se.wav");
+	//SE出力	
+	g_seEffectAllow = LoadSoundMem("sound/effectAllow.mp3");
+	g_seEffectSword = LoadSoundMem("sound/effectSword.mp3");
+	g_seEffectMagic = LoadSoundMem("sound/effectMagic.wav");
+	g_seEffectBoss = LoadSoundMem("sound/effectBoss.mp3");
+	g_seMoveBattle = LoadSoundMem("sound/battleStart.mp3");
 
 	//画像の出力--------------------------------------------
 
@@ -199,8 +214,6 @@ void gameStart() {
 	g_tutorialBattleHit = LoadGraph("graphics/tutorialBattleHit.png");;
 	//スコア説明
 	g_tutorialScore = LoadGraph("graphics/Score.png");;
-
-
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -222,68 +235,63 @@ void gameMain(float delta_time) {
 	//曲を途中から再生する
 	//PlaySoundMem(sound_bgm_hdl,DX_PLAYTYPE_LOOP,false);
 
-
 	switch (g_gameScene_id) {
 
 		case GAME_START: {
 
-			StopSoundMem(g_bgmMap);
-
-			titleBackDraw();			//タイトル背景画像
-			movieDraw();				//タイトルアニメーション動画
-			sceneTitle();				//タイトル全般
+			soundTitle();					//タイトル画面でのサウンド制御
+			titleBackDraw();				//タイトル背景画像
+			movieDraw();					//タイトルアニメーション動画
+			sceneTitle();					//タイトル全般
 
 			break;
 		}
 		case GAME_STORY: {
 
-			StopSoundMem(g_bgmMap);
-
-			storyDraw();				//ストーリー背景描画
-			storyMessage();				//ストーリーメッセージ描画
-			leafBottonDrawStory(delta_time);
+			soundTitle();					//タイトル画面でのサウンド制御
+			storyDraw();					//ストーリー背景描画
+			storyMessage();					//ストーリーメッセージ描画
+			leafBottonDrawStory(delta_time);//エンター画像描画
 
 			break;
 		}
 		case GAME_TUTORIAL: {
 
-			StopSoundMem(g_bgmMap);
-
-			tutorialDraw();
-			tutorialMessage();
-			leafBottonDrawStory(delta_time);
+			soundTitle();					//タイトル画面でのサウンド制御
+			tutorialDraw();					//チュートリアル画像描画
+			tutorialMessage();				//チュートリアルメッセージ描画
+			leafBottonDrawStory(delta_time);//エンター画像描画
 
 			break;
 		}
 		case GAME_MAP: {
 
-			playMusic();				//音声関連
-			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
-			mapPosition(delta_time);	//画像描画
-			display();					//下画面情報描画制御
-			cellInfoDisplay();			//地形回復情報表示処理
-			cursorMove();				//カーソル移動手定義
-			instructions(delta_time);	//指示文字描画
-			scoreDraw();				//score描画
-			turnMove(delta_time);		//ゲームの流れ全般
+			playMusic();					//音声関連
+			getCharaPosition();				//charaData[MAP_HEIGHT][MAP_WIDTH]定義
+			mapPosition(delta_time);		//画像描画
+			display();						//下画面情報描画制御
+			cellInfoDisplay();				//地形回復情報表示処理
+			cursorMove();					//カーソル移動手定義
+			instructions(delta_time);		//指示文字描画
+			scoreDraw();					//score描画
+			turnMove(delta_time);			//ゲームの流れ全般
 			
 			break;
 		}
 		case GAME_OVER: {
 
-			DeleteSoundMem(g_bgmMap);
-
-			gameOver(delta_time);		//ゲームオーバー全般	
-			scoreResult();
-
+			soundOver();					//ゲームオーバー音楽再生
+			gameOver(delta_time);			//ゲームオーバー全般	
+			scoreResult();					//スコア描画
+				
 			break;
 		}
 		case GAME_CLEAR: {
 
-			endSound();					//クリア音楽再生
-			gameClear(delta_time);		//ゲームクリア全般
-			leafBottonDrawStory(delta_time);
-			movieDraw();				//エンドアニメーション動画
+			soundClear();					//クリア音楽再生
+			gameClear(delta_time);			//ゲームクリア全般
+			leafBottonDrawStory(delta_time);//エンター画像描画
+			movieDraw();					//エンドアニメーション動画
 
 			break;
 		}

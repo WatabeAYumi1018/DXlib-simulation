@@ -41,6 +41,7 @@ void storyDraw() {
 	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
 }
 
+//エンターマーク描画
 void leafBottonDrawStory(float delta_time) {
 
 	float static leafBottonTimeCount = 0;
