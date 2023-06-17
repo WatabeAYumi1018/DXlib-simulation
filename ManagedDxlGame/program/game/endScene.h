@@ -16,7 +16,7 @@ void gameOver(float delta_time);
 void gameClear(float delta_time);
 
 //スコア結果表示
-void scoreResult(float delta_time);
+void scoreResult();
 
 //クリア後メッセージ
 void clearMessage();

@@ -47,6 +47,8 @@ void gameOver(float delta_time) {
 		SetFontSize(50);
 		DrawStringEx(580, 500, TEXT_COLOR_WHITE, "CLOSE");
 	}
+
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {DxLib_End();}
 }
 
 //ゲームクリア画面描画
@@ -89,7 +91,7 @@ void gameClear(float delta_time) {
 		}
 		else {
 			DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][12], true);
-			scoreResult(delta_time);
+			scoreResult();
 		}
 
 		movieDraw();
@@ -102,7 +104,7 @@ void gameClear(float delta_time) {
 		}
 		else { 
 			DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][1], true); 
-			scoreResult(delta_time);
+			scoreResult();
 		}
 		movieDraw();
 	}
@@ -114,35 +116,22 @@ void gameClear(float delta_time) {
 		}
 		else { 
 			DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][7], true); 
-			scoreResult(delta_time);
+			scoreResult();
 		}
 	}
 	clearMessage();
 }
 
 //スコア結果表示
-void scoreResult(float delta_time) {
+void scoreResult() {
 
-	float static resultTimeCount = 0;
-	bool static resultDraw = true;
+	DrawGraph(700, 400, g_battle_attack[0][17], TRUE);
 
-	//点滅処理
-	resultTimeCount += delta_time;
+	SetFontSize(80);
 
-	if (resultTimeCount > 1.0f) {
-		resultDraw = !resultDraw;
-		resultTimeCount = 0;
-	}
+	std::string SCORE = std::to_string(g_score);
+	DrawStringEx(1050, 390, GetColor(255, 175, 40), SCORE.c_str());
 
-	if (resultDraw) {
-
-		DrawGraph(700, 400, g_battle_attack[0][17], TRUE);
-
-		SetFontSize(80);
-
-		std::string SCORE = std::to_string(g_score);
-		DrawStringEx(1050, 390, GetColor(255, 175, 40), SCORE.c_str());
-	}
 }
 
 //クリア後メッセージ

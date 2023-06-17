@@ -2,7 +2,6 @@
 #include "gm_main.h"
 #include "titleScene.h"
 
-
 //ƒ^ƒCƒgƒ‹•¶Žš
 int g_title = 0;
 

@@ -271,7 +271,10 @@ void gameMain(float delta_time) {
 		}
 		case GAME_OVER: {
 
+			DeleteSoundMem(g_bgmMap);
+
 			gameOver(delta_time);		//ゲームオーバー全般	
+			scoreResult();
 
 			break;
 		}
