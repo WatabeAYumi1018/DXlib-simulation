@@ -120,6 +120,7 @@ void playMusic() {
 
 	if (CheckSoundMem(g_bgmMap_hdl) == 0) { PlaySoundMem(g_bgmMap_hdl, DX_PLAYTYPE_LOOP, TRUE); }
 }
+
 //ˆê˜A‚Ì—¬‚ê
 void turnMove(float delta_time) {
 
@@ -145,20 +146,7 @@ void turnMove(float delta_time) {
 
 			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][10], true);
 
-			//‰ñ•œ’nŒ`‚Ìã‚É‚¢‚½‚çAƒ^[ƒ“ŠJn‚É‘S‰ñ•œ
-			for (int i = 0; i < CHARACTER_ALLAY_MAX; i++) {
-
-				if (mapData[character[i].y][character[i].x] == CELL_HOUSE ||
-					mapData[character[i].y][character[i].x] == CELL_FORT) {
-
-					if (character[i].hp > 0 && character[i].hp < character[i].maxHp) {
-
-						character[i].hp = character[i].maxHp;
-
-						if (character[i].hp >= character[i].maxHp) { character[i].hp = character[i].maxHp; }
-					}
-				}
-			}
+			cellHeal();
 
 			if (telopFrame >= TELOP_FRAME_MAX) {
 
@@ -200,7 +188,7 @@ void turnMove(float delta_time) {
 			if (telopFrame >= TELOP_FRAME_MAX) {
 
 				telopFrame = 0;				//ƒeƒƒbƒv‚Ì—¬‚ê‚½‹——£ƒŠƒZƒbƒg
-				telopTimeCount = 0;		//ƒeƒƒbƒv‚ÌƒJƒEƒ“ƒgƒŠƒZƒbƒg
+				telopTimeCount = 0;			//ƒeƒƒbƒv‚ÌƒJƒEƒ“ƒgƒŠƒZƒbƒg
 				g_flagTurnEnemy = false;	//“Gƒ^[ƒ“‚Ìƒeƒƒbƒv—¬‚µ‚Íˆê‰ñ‚ÅŠ®—¹‚Ì‚½‚ßfalse
 			}
 		}
@@ -547,7 +535,7 @@ void fillCanMove(int _chara, int _x, int _y, int _move) {//‘I‘ğ‚µ‚½–¡•ûƒLƒƒƒ‰A
 	}
 }
 
-//î•ñ‚âŠeƒtƒF[ƒY‚Å‚Ìw¦•¶š•`‰æˆ—
+//ŠeƒtƒF[ƒY‚Å‚Ìw¦•¶š•`‰æˆ—
 void instructions(float delta_time) {
 
 	//–½—ß•¶‚ÌÀ•W
@@ -783,6 +771,44 @@ void leafBottonDrawEnemyTurnMap(float delta_time) {
 		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "“Gƒ^[ƒ“I—¹\n");
 	}
 }
+
+//‰ñ•œ’nŒ`‚Ìã‚É‚¢‚½‚çAƒ^[ƒ“ŠJn‚É‘S‰ñ•œ
+void cellHeal() {
+
+	for (int i = 0; i < CHARACTER_ALLAY_MAX; i++) {
+
+		if (mapData[character[i].y][character[i].x] == CELL_HOUSE ||
+			mapData[character[i].y][character[i].x] == CELL_FORT) {
+
+			if (character[i].hp > 0 && character[i].hp < character[i].maxHp) {
+
+				character[i].hp = character[i].maxHp;
+
+				if (character[i].hp >= character[i].maxHp) { character[i].hp = character[i].maxHp; }
+			}
+		}
+	}
+}
+
+//‰ñ•œî•ñ•`‰æ
+void cellInfoDisplay() {
+
+	if (g_flagCursor) {
+
+		//‚±‚±‚©‚çî•ñŠJ¦‚Ì‚½‚ß‚Ì•¶š•`‰æ
+		SetFontSize(30);
+
+		if (mapData[cursorY][cursorX] == CELL_FORT) {
+
+			DrawStringEx(100, 530, TEXT_COLOR_WHITE, "Ô@@F@‘Ò‹@‚ÅŸƒ^[ƒ“ŠJn‚É‘S‰ñ•œ\n");
+		}
+		if (mapData[cursorY][cursorX] == CELL_HOUSE) {
+		
+			DrawStringEx(100, 530, TEXT_COLOR_WHITE, "–¯‰Æ@F@‘Ò‹@‚ÅŸƒ^[ƒ“ŠJn‚É‘S‰ñ•œ\n");
+		}
+	}
+}
+
 
 //ƒNƒ‰ƒbƒJ[•`‰æ
 void clearCracker(){

@@ -223,9 +223,12 @@ void gameMain(float delta_time) {
 
 			StopSoundMem(g_bgmMap_hdl);
 
-			titleBackDraw();			//タイトル背景画像
-			movieDraw();				//タイトルアニメーション動画
-			sceneTitle();				//タイトル全般
+			gameClear(delta_time);		//ゲームクリア全般
+
+
+			//titleBackDraw();			//タイトル背景画像
+			//movieDraw();				//タイトルアニメーション動画
+			//sceneTitle();				//タイトル全般
 
 			break;
 		}
@@ -256,6 +259,7 @@ void gameMain(float delta_time) {
 			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
 			mapPosition(delta_time);	//画像描画
 			display();					//下画面情報描画制御
+			cellInfoDisplay();			//地形回復情報表示処理
 			cursorMove();				//カーソル移動手定義
 			instructions(delta_time);	//指示文字描画
 			scoreDraw();				//score描画

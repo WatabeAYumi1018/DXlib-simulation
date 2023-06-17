@@ -1,7 +1,9 @@
 #include "../dxlib_ext/dxlib_ext.h"
 #include "gm_main.h"
 #include "titleScene.h"
+#include "storyScene.h"
 #include "mapScene_map.h"
+#include "mapScene_battle.h"
 #include "endScene.h"
 
 //ゲームオーバー画面
@@ -79,9 +81,8 @@ void gameClear(float delta_time) {
 		g_gameClearTimeCount = 0;				//テロップのカウントリセット	
 		animEnd = true;
 	}
-
 	//高得点ハイスコア！
-	if (g_score >= 500) {
+	if (g_score >= 1000) {
 		
 		if (!animEnd) {
 			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][12], true);
@@ -94,7 +95,7 @@ void gameClear(float delta_time) {
 		movieDraw();
 	}
 	//上出来クリア！
-	else if (g_score <= 300 && g_score >= 100) {
+	else if (g_score <= 999 && g_score >= 500) {
 
 		if (!animEnd) {
 			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][1], true);
@@ -103,7 +104,6 @@ void gameClear(float delta_time) {
 			DrawExtendGraph(300, TELOP_Y_START, 1000, TELOP_Y_END, g_map_turn[0][1], true); 
 			scoreResult(delta_time);
 		}
-
 		movieDraw();
 	}
 	//クリア！
@@ -117,8 +117,11 @@ void gameClear(float delta_time) {
 			scoreResult(delta_time);
 		}
 	}
+
+	clearMessage();
 }
 
+//スコア結果表示
 void scoreResult(float delta_time) {
 
 	float static resultTimeCount = 0;
@@ -133,9 +136,66 @@ void scoreResult(float delta_time) {
 	}
 
 	if (resultDraw) {
-		SetFontSize(100);
-		DrawStringEx(300, 500, GetColor(110,210,80), "SCORE :");
+
+		DrawGraph(700, 400, g_battle_attack[0][17], TRUE);
+
+		SetFontSize(80);
+
 		std::string SCORE = std::to_string(g_score);
-		DrawStringEx(400, 500, GetColor(110, 210, 80), SCORE.c_str());
+		DrawStringEx(1050, 390, GetColor(255, 175, 40), SCORE.c_str());
 	}
+}
+
+//クリア後メッセージ
+void clearMessage() {
+
+	SetFontSize(40);
+
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_messageRun++; }
+
+	//高得点ハイスコア！
+	if (g_score >= 1000) {
+	
+		if (g_messageRun == 0) {
+
+			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "素晴らしいです！\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "こんなにも高い評価　はじめてですわ！\n");
+		}
+		else if (g_messageRun == 1) {
+
+			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなた様こそ\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "唯一無二の　軍師様ですわね！\n");
+		}
+	}
+	//上出来クリア！
+	else if (g_score <= 999 && g_score >= 500) {
+
+		if (g_messageRun == 0) {
+
+			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなた様の采配　流石の言葉しかございません\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "大変　勉強になりましたわ\n");
+		}
+		else if (g_messageRun == 1) {
+
+			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "この名誉に　恥じぬよう\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "私たちも　精進を重ねますわね！\n");
+		}
+	}
+	else {
+
+		if (g_messageRun == 0) {
+
+			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "おめでとうございます！\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "まさか　マルグリット様に打ち勝つとは\n");
+		}
+		else if (g_messageRun == 1) {
+
+			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "御見それいたしました\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "ご一緒できて　光栄でしたわ\n");
+		}
+	}
+	//少女立ち絵笑顔
+	DrawExtendGraph(100, 100, 500, 500, g_girlSmile, TRUE);
+	//ストーリー会話ウィンドウ
+	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
 }
