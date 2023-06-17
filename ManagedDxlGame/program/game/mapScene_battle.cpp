@@ -467,16 +467,10 @@ void battleHitRandom(float delta_time,int attack, int defence) {
 	//UŒ‚ƒ~ƒX
 	if (hit < hitRandom) {
 
-		//UŒ‚ƒ~ƒX‚Ì•`‰æ
-		//DrawRotaGraph(800, 300, 1.0f, 45, g_battleMiss, TRUE);
-		
-		g_CanAttackMove++;
+		//UŒ‚ƒ~ƒX‚ÌSE
 	}
 	//UŒ‚”»’è
-	else { 
-		battleHpMove(delta_time, attack, defence); 
-		g_CanAttackMove++;
-	}
+	else { battleHpMove(delta_time, attack, defence); }
 }
 
 //í“¬ŒvZˆ—
@@ -555,10 +549,10 @@ void battledExit(int attack,int defence){
 void scoreMove() {
 
 	if (character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp <=0) {
+		
 		if (ThreeRelation(g_selectedChara, g_standbyChara) == 0) { g_score += 30; }
 		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 1) { g_score += 100; }
 		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 2) { g_score += 70; }
-	 
 	}
 	if (character[g_selectedChara].team == TEAM_ALLY ) {
 	
@@ -631,7 +625,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 				battleEffectGraph(delta_time, attack);
 				seBattle(attack);
 			}
-			else if (character[defence].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+			else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
 
 				battleEffectGraph(delta_time, defence);
 				seBattle(defence);

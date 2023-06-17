@@ -33,7 +33,7 @@ Character character[] = {
 	{"ƒ~ƒ‚ƒU",		JOB_SWORDMASTER,	300, 300,	150,  80,  15,  100,  6,	TEAM_ALLY,	36, 4},
 	{"ƒAƒlƒ‚ƒl",	JOB_SNIPER,			250, 250,	100,  90,  20,  100,  5,	TEAM_ALLY,	34, 4},
 	{"ƒAƒiƒxƒ‹",	JOB_MAGICIAN,		200, 200,	250,  70,  10,  100,  4,	TEAM_ALLY,	35, 6},
-	{"Œ•Žm",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 6},
+	{"Œ•Žm",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 5},
 	{"‹|Žg‚¢",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	33, 11},
 	{"–‚“¹Žm",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	27, 1},
 	{"Œ•Žm",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	15, 10},

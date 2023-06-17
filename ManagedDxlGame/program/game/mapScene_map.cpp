@@ -207,12 +207,14 @@ void turnMove(float delta_time) {
 
 		static int countBattle = 0;
 
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_LSHIFT)) { countBattle++; }
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) { countBattle++; }
 
 		//★敵がいない場合の処理がない！
 		if (countBattle == 1) {
 
 			enemyAttack(delta_time, charaAlly0, charaEnemy0);
+
+			//if()
 		}
 		else if (countBattle == 2) {
 
@@ -353,6 +355,9 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 	}
 }
 
+//移動前のキャラ情報
+int g_moveBeforeChara = 0;
+
 //カーソルエンター処理について
 void phaseAllyMove(float delta_time) {
 
@@ -396,6 +401,7 @@ void phaseAllyMove(float delta_time) {
 				if (character[chara].team == TEAM_ALLY) {
 
 					g_selectedChara = chara; //味方キャラを代入
+					g_moveBeforeChara = g_selectedChara; //移動前キャラ情報を保持
 					g_phaseAlly = PHASE_SET_MOVE_POSITION;
 				}
 				break;
@@ -420,18 +426,26 @@ void phaseAllyMove(float delta_time) {
 					if (checkCanAllyBattle(g_selectedChara, i)) {
 
 						g_standbyChara = i;
-						checkBattleFlag = true;
+						g_phaseAlly = PHASE_SELECT_ATTACK;
 						break;
 					}
+					else {
+						//攻撃可能キャラがいなければ、待機
+						character[g_selectedChara].done = true;
+						resetFill();
+						g_phaseAlly = PHASE_SELECT_CHARACTER;
+					}
 				}
-				if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK; }
+			//	if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {  }
 
-				else {
-					//攻撃可能キャラがいなければ、待機
-					character[g_selectedChara].done = true;
-					resetFill();
-					g_phaseAlly = PHASE_SELECT_CHARACTER;
-				}
+				//if (checkCanAllyBattle(g_selectedChara, g_standbyChara) &&
+				//	 character[g_selectedChara].x==character[g_moveBeforeChara].x &&
+				//	  character[g_selectedChara].y == character[g_moveBeforeChara].y) {
+
+				//	g_phaseAlly = PHASE_SELECT_ATTACK;
+				//}
+
+				
 			}
 		}
 		break;
@@ -479,7 +493,6 @@ void phaseAllyMove(float delta_time) {
 	//	}
 	//	else {g_phaseAlly = PHASE_SELECT_CHARACTER;}
 	//}
-	
 }
 
 //score表示
@@ -730,7 +743,7 @@ void leafBottonDrawAllyTurnMap(float delta_time) {
 	//毎フレーム足していく処理
 	leafBottonTimeCount += delta_time;
 
-	if (leafBottonTimeCount > 1.0f) {
+	if (leafBottonTimeCount > 2.0f) {
 		leafBottonDraw = !leafBottonDraw;
 		leafBottonTimeCount = 0;
 	}
@@ -759,7 +772,7 @@ void leafBottonDrawEnemyTurnMap(float delta_time) {
 	//毎フレーム足していく処理
 	leafBottonTimeCount += delta_time;
 
-	if (leafBottonTimeCount > 1.0f) {
+	if (leafBottonTimeCount > 2.0f) {
 		leafBottonDraw = !leafBottonDraw;
 		leafBottonTimeCount = 0;
 	}
