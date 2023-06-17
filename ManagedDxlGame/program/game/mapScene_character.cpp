@@ -45,7 +45,7 @@ Character character[] = {
 	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	5,	6},
 	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	5,	10},
 	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	20, 8},
-	{"マルグリット",JOB_LEADER,			300,  300,	200,  70,  15,  100,  0,	TEAM_ENEMY,	4,	3}
+	{"マルグリット",JOB_LEADER,			10,  300,	200,  70,  15,  100,  0,	TEAM_ENEMY,	4,	3}
 };
 
 //charaDate定義。いなければ-１

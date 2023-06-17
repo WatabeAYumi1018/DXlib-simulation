@@ -117,7 +117,6 @@ void gameClear(float delta_time) {
 			scoreResult(delta_time);
 		}
 	}
-
 	clearMessage();
 }
 
@@ -148,6 +147,18 @@ void scoreResult(float delta_time) {
 
 //クリア後メッセージ
 void clearMessage() {
+
+	//少女立ち絵笑顔
+	if (g_messageRun == 0 || g_messageRun == 1 || g_messageRun == 5) {
+	
+		DrawExtendGraph(100, 100, 500, 500, g_girlSmile, TRUE);
+	}
+	
+	//少女立ち絵普通
+	else{DrawExtendGraph(100, 100, 500, 500, g_girlNormal, TRUE);}
+
+	//ストーリー会話ウィンドウ
+	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
 
 	SetFontSize(40);
 
@@ -194,8 +205,35 @@ void clearMessage() {
 			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "ご一緒できて　光栄でしたわ\n");
 		}
 	}
-	//少女立ち絵笑顔
-	DrawExtendGraph(100, 100, 500, 500, g_girlSmile, TRUE);
-	//ストーリー会話ウィンドウ
-	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
+	if(g_messageRun == 2) {
+
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "私たちの訓練は　いかがでしたでしょうか\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "何か得るものがありましたら　うれしいです\n");
+	}
+	else if (g_messageRun == 3) {
+
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "私たちも　今回の教えを糧として\n");
+	}
+	else if (g_messageRun == 4) {
+
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "これからも精進できるよう\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "一族の皆と共に　頑張りますね\n");
+	}
+	else if (g_messageRun == 5) {
+
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなたにお会いできて　本当によかった\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "またいつでも　お越しくださいね\n");
+	}
+	else if (g_messageRun == 6) {
+	
+		DxLib_End();// DXlibの終了処理
+	}
+}
+
+//クリア音楽再生
+void endSound() {
+
+	DeleteSoundMem(g_bgmMap);	//タイトル～チュートリアルまでのBGM削除
+
+	if (CheckSoundMem(g_bgmEnding) == 0) { PlaySoundMem(g_bgmEnding, DX_PLAYTYPE_LOOP, TRUE); }
 }

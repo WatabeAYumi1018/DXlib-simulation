@@ -111,7 +111,6 @@ void movieDraw() {
 
 		//“§‰ßˆ—‚³‚ê‚½‰æ‘œ‚ğ‰æ–Ê‚¢‚Á‚Ï‚¢‚É•`‰æ
 		DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, screen_handle, TRUE);
-
 	}
 }
 

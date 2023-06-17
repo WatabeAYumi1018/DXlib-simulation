@@ -20,3 +20,6 @@ void scoreResult(float delta_time);
 
 //クリア後メッセージ
 void clearMessage();
+
+//クリア音楽再生
+void endSound();

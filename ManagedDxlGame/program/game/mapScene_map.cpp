@@ -116,9 +116,11 @@ bool g_enemyCheckFinish = true;
 //音声関連
 void playMusic() {
 
-	DeleteSoundMem(g_bgmTitle_hdl);	//タイトル～チュートリアルまでのBGM削除
+	StopSoundMem(g_bgmEnding);
 
-	if (CheckSoundMem(g_bgmMap_hdl) == 0) { PlaySoundMem(g_bgmMap_hdl, DX_PLAYTYPE_LOOP, TRUE); }
+	DeleteSoundMem(g_bgmTitle);	//タイトル～チュートリアルまでのBGM削除
+
+	if (CheckSoundMem(g_bgmMap) == 0) { PlaySoundMem(g_bgmMap, DX_PLAYTYPE_LOOP, TRUE); }
 }
 
 //一連の流れ
@@ -369,7 +371,7 @@ void phaseAllyMove(float delta_time) {
 			if (chara < 0) { break; } //負の値だったらいない
 
 			//行動済みなら座標動かない
-			if (character[chara].done) { resetFill(); }
+			//if (character[chara].done) { resetFill(); }
 
 			//キャラがいれば(それ以外は)塗りつぶし
 			else {
@@ -458,24 +460,24 @@ void phaseAllyMove(float delta_time) {
 		resetFill();
 		g_phaseAlly = PHASE_SELECT_CHARACTER;
 	}
-	if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {
+	//if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {
 
-		if (character[g_selectedChara].x == cursorX && character[g_selectedChara].y == cursorY) {
+	//	if (character[g_selectedChara].x == cursorX && character[g_selectedChara].y == cursorY) {
 
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+	//		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
-				if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
-				
-					if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+	//			if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
+	//			
+	//				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
-						checkBattleFlag = true;
-						g_phaseAlly = PHASE_SELECT_ATTACK;
-					}
-				}
-			}
-		}
-		else {g_phaseAlly = PHASE_SELECT_CHARACTER;}
-	}
+	//					checkBattleFlag = true;
+	//					g_phaseAlly = PHASE_SELECT_ATTACK;
+	//				}
+	//			}
+	//		}
+	//	}
+	//	else {g_phaseAlly = PHASE_SELECT_CHARACTER;}
+	//}
 	
 }
 

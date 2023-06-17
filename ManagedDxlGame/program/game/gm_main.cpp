@@ -21,9 +21,13 @@
 int g_gameScene_id = GAME_START;
 
 //サウンド　タイトル
-int g_bgmTitle_hdl = 0;
+int g_bgmTitle = 0;
 //サウンド　マップ
-int g_bgmMap_hdl = 0;
+int g_bgmMap = 0;
+//サウンド　クリアファンファーレ
+int g_bgmClear = 0;
+//サウンド　エンディング
+int g_bgmEnding = 0;
 
 //int sound_se_hdl = 0;
 
@@ -51,11 +55,13 @@ void gameStart() {
 	SetWindowText("GREEN OCEAN");
 
 	//音楽の出力--------------------------------------------
-	g_bgmTitle_hdl = LoadSoundMem("sound/title.mp3");
-	g_bgmMap_hdl = LoadSoundMem("sound/map.mp3");
-
-	//タイトル～チュートリアルにて再生
-	PlaySoundMem(g_bgmTitle_hdl, DX_PLAYTYPE_LOOP, TRUE); //DXlibリファレンス、ループ処理の引数
+	g_bgmTitle = LoadSoundMem("sound/title.mp3");
+	g_bgmMap = LoadSoundMem("sound/map.mp3");
+	g_bgmClear= LoadSoundMem("sound/clear.wav");
+	g_bgmEnding= LoadSoundMem("sound/ending.mp3");
+	
+		//タイトル～チュートリアルにて再生
+	PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE); //DXlibリファレンス、ループ処理の引数
 
 	//SEの出力
 	//sound_se_hdl = LoadSoundMem("sound/test_se.wav");
@@ -221,20 +227,17 @@ void gameMain(float delta_time) {
 
 		case GAME_START: {
 
-			StopSoundMem(g_bgmMap_hdl);
+			StopSoundMem(g_bgmMap);
 
-			gameClear(delta_time);		//ゲームクリア全般
-
-
-			//titleBackDraw();			//タイトル背景画像
-			//movieDraw();				//タイトルアニメーション動画
-			//sceneTitle();				//タイトル全般
+			titleBackDraw();			//タイトル背景画像
+			movieDraw();				//タイトルアニメーション動画
+			sceneTitle();				//タイトル全般
 
 			break;
 		}
 		case GAME_STORY: {
 
-			StopSoundMem(g_bgmMap_hdl);
+			StopSoundMem(g_bgmMap);
 
 			storyDraw();				//ストーリー背景描画
 			storyMessage();				//ストーリーメッセージ描画
@@ -244,7 +247,7 @@ void gameMain(float delta_time) {
 		}
 		case GAME_TUTORIAL: {
 
-			StopSoundMem(g_bgmMap_hdl);
+			StopSoundMem(g_bgmMap);
 
 			tutorialDraw();
 			tutorialMessage();
@@ -255,7 +258,6 @@ void gameMain(float delta_time) {
 		case GAME_MAP: {
 
 			playMusic();				//音声関連
-
 			getCharaPosition();			//charaData[MAP_HEIGHT][MAP_WIDTH]定義
 			mapPosition(delta_time);	//画像描画
 			display();					//下画面情報描画制御
@@ -275,7 +277,10 @@ void gameMain(float delta_time) {
 		}
 		case GAME_CLEAR: {
 
+			endSound();					//クリア音楽再生
 			gameClear(delta_time);		//ゲームクリア全般
+			leafBottonDrawStory(delta_time);
+			movieDraw();				//エンドアニメーション動画
 
 			break;
 		}

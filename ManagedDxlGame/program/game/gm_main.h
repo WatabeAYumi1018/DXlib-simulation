@@ -4,9 +4,14 @@
 extern int g_gameScene_id;
 
 //サウンド　タイトル
-extern int g_bgmTitle_hdl;
+extern int g_bgmTitle;
 //サウンド　マップ
-extern int g_bgmMap_hdl;
+extern int g_bgmMap;
+//サウンド　クリアファンファーレ
+extern int g_bgmClear;
+//サウンド　エンディング
+extern int g_bgmEnding;
+
 
 extern int sound_se_hdl;
 
