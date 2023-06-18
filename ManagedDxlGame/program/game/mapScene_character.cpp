@@ -67,7 +67,6 @@ void getCharaPosition() {
 			charaData[i][j] = -1; //現状、charaData[][]の中身は初期化の状態で全てに０が入ってる。このままだと、character[0]の大量発生
 		}						  //そこにー１を入れることで、それを防いでいる。
 	}
-
 	//キャラクター各々の座標を習得(自分の座標を常に自分で持つようにする(毎回更新))
 	for (int i = 0; i < CHARACTER_MAX; i++) {
 

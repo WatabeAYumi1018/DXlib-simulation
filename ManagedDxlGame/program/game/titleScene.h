@@ -21,9 +21,6 @@ const tnl::Vector3 TITLE_SELECT_MENU_POSITION[TITLE_MENU_MAX] = {
 //ゲームスタート画面
 extern int g_gameStart;
 
-//ゲームスタート画面ライト
-extern int g_gameStartAnim;
-
 //タイトル動画ハンドル
 extern int g_titleMovie;
 

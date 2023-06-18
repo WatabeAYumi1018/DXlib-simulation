@@ -71,7 +71,7 @@ void gameStart() {
 	g_bgmGameOver = LoadSoundMem("sound/gameOver.mp3");
 
 	//タイトル～チュートリアルにて再生
-	//PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE);
+	PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE);
 
 	//SE出力	
 	g_seEffectAllow = LoadSoundMem("sound/effectAllow.mp3");
@@ -214,7 +214,7 @@ void gameMain(float delta_time) {
 
 		case GAME_START: {
 
-			//soundTitle();					//タイトル画面でのサウンド制御
+			soundTitle();					//タイトル画面でのサウンド制御
 			titleBackDraw();				//タイトル背景画像
 			movieDraw();					//タイトルアニメーション動画
 			sceneTitle();					//タイトル全般
@@ -223,7 +223,7 @@ void gameMain(float delta_time) {
 		}
 		case GAME_STORY: {
 
-			//soundTitle();					//タイトル画面でのサウンド制御
+			soundTitle();					//タイトル画面でのサウンド制御
 			storyDraw();					//ストーリー背景描画
 			storyMessage();					//ストーリーメッセージ描画
 			leafBottonDrawStory(delta_time);//エンター画像描画
@@ -232,7 +232,7 @@ void gameMain(float delta_time) {
 		}
 		case GAME_TUTORIAL: {
 
-		//	soundTitle();					//タイトル画面でのサウンド制御
+			soundTitle();					//タイトル画面でのサウンド制御
 			tutorialDraw();					//チュートリアル画像描画
 			tutorialMessage();				//チュートリアルメッセージ描画
 			leafBottonDrawStory(delta_time);//エンター画像描画
@@ -241,7 +241,7 @@ void gameMain(float delta_time) {
 		}
 		case GAME_MAP: {
 
-			//playMusic();					//音声関連
+			playMusic();					//音声関連
 			getCharaPosition();				//charaData[MAP_HEIGHT][MAP_WIDTH]定義
 			mapPosition(delta_time);		//画像描画
 			display();						//下画面情報描画制御

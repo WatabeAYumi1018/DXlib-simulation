@@ -131,6 +131,7 @@ void sceneTitle() {
 
 //タイトル画面でのサウンド制御
 void soundTitle() {
+
 	StopSoundMem(g_bgmMap);
 	StopSoundMem(g_bgmGameOver);
 }

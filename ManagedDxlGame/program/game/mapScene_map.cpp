@@ -239,6 +239,7 @@ void turnMove(float delta_time) {
 			character[2].done = false;
 			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
 			g_turnMove = TURN_ALLAY;
+			g_phaseAlly=PHASE_SELECT_CHARACTER;
 		}
 		//敵ターンボタン描画
 		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
@@ -363,19 +364,14 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 	}
 }
 
-//移動前のキャラ情報
-int g_moveBeforeChara = 0;
-
 //カーソルエンター処理について
 void phaseAllyMove(float delta_time) {
-
-	bool checkBattleFlag = false;
 
 	switch (g_phaseAlly) {
 
 	case PHASE_SELECT_CHARACTER: {
 		
-		if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
 			resetFill();
 
@@ -400,7 +396,10 @@ void phaseAllyMove(float delta_time) {
 					for (int j = 0; j < MAP_WIDTH; j++) {
 
 						int standChara = getCharacter(j, i);
-						if (standChara >= 0 && fill[i][j]) { fill[i][j] = false; }
+						
+						//fill範囲内にキャラクターがいた場合、かつそのキャラが自分自身でなければそこは描画されない
+						//描画されている範囲＝移動できる場所になっているため、自分自身も描画することでそこへ移動したという処理になる
+						if (standChara >= 0 && fill[i][j] && chara!= standChara) { fill[i][j] = false; }
 					}
 				}
 				drawFill();
@@ -409,7 +408,6 @@ void phaseAllyMove(float delta_time) {
 				if (character[chara].team == TEAM_ALLY) {
 
 					g_selectedChara = chara; //味方キャラを代入
-					//g_moveBeforeChara = g_selectedChara; //移動前キャラ情報を保持
 					g_phaseAlly = PHASE_SET_MOVE_POSITION;
 				}
 				break;
@@ -420,7 +418,7 @@ void phaseAllyMove(float delta_time) {
 
 		drawFill();
 
-		if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
 			//移動先の選択、完了したら選択フェーズに戻る
 			if (fill[cursorY][cursorX]) {
@@ -429,29 +427,25 @@ void phaseAllyMove(float delta_time) {
 				character[g_selectedChara].x = cursorX;
 				character[g_selectedChara].y = cursorY;
 
+				bool checkBattleFlag = false;
+
 				for (int i = 0; i < CHARACTER_MAX; i++) {
 
 					if (checkCanAllyBattle(g_selectedChara, i)) {
 
 						g_standbyChara = i;
-						g_phaseAlly = PHASE_SELECT_ATTACK;
+						checkBattleFlag = true;
 						break;
 					}
-					else {
-						//攻撃可能キャラがいなければ、待機
-						character[g_selectedChara].done = true;
-						resetFill();
-						g_phaseAlly = PHASE_SELECT_CHARACTER;
-					}
 				}
-			//if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {  }
+				if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK; }
 
-			//if (checkCanAllyBattle(g_selectedChara, g_standbyChara) &&
-			//	 character[g_selectedChara].x==character[g_moveBeforeChara].x &&
-			//	  character[g_selectedChara].y == character[g_moveBeforeChara].y) {
-
-			//	g_phaseAlly = PHASE_SELECT_ATTACK;
-			//}
+				else {
+					//攻撃可能キャラがいなければ、待機
+					character[g_selectedChara].done = true;
+					resetFill();
+					g_phaseAlly = PHASE_SELECT_CHARACTER;
+				}
 			}
 		}
 		break;
@@ -481,24 +475,6 @@ void phaseAllyMove(float delta_time) {
 		resetFill();
 		g_phaseAlly = PHASE_SELECT_CHARACTER;
 	}
-	//if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {
-
-	//	if (character[g_selectedChara].x == cursorX && character[g_selectedChara].y == cursorY) {
-
-	//		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-	//			if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
-	//			
-	//				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-	//					checkBattleFlag = true;
-	//					g_phaseAlly = PHASE_SELECT_ATTACK;
-	//				}
-	//			}
-	//		}
-	//	}
-	//	else {g_phaseAlly = PHASE_SELECT_CHARACTER;}
-	//}
 }
 
 //score表示
