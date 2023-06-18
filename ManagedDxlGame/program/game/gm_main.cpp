@@ -67,11 +67,11 @@ void gameStart() {
 	//BGMの出力
 	g_bgmTitle = LoadSoundMem("sound/title.mp3");
 	g_bgmMap = LoadSoundMem("sound/map.mp3");
-	g_bgmEnding= LoadSoundMem("sound/ending.mp3");
-	g_bgmGameOver=LoadSoundMem("sound/gameOver.mp3");
-	
+	g_bgmEnding = LoadSoundMem("sound/ending.mp3");
+	g_bgmGameOver = LoadSoundMem("sound/gameOver.mp3");
+
 	//タイトル～チュートリアルにて再生
-	PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE); 
+	PlaySoundMem(g_bgmTitle, DX_PLAYTYPE_LOOP, TRUE);
 
 	//SE出力	
 	g_seEffectAllow = LoadSoundMem("sound/effectAllow.mp3");
@@ -99,10 +99,10 @@ void gameStart() {
 	g_select_cursor = LoadGraph("graphics/flowerSelect.png");
 
 	//タイトル文字画像
-	g_title= LoadGraph("graphics/GREEN OCEAN.png");
+	g_title = LoadGraph("graphics/GREEN OCEAN.png");
 
 	//ストーリーシーン背景
-	g_storyBack= LoadGraph("graphics/GameStoryBack.png");
+	g_storyBack = LoadGraph("graphics/GameStoryBack.png");
 
 	//ストーリーシーン会話ウィンドウ
 	g_storyWindow = LoadGraph("graphics/storyWindow.png");
@@ -111,22 +111,22 @@ void gameStart() {
 	LoadDivGraph("graphics/pipo-map001.png", 88, 8, 11, CHIP_SIZE, CHIP_SIZE, map_chips[0]);
 
 	//キャラ
-	LoadDivGraph("graphics/player1.png",  12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[0]);
-	LoadDivGraph("graphics/player2.png",  12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[1]);
-	LoadDivGraph("graphics/player3.png",  12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[2]);
-	LoadDivGraph("graphics/enemy1.png",	  12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[3]);
-	LoadDivGraph("graphics/enemy2.png",   12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[4]);
-	LoadDivGraph("graphics/enemy3.png",   12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[5]);
-	LoadDivGraph("graphics/enemyBOSS.png",12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[6]);
+	LoadDivGraph("graphics/player1.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[0]);
+	LoadDivGraph("graphics/player2.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[1]);
+	LoadDivGraph("graphics/player3.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[2]);
+	LoadDivGraph("graphics/enemy1.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[3]);
+	LoadDivGraph("graphics/enemy2.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[4]);
+	LoadDivGraph("graphics/enemy3.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[5]);
+	LoadDivGraph("graphics/enemyBOSS.png", 12, 3, 4, CHIP_SIZE, CHIP_SIZE, character_chips[6]);
 
 	//カーソル
 	g_cursor = LoadGraph("graphics/cursor.png");
-	
+
 	//マップ上での情報表示用（下画面）
-	display_map = LoadGraph("graphics/mapInfo.png"); 
+	display_map = LoadGraph("graphics/mapInfo.png");
 
 	//マップ上での行動可能範囲
-	fill_map = LoadGraph("graphics/canMoveTile.png"); 
+	fill_map = LoadGraph("graphics/canMoveTile.png");
 
 	//攻撃画面の背景
 	g_battleGround = LoadGraph("graphics/battleback.jpg");
@@ -136,29 +136,29 @@ void gameStart() {
 
 	//ゲームオーバー背景
 	g_gameOver = LoadGraph("graphics/GameOver.jpg");
-	
+
 	//ゲームクリア背景
 	g_gameClear = LoadGraph("graphics/GameClear.png");
 
 	//攻撃中の下画面
-	LoadDivGraph("graphics/battleHp.png",		35, 5, 7, 120, 60, g_battle_hp[0]);
-	LoadDivGraph("graphics/battleAttack.png",	42, 3, 14,300, 60, g_battle_attack[0]);
-	LoadDivGraph("graphics/battleHit.png",		25, 5, 5, 180, 60, g_battle_hit[0]);
-	
+	LoadDivGraph("graphics/battleHp.png", 35, 5, 7, 120, 60, g_battle_hp[0]);
+	LoadDivGraph("graphics/battleAttack.png", 42, 3, 14, 300, 60, g_battle_attack[0]);
+	LoadDivGraph("graphics/battleHit.png", 25, 5, 5, 180, 60, g_battle_hit[0]);
+
 	//攻撃エフェクトアニメーション
 	LoadDivGraph("graphics/effect_sword.png", 15, 5, 3, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_sword[0]);
-	LoadDivGraph("graphics/effect_snip.png",  10, 5, 2, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_snip[0]);
-	LoadDivGraph("graphics/effect_magic.png",14,14, 1, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_magic[0]);
-	LoadDivGraph("graphics/effect_leader.png",10, 5, 2, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_leader[0]);
+	LoadDivGraph("graphics/effect_snip.png", 10, 5, 2, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_snip[0]);
+	LoadDivGraph("graphics/effect_magic.png", 14, 14, 1, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_magic[0]);
+	LoadDivGraph("graphics/effect_leader.png", 10, 5, 2, EFFECT_SIZE, EFFECT_SIZE, g_battle_effect_leader[0]);
 
 	//職業アイコン
-	icon_sword= LoadGraph("graphics/iconSWORD.png");
-	icon_magic= LoadGraph("graphics/iconMAGIC.png");
-	icon_snip=LoadGraph("graphics/iconSNIP.png");
-	icon_boss= LoadGraph("graphics/iconBOSS.png");
+	icon_sword = LoadGraph("graphics/iconSWORD.png");
+	icon_magic = LoadGraph("graphics/iconMAGIC.png");
+	icon_snip = LoadGraph("graphics/iconSNIP.png");
+	icon_boss = LoadGraph("graphics/iconBOSS.png");
 
 	//三すくみエフェクト
-	g_relation_back= LoadGraph("graphics/relationBack.png");
+	g_relation_back = LoadGraph("graphics/relationBack.png");
 	g_relation = LoadGraph("graphics/relation.png");
 
 	//マップ画面でのターン文字
@@ -169,16 +169,16 @@ void gameStart() {
 	//カーソルボタン
 	g_bottonCursor = LoadGraph("graphics/leafCursor.png");
 	//タブボタン
-	g_bottonTab= LoadGraph("graphics/leafTab.png");
+	g_bottonTab = LoadGraph("graphics/leafTab.png");
 	//スペースボタン
-	g_bottonSpace= LoadGraph("graphics/leafSpace.png");
+	g_bottonSpace = LoadGraph("graphics/leafSpace.png");
 	//シフトボタン
-	g_bottonShift= LoadGraph("graphics/leafShift.png");
+	g_bottonShift = LoadGraph("graphics/leafShift.png");
 
 	//女性立ち絵
-	g_girlNormal= LoadGraph("graphics/swordGirl.png");
-	g_girlSmile= LoadGraph("graphics/girlSmile.png");
-	g_girlTroubled= LoadGraph("graphics/girl_troubled.png");
+	g_girlNormal = LoadGraph("graphics/swordGirl.png");
+	g_girlSmile = LoadGraph("graphics/girlSmile.png");
+	g_girlTroubled = LoadGraph("graphics/girl_troubled.png");
 
 	//長立ち絵
 	g_bossNormal = LoadGraph("graphics/boss_tutorial.png");
@@ -186,35 +186,26 @@ void gameStart() {
 	//チュートリアル関係-----------------------------
 	//
 	//マップ全体図
-	g_tutorialMap = LoadGraph("graphics/tutorialMap.png");;
+	g_tutorialMap = LoadGraph("graphics/tutorialMap.png");
 	//ゲーム目的
-	g_tutorialMapStream = LoadGraph("graphics/tutorialMapStream.png");;
+	g_tutorialMapStream = LoadGraph("graphics/tutorialMapStream.png");
 	//味方ターンカーソル
-	g_tutorialAllyTurnCursor = LoadGraph("graphics/tutorialAllyTurnCursor.png");;
+	g_tutorialAllyTurnCursor = LoadGraph("graphics/tutorialAllyTurnCursor.png");
 	//下画面情報
-	g_tutorialAllyTurnInfo = LoadGraph("graphics/tutorialAllyTurnInfo.png");;
+	g_tutorialAllyTurnInfoSpeed = LoadGraph("graphics/tutorialAllyTurnInfoSpeed.png");
 	//味方ターン移動先選択
-	g_tutorialAllyTurnSelect = LoadGraph("graphics/tutorialAllyTurnSelect.png");;
+	g_tutorialAllyTurnSelect = LoadGraph("graphics/tutorialAllyTurnSelect.png");
 	//味方ターン移動
-	g_tutorialAllyTurnMove = LoadGraph("graphics/tutorialAllyTurnMove.png");;
+	g_tutorialAllyTurnMove = LoadGraph("graphics/tutorialAllyTurnMove.png");
 	//味方ターン敵選択
-	g_tutorialAllyTurnSelectEnemy = LoadGraph("graphics/tutorialAllyTurnSelectEnemy.png");;
+	g_tutorialAllyTurnSelectEnemy = LoadGraph("graphics/tutorialAllyTurnSelectEnemy.png");
 	//敵ターン
-	g_tutorialEnemyTurn = LoadGraph("graphics/tutorialEnemyTurn.png");;
-	//敵ターン移動
-	g_tutorialEnemyTurnMove = LoadGraph("graphics/tutorialEnemyTurnMove.png");;
-	//敵ターン攻撃呼び出し
-	g_tutorialMapEnemyTurnAttack = LoadGraph("graphics/tutorialMapEnemyTurnAttack.png");;
+	g_tutorialEnemyTurn = LoadGraph("graphics/tutorialEnemyTurn.png");
 	//敵ターン終了
-	g_tutorialMapEnemyTurnEnd = LoadGraph("graphics/tutorialMapEnemyTurnEnd.png");;
-	//戦闘画面攻撃力
-	g_tutorialBattleAttack = LoadGraph("graphics/tutorialBattleAttack.png");;
-	//戦闘画面命中率
-	g_tutorialBattleHit = LoadGraph("graphics/tutorialBattleHit.png");;
-	//スコア説明
-	g_tutorialScore = LoadGraph("graphics/Score.png");;
+	g_tutorialMapEnemyTurnEnd = LoadGraph("graphics/tutorialMapEnemyTurnEnd.png");
+	//回復スポット説明
+	g_tutorialMapHeal = LoadGraph("graphics/tutorialMapHeal.png");
 }
-
 //------------------------------------------------------------------------------------------------------------
 // 毎フレーム実行されます,60FPS
 void gameMain(float delta_time) {
