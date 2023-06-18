@@ -47,10 +47,8 @@ void tutorialDraw() {
 
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_tutorialRun++; }
 
-	if (g_tutorialRun == 2 || g_tutorialRun == 13 || g_tutorialRun == 14) {
-	
-		DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMap, false);
-	}
+	if (g_tutorialRun == 2 || g_tutorialRun == 13 || g_tutorialRun == 14) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMap, false);}
+
 	else if (g_tutorialRun == 3 || g_tutorialRun == 4) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapStream, false);}
 	
 	else if (g_tutorialRun == 5) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnCursor, false);}
@@ -59,10 +57,8 @@ void tutorialDraw() {
 	
 	else if (g_tutorialRun == 7) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnMove, false);}
 	
-	else if (g_tutorialRun == 8 || g_tutorialRun == 9 || g_tutorialRun == 10) {
+	else if (g_tutorialRun == 8 || g_tutorialRun == 9 || g_tutorialRun == 10) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnInfoSpeed, false);}
 	
-		DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnInfoSpeed, false);
-	}
 	else if (g_tutorialRun == 11) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialEnemyTurn, false);}
 
 	else if (g_tutorialRun == 12) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapEnemyTurnEnd, false);}

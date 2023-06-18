@@ -207,13 +207,12 @@ void turnMove(float delta_time) {
 
 		static int countBattle = 0;
 
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) { countBattle++; }
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_LSHIFT)) { countBattle++; }
 
 		//★敵がいない場合の処理がない！
 
 
 		//現状だとスペースを押さないと戦闘に入らない
-
 		if (countBattle == 1) {
 
 			enemyAttack(delta_time, charaAlly0, charaEnemy0);
@@ -336,10 +335,15 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 
 			else if (enemyX < allyX && enemyY == allyY) { enemyX = allyX - 1; }
 		}
-		//座標更新
-		character[enemyNumber].x = enemyX;
-		character[enemyNumber].y = enemyY;
+		//移動先に既に他のキャラ座標があった場合は動かない
+		if (charaData[enemyY][enemyX]==-1) {
+			
+			//座標更新
+			character[enemyNumber].x = enemyX;
+			character[enemyNumber].y = enemyY;
 
+			charaData[character[enemyNumber].y][character[enemyNumber].x] = enemyNumber;
+		}
 		break;
 	}
 	}
@@ -440,16 +444,14 @@ void phaseAllyMove(float delta_time) {
 						g_phaseAlly = PHASE_SELECT_CHARACTER;
 					}
 				}
-			//	if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {  }
+			//if (checkCanAllyBattle(g_selectedChara, g_standbyChara)) {  }
 
-				//if (checkCanAllyBattle(g_selectedChara, g_standbyChara) &&
-				//	 character[g_selectedChara].x==character[g_moveBeforeChara].x &&
-				//	  character[g_selectedChara].y == character[g_moveBeforeChara].y) {
+			//if (checkCanAllyBattle(g_selectedChara, g_standbyChara) &&
+			//	 character[g_selectedChara].x==character[g_moveBeforeChara].x &&
+			//	  character[g_selectedChara].y == character[g_moveBeforeChara].y) {
 
-				//	g_phaseAlly = PHASE_SELECT_ATTACK;
-				//}
-
-				
+			//	g_phaseAlly = PHASE_SELECT_ATTACK;
+			//}
 			}
 		}
 		break;
@@ -603,15 +605,21 @@ void instructions(float delta_time) {
 }
 
 //カーソル移動
-void cursorMove() {
-	if (g_flagCursor) {
+void cursorMove(float delta_time) {
+
+	float static cursorWaitCount = 0;
+
+	//毎フレーム足していく処理
+	cursorWaitCount += delta_time;
+
+	if (g_flagCursor && cursorWaitCount > 0.1f) {
 
 		if ((tnl::Input::IsKeyDown(eKeys::KB_DOWN)) && cursorY < MAP_HEIGHT - 1) { cursorY++; }
-		if ((tnl::Input::IsKeyDown(eKeys::KB_UP)) && cursorY > 0)				 { cursorY--; }
+		if ((tnl::Input::IsKeyDown(eKeys::KB_UP)) && cursorY > 0) { cursorY--; }
 		if ((tnl::Input::IsKeyDown(eKeys::KB_RIGHT)) && cursorX < MAP_WIDTH - 1) { cursorX++; }
-		if ((tnl::Input::IsKeyDown(eKeys::KB_LEFT)) && cursorX > 0)				 { cursorX--; }
-
-		WaitTimer(100);
+		if ((tnl::Input::IsKeyDown(eKeys::KB_LEFT)) && cursorX > 0) { cursorX--; }
+	
+		cursorWaitCount = 0;
 	}
 }
 
@@ -847,4 +855,3 @@ void playSeTurnMove() {
 
 	g_sePlay = false;
 }
-

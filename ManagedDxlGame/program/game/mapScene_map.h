@@ -133,7 +133,7 @@ void fillCanMove(int _chara, int _x, int _y, int _move);
 void instructions(float delta_time);
 
 //カーソル移動
-void cursorMove();
+void cursorMove(float delta_time);
 
 //マップ全体の情報を読み取り、ifで各数字に対応するチップを描画する
 void mapPosition(float delta_time);
