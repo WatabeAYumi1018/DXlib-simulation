@@ -43,10 +43,8 @@ bool checkCanAllyBattle(int attack, int defence) {
 		int distanceX = abs(character[attack].x - character[defence].x);//absolute valueの略。絶対　値。
 		int distanceY = abs(character[attack].y - character[defence].y);
 		
-		if ((distanceX == 0 && distanceY == 1) || (distanceX == 1 && distanceY == 0)) { 
-			
-			return true; 
-		}
+		if ((distanceX == 0 && distanceY == 1) || (distanceX == 1 && distanceY == 0)) { return true; }
+	
 		return false;
 	}
 }
@@ -512,7 +510,8 @@ void battleHpMove(float delta_time, int attack, int defence) {
 			int damage = battleDamage(attack, defence);
 			character[defence].hp -= damage;
 
-			if (character[defence].hp <= 0) { character[defence].hp = 0; }
+			if (character[defence].hp <= 0) { 
+				character[defence].hp = 0; }
 
 			g_HpTimeCount = 0;
 			g_flagBattleHp = false;
@@ -521,23 +520,22 @@ void battleHpMove(float delta_time, int attack, int defence) {
 }
 
 //戦闘処理終了
-void battleExit() {
+void allyBattleExit(int chara) {
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+	if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
 
-		character[g_selectedChara].done = true;
-		g_phaseAlly = PHASE_SELECT_CHARACTER;
-
+		character[chara].done = true;
 		g_flagEnter = false;
 		g_flagCursor = true;
 		g_CanAttackMove = 0;
+		g_phaseAlly = PHASE_SELECT_CHARACTER;
 	}
 }
 
 //敵からの戦闘終了
-void battledExit(int attack,int defence){
+void enemyBattleExit(int attack,int defence){
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+	if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {
 
 		g_flagEnter = false;
 		g_flagCursor = true;
@@ -546,18 +544,15 @@ void battledExit(int attack,int defence){
 }
 
 //スコア変動処理
-void scoreMove() {
+void scoreMove(int attack,int defence) {
 
-	if (character[g_standbyChara].team == TEAM_ENEMY && character[g_standbyChara].hp <=0) {
+	if (character[defence].team == TEAM_ENEMY && character[defence].hp <=0) {
 		
-		if (ThreeRelation(g_selectedChara, g_standbyChara) == 0) { g_score += 30; }
-		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 1) { g_score += 100; }
-		else if (ThreeRelation(g_selectedChara, g_standbyChara) == 2) { g_score += 70; }
+		if (ThreeRelation(attack, defence) == 0) { g_score += 30; }
+		else if (ThreeRelation(attack, defence) == 1) { g_score += 100; }
+		else if (ThreeRelation(attack, defence) == 2) { g_score += 70; }
 	}
-	if (character[g_selectedChara].team == TEAM_ALLY ) {
-	
-		if (character[g_selectedChara].hp <= 0 && character[g_selectedChara].team == TEAM_ALLY) { g_score -= 50; }
-	}
+	else if (character[attack].team == TEAM_ALLY && character[attack].hp <= 0) { g_score -= 50; }
 }
 
 //味方バトル関数
@@ -593,8 +588,8 @@ void battleAlly(float delta_time,int attack,int defence) {
 
 			if (character[defence].hp <= 0) {
 
-				scoreMove();
-				battleExit();
+				scoreMove(attack,defence);
+				allyBattleExit(attack);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
@@ -612,8 +607,8 @@ void battleAlly(float delta_time,int attack,int defence) {
 
 			if (character[attack].hp <= 0) {
 
-				scoreMove();
-				battleExit();
+				scoreMove(attack, defence);
+				allyBattleExit(attack);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
@@ -630,9 +625,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 				battleEffectGraph(delta_time, defence);
 				seBattle(defence);
 			}
-			else {
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {battleExit();}
-			}
+			else {allyBattleExit(attack);}
 		}
 		else if (g_CanAttackMove == 6) {
 
@@ -649,8 +642,8 @@ void battleAlly(float delta_time,int attack,int defence) {
 		}
 		else {
 
-			if (character[attack].hp <= 0) {scoreMove();}
-			battleExit();
+			scoreMove(attack, defence);
+			allyBattleExit(attack);
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 		}
@@ -690,8 +683,8 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[defence].hp <= 0) {
 
-				scoreMove();
-				battledExit(attack, defence);
+				scoreMove(attack, defence);
+				enemyBattleExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) {g_gameScene_id = GAME_CLEAR; }			
 			}
@@ -709,8 +702,8 @@ void battleEnemy(float delta_time, int attack, int defence) {
 
 			if (character[attack].hp <= 0) {
 
-				scoreMove();
-				battledExit(attack, defence);
+				scoreMove(attack, defence);
+				enemyBattleExit(attack, defence);
 				if (battleLost()) { g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
@@ -727,9 +720,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				battleEffectGraph(delta_time, defence);
 				seBattle(defence);
 			}
-			else {
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {battledExit(attack, defence);}
-			}
+			else {enemyBattleExit(attack, defence);}
 		}
 		else if (g_CanAttackMove == 6) {
 
@@ -746,10 +737,8 @@ void battleEnemy(float delta_time, int attack, int defence) {
 		}
 		else {
 
-			if (character[attack].hp <= 0) {scoreMove();}
-
-			battledExit(attack, defence);
-
+			scoreMove(attack, defence);
+			enemyBattleExit(attack, defence);
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
 			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 		}

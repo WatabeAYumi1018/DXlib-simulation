@@ -70,13 +70,13 @@ int battleDamage(int attack, int defence);
 void battleHpMove(float delta_time, int attack, int defence);
 
 //戦闘処理終了
-void battleExit();
+void allyBattleExit(int chara);
 
 //敵からの戦闘終了
-void battledExit(int attack, int defence);
+void enemyBattleExit(int attack, int defence);
 
-//戦闘によるスコア変動
-void scoreMove();
+//スコア変動処理
+void scoreMove(int attack, int defence);
 
 //戦闘処理
 void battleAlly(float delta_time, int attack, int defence);
