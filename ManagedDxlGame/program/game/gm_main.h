@@ -73,11 +73,8 @@ extern int g_bottonShift;
 //----------------------------
 
 //----------------------------
-void phaseAllyMove(float delta_time);
 
-void phaseEnemyMove(float delta_time, int enemyNumber);
 
-void enemyAttack(float delta_time, int ally, int enemy);
 
 void gameStart();
 void gameMain( float delta_time );

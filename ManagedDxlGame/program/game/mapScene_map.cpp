@@ -380,7 +380,7 @@ void phaseAllyMove(float delta_time) {
 			if (chara < 0) { break; } //負の値だったらいない
 
 			//行動済みなら座標動かない
-			//if (character[chara].done) { resetFill(); }
+			if (character[chara].done) { resetFill(); }
 
 			//キャラがいれば(それ以外は)塗りつぶし
 			else {
@@ -452,21 +452,25 @@ void phaseAllyMove(float delta_time) {
 		break;
 	}
 	case PHASE_SELECT_ATTACK: {
-
-		if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
-
-			predictionDraw(g_selectedChara, g_standbyChara);
-
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-				g_flagEnter = true;
-				g_flagCursor = false;
-				g_flagBattleAnime = true;
-				g_flagBattleHp = true;
-				g_CanAttackMove++;
-				g_sePlay = true;
+	
+		std::vector<int> adjacentEnemies = getAdjacentCharacters(g_selectedChara);
+		
+		for (int enemy : adjacentEnemies) {
+		
+			if (character[enemy].x == cursorX && character[enemy].y == cursorY) {
+			
+				predictionDraw(g_selectedChara, enemy);
+				
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+					g_flagEnter = true;
+					g_flagCursor = false;
+					g_flagBattleAnime = true;
+					g_flagBattleHp = true;
+					g_CanAttackMove++;
+					g_sePlay = true;
+				}
+				battleAlly(delta_time, g_selectedChara, enemy);
 			}
-			battleAlly(delta_time, g_selectedChara, g_standbyChara);
 		}
 		break;
 	}

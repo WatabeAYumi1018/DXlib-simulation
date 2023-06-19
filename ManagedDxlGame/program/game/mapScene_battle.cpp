@@ -4,6 +4,7 @@
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
+
 //戦闘中の画面ハンドル
 int g_battleGround = 0;
 int g_battleParaBack = 0;
@@ -111,17 +112,17 @@ void battleInfo(int attack, int defence) {
 	//命中率描画
 	if (ThreeRelation(attack, defence) == 0) {		//有利の場合
 
-		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {//有利の場合＋味方追撃あり
 		
 			//味方の与えるダメージ
-			std::string ALLAY_attack = std::to_string(2 * 2 *(character[attack].attack - character[defence].defence));
+			std::string ALLAY_attack = std::to_string(2 * 2*(character[attack].attack - character[defence].defence));
 			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
 
 			//敵の与えるダメージ
 			std::string ENEMY_attack = std::to_string((character[defence].attack - character[attack].defence)/2);
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
-		else if(character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE){
+		else if(character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE){//有利の場合＋敵追撃あり
 		
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string(2 * (character[attack].attack - character[defence].defence));
@@ -131,7 +132,8 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string(character[defence].attack - character[attack].defence);	//2*0.5=1.0でそのまま
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
-		else {
+		else {	//追撃なし
+
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string(2 * (character[attack].attack - character[defence].defence));
 			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());

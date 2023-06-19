@@ -2,6 +2,7 @@
 #include "gm_main.h"
 #include "mapScene_map.h"
 #include "mapScene_character.h"
+#include "mapScene_battle.h"
 
 //キャラクターのデータ二次元配列（マップチップとキャラチップを分けて考える）
 int charaData[MAP_HEIGHT][MAP_WIDTH];
@@ -133,3 +134,20 @@ void characterMapInfo(int chara) {
 	}
 }
 
+//隣接キャラの情報を入れていくための空箱
+EnemyChara::EnemyChara(int x,int y,int team,int hp): x(x), y(y), team(team), hp(hp) {}
+
+// キャラクターリスト
+std::vector<EnemyChara> enemyChara;
+
+//隣接しているキャラ全員の情報を格納していく
+std::vector<int> getAdjacentCharacters(int ally) {
+
+	std::vector<int> canBattleCharacters;
+
+	for (int i = 3; i < CHARACTER_MAX; i++) {
+
+		if (checkCanAllyBattle(ally, i)) {canBattleCharacters.push_back(i);}
+	}
+	return canBattleCharacters;
+}
