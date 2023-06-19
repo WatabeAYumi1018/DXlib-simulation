@@ -144,6 +144,12 @@ void leafBottonDrawAllyTurnMap(float delta_time);
 //敵ターンマップ画面のボタン表記
 void leafBottonDrawEnemyTurnMap(float delta_time);
 
+//戦闘前の情報予測描画(攻撃/防御)
+void prediction(int attack, int defence);
+
+//戦闘前情報グラフィック描画
+void predictionDraw(int attack, int defence);
+
 //回復地形の上にいたら、ターン開始時に全回復
 void cellHeal();
 

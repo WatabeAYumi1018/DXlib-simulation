@@ -407,7 +407,7 @@ void phaseAllyMove(float delta_time) {
 				//キャラを選択したら、移動フェーズへ
 				if (character[chara].team == TEAM_ALLY) {
 
-					g_selectedChara = chara; //味方キャラを代入
+					g_selectedChara = chara; //味方キャラを代入					
 					g_phaseAlly = PHASE_SET_MOVE_POSITION;
 				}
 				break;
@@ -448,11 +448,14 @@ void phaseAllyMove(float delta_time) {
 				}
 			}
 		}
+		
 		break;
 	}
 	case PHASE_SELECT_ATTACK: {
 
 		if (character[g_standbyChara].x == cursorX && character[g_standbyChara].y == cursorY) {
+
+			predictionDraw(g_selectedChara, g_standbyChara);
 
 			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
@@ -575,6 +578,8 @@ void instructions(float delta_time) {
 			if (instructionsDraw) {
 				SetFontSize(30);
 				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y, "攻撃対象を選んでください\n", TEXT_COLOR_WHITE);
+				DrawString(INSTRUCTIONS_X, INSTRUCTIONS_Y+40, "Space：待機ボタン\n", TEXT_COLOR_WHITE);
+
 			}
 			break;
 	}
@@ -774,6 +779,163 @@ void leafBottonDrawEnemyTurnMap(float delta_time) {
 		DrawExtendGraph(980, 400, 1060, 480, g_bottonTab, true);
 		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "敵ターン終了\n");
 	}
+}
+
+//戦闘前の情報予測描画(攻撃/防御)
+void predictionBattle(int attack, int defence) {
+
+	//名前の表示位置
+	const int ALLAY_NAME_START_X = 1180;
+	const int ENEMY_NAME_START_X = 1050;
+	const int NAME_Y = 100;
+
+	//攻撃力の描画位置
+	const int ALLAY_ATTACK_X = 1200;
+	const int ENEMY_ATTACK_X = 1050;
+	const int ATTACK_Y = 150;
+
+	//命中率の描画位置
+	const int ALLAY_HIT_X = 1200;
+	const int ENEMY_HIT_X = 1050;
+	const int HIT_Y = 200;
+
+	//名前描画
+	SetFontSize(20);
+
+	DrawStringEx(ALLAY_NAME_START_X, NAME_Y, TEXT_COLOR_WHITE, character[attack].name.c_str());	//味方
+	
+	if (defence != 15) {DrawStringEx(ENEMY_NAME_START_X, NAME_Y, TEXT_COLOR_WHITE, character[defence].name.c_str());}//敵
+	else {
+		SetFontSize(15);
+		DrawStringEx(ENEMY_NAME_START_X, NAME_Y, TEXT_COLOR_WHITE, character[defence].name.c_str());//長
+	}
+
+	//攻撃力描画
+	SetFontSize(30);
+
+	//命中率描画
+	if (ThreeRelation(attack, defence) == 0) {		//有利の場合
+
+		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(2 * 2 * (character[attack].attack - character[defence].defence));
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string((character[defence].attack - character[attack].defence) / 2);
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
+
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(2 * (character[attack].attack - character[defence].defence));
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(character[defence].attack - character[attack].defence);	//2*0.5=1.0でそのまま
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		else {
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(2 * (character[attack].attack - character[defence].defence));
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string((character[defence].attack - character[attack].defence) / 2);
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		DrawStringEx(ALLAY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "100");
+		DrawStringEx(ENEMY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "60");
+	}
+	else if (ThreeRelation(attack, defence) == 1) {	//不利の場合
+
+		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(character[attack].attack - character[defence].defence);	//2*0.5=1.0でそのまま
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(2 * (character[defence].attack - character[attack].defence));
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
+
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string((character[attack].attack - character[defence].defence) / 2);
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(2 * 2 * (character[defence].attack - character[attack].defence));
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		else {
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string((character[attack].attack - character[defence].defence) / 2);
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(2 * (character[defence].attack - character[attack].defence));
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		DrawStringEx(ALLAY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "60");
+		DrawStringEx(ENEMY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "100");
+	}
+	else if (ThreeRelation(attack, defence) == 2) {	//それ以外
+
+		//味方の与えるダメージ
+		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(2 * (character[attack].attack - character[defence].defence));
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(character[defence].attack - character[attack].defence);
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
+
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(character[attack].attack - character[defence].defence);
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(2 * (character[defence].attack - character[attack].defence));
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+		}
+		else {
+			//味方の与えるダメージ
+			std::string ALLAY_attack = std::to_string(character[attack].attack - character[defence].defence);
+			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
+
+			//敵の与えるダメージ
+			std::string ENEMY_attack = std::to_string(character[defence].attack - character[attack].defence);
+			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
+
+		}
+		DrawStringEx(ALLAY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "80");
+		DrawStringEx(ENEMY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "80");
+	}
+}
+
+//戦闘前情報グラフィック描画
+void predictionDraw(int attack,int defence) {
+
+	const int drawAttackX = 1100;
+	const int drawHitX = 1115;
+	const int drawAttackY = 150;
+	const int drawHitY = 200;
+
+	DrawExtendGraph(1030, 90, 1270, 250, display_map, true);
+
+	SetFontSize(20);
+
+	DrawStringEx(drawAttackX, drawAttackY, TEXT_COLOR_WHITE, "ダメージ");
+	DrawStringEx(drawHitX, drawHitY, TEXT_COLOR_WHITE, "命中率");
+
+	predictionBattle(attack,defence);
 }
 
 //回復地形の上にいたら、ターン開始時に全回復
