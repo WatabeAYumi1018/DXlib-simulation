@@ -380,7 +380,7 @@ void phaseAllyMove(float delta_time) {
 			if (chara < 0) { break; } //負の値だったらいない
 
 			//行動済みなら座標動かない
-			if (character[chara].done) { resetFill(); }
+			//if (character[chara].done) { resetFill(); }
 
 			//キャラがいれば(それ以外は)塗りつぶし
 			else {
@@ -462,6 +462,7 @@ void phaseAllyMove(float delta_time) {
 				predictionDraw(g_selectedChara, enemy);
 				
 				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
 					g_flagEnter = true;
 					g_flagCursor = false;
 					g_flagBattleAnime = true;
@@ -470,6 +471,8 @@ void phaseAllyMove(float delta_time) {
 					g_sePlay = true;
 				}
 				battleAlly(delta_time, g_selectedChara, enemy);
+
+				break;
 			}
 		}
 		break;

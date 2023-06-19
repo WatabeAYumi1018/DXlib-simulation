@@ -32,7 +32,7 @@ int icon_boss = 0;
 Character character[] = {
 	//キャラ名		職業				HP　maxHp	攻撃 防御 速さ 命中 移動	チーム		X	 Y
 	{"ミモザ",		JOB_SWORDMASTER,	300, 300,	150,  80,  15,  100,  6,	TEAM_ALLY,	36, 4},
-	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  90,  20,  100,  5,	TEAM_ALLY,	34, 4},
+	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  90,  20,  100,  5,	TEAM_ALLY,	35, 4},
 	{"アナベル",	JOB_MAGICIAN,		200, 200,	250,  70,  10,  100,  4,	TEAM_ALLY,	35, 6},
 	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 5},
 	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	33, 11},
@@ -134,7 +134,8 @@ void characterMapInfo(int chara) {
 	}
 }
 
-//隣接キャラの情報を入れていくための空箱
+//コンストラクタの定義
+//各メンバ変数の初期化は、:の後にメンバ変数の名前と、その初期値を指定する形式で行われる
 EnemyChara::EnemyChara(int x,int y,int team,int hp): x(x), y(y), team(team), hp(hp) {}
 
 // キャラクターリスト

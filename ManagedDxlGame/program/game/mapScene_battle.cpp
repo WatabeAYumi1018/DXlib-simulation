@@ -611,7 +611,8 @@ void battleAlly(float delta_time,int attack,int defence) {
 
 				scoreMove(attack, defence);
 				allyBattleExit(attack);
-				if (battleLost()) { g_gameScene_id = GAME_OVER; }
+				if (battleLost()) {
+					g_gameScene_id = GAME_OVER; }
 				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 			}
 		}
@@ -647,7 +648,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 			scoreMove(attack, defence);
 			allyBattleExit(attack);
 			if (battleLost()) { g_gameScene_id = GAME_OVER; }
-			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
+			if (character[15].hp <= 0) {g_gameScene_id = GAME_CLEAR;}
 		}
 	}
 }
