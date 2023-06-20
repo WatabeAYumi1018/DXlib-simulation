@@ -129,12 +129,12 @@ void characterMapInfo(int chara) {
 //—×Ú‚µ‚Ä‚¢‚éƒLƒƒƒ‰‘Sˆõ‚Ìî•ñ‚ğŠi”[‚µ‚Ä‚¢‚­
 std::vector<int> getAdjacentCharacters(int ally) {
 
-	std::vector<int> canBattleCharacters;
+	std::vector<int> adjacentEnemy;
 
 	//“G‚Ìindex‚ÍÅ¬3`
-	for (int i = 3; i < CHARACTER_MAX; i++) {
+	for (int i = 0; i < CHARACTER_MAX; i++) {
 
-		if (checkCanAllyBattle(ally, i)) {canBattleCharacters.push_back(i);}
+		if (checkCanAllyBattle(ally, i)) {adjacentEnemy.push_back(i);}
 	}
-	return canBattleCharacters;
+	return adjacentEnemy;
 }

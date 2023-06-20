@@ -116,6 +116,45 @@ bool g_sePlay = true;
 //マップ全般に関わる関数
 //
 
+//敵が隣接する味方キャラの情報を取得する関数
+int selectTargetCharacter(int enemy) {
+
+	std::vector<int> adjacentAlly = getAdjacentCharacters(enemy);
+
+	if (!adjacentAlly.empty()) {
+
+		// ランダムに隣接する味方キャラクターを選択する
+		int allyIndex = adjacentAlly[rand() % adjacentAlly.size()];
+		return allyIndex;
+	}
+	// 隣接する味方キャラクターがいない場合は無効なインデックスを返す
+	return -1;
+}
+
+// 敵キャラクターの戦闘処理を順番に行う関数
+void phaseEnemyAttack(float delta_time) {
+
+	for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
+
+		int targetAllyIndex = selectTargetCharacter(enemyIndex);
+
+		if (targetAllyIndex != -1) {
+
+			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+				g_flagEnter = true;
+				g_flagCursor = false;
+				g_flagBattleAnime = true;
+				g_flagBattleHp = true;
+				g_CanAttackMove++;
+				g_sePlay = true;
+			}
+			// 敵キャラクターと味方キャラクターの戦闘処理を行う
+			battleAlly(delta_time, targetAllyIndex, enemyIndex);
+		}
+	}
+}
+
 //一連の流れ
 void turnMove(float delta_time) {
 
@@ -197,40 +236,13 @@ void turnMove(float delta_time) {
 		//敵全員が移動する
 		phaseEnemyMove(delta_time, currentEnemyNumber);
 
-		const int charaAlly0 = 0;
-		const int charaAlly1 = 1;
-		const int charaAlly2 = 2;
+		phaseEnemyAttack(delta_time);
 
-		static int charaEnemy0 = 0;
-		static int charaEnemy1 = 0;
-		static int charaEnemy2 = 0;
-
-		static int countBattle = 0;
-
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_LSHIFT)) { countBattle++; }
-
-		//★敵がいない場合の処理がない！
-
-
-		//現状だとスペースを押さないと戦闘に入らない
-		if (countBattle == 1) {
-
-			enemyAttack(delta_time, charaAlly0, charaEnemy0);
-
-			if (!checkCanAllyBattle(charaAlly0, charaEnemy0)) { break; }
-		}
-		else if (countBattle == 2) {
-
-			enemyAttack(delta_time, charaAlly1, charaEnemy1);
-		}
-		else if (countBattle == 3) {
-
-			enemyAttack(delta_time, charaAlly2, charaEnemy2);
-		}
+		//敵ターンボタン描画
+		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
 
 		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
 
-			countBattle = 0;
 			g_enemyCheckFinish = true;
 			g_flagEnter = false;
 			g_flagCursor = true;
@@ -241,9 +253,6 @@ void turnMove(float delta_time) {
 			g_turnMove = TURN_ALLAY;
 			g_phaseAlly=PHASE_SELECT_CHARACTER;
 		}
-		//敵ターンボタン描画
-		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
-		
 		break;
 	}
 	}
@@ -291,14 +300,12 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 				nearDistanceAlly = i;
 			}
 		}
+		for (int dir = 0; dir < DIRECTION_MAX; dir++){
 
-		for (int dir = 0; dir < DIRECTION_MAX; dir++)
-		{
 			int _x = character[enemyNumber].x + g_directions[dir][0];
 			int _y = character[enemyNumber].y + g_directions[dir][1];
 			fillCanMove(enemyNumber, _x, _y, character[enemyNumber].move);
 		}
-
 		//味方までの距離と敵キャラの行動範囲を比較
 		if (maxDistance <= character[enemyNumber].move && fill[_enemyY][_enemyX]) {
 
@@ -357,7 +364,6 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 		resetFill();
 		return;
 	}
-
 	else {//未調査の次の敵キャラクター判定のため更新
 		g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
 		phaseEnemyMove(delta_time, enemyNumber);
@@ -371,9 +377,9 @@ void phaseAllyMove(float delta_time) {
 
 	case PHASE_SELECT_CHARACTER: {
 		
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+		resetFill();
 
-			resetFill();
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
 
 			//選択したキャラクターを囲って東西南北に1マスずつ塗りつぶし
 			int chara = getCharacter(cursorX, cursorY);

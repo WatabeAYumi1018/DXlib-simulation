@@ -780,6 +780,7 @@ void leafBottonDrawEnemyBattle(float delta_time) {
 void seBattle(int chara) {
 
 	if (g_sePlay && character[chara].job == JOB_SWORDMASTER) {
+	
 		if (CheckSoundMem(g_seEffectSword) == 0)  PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE); 
 	}
 	if (g_sePlay && character[chara].job == JOB_SNIPER) {
