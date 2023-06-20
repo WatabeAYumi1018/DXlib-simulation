@@ -116,64 +116,13 @@ bool g_sePlay = true;
 //マップ全般に関わる関数
 //
 
-//敵からの攻撃処理を終えたかの判定
-//bool g_battled = false;
-
-//敵が隣接する味方キャラの情報を取得する関数
-//int selectTargetCharacter(int chara) {
-//
-//	std::vector<int> adjacentAlly = getAdjacentCharacters(chara);
-//
-//	if (!adjacentAlly.empty()) {
-//
-//		// ランダムに隣接する味方キャラクターを選択する
-//		int allyIndex = adjacentAlly[rand() % adjacentAlly.size()];
-//		return allyIndex;
-//	}
-//	// 隣接する味方キャラクターがいない場合は無効なインデックスを返す
-//	return -1;
-//}
-
-// 敵キャラクターの戦闘処理を順番に行う関数
-//void phaseEnemyAttack(float delta_time) {
-//
-//	bool isBattleFinished = true; // 初期値はtrueに設定しておく
-//
-//	for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
-//	
-//		//戦闘が終了していなければスキップ
-//		if (!isBattleFinished) {continue;}
-//
-//		int targetAllyIndex = selectTargetCharacter(enemyIndex);
-//
-//		if (targetAllyIndex != -1) {
-//			
-//			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-//				
-//				g_flagEnter = true;
-//				g_flagCursor = false;
-//				g_flagBattleAnime = true;
-//				g_flagBattleHp = true;
-//				g_CanAttackMove++;
-//				g_sePlay = true;
-//			}
-//
-//			// 敵キャラクターと味方キャラクターの戦闘処理を行う
-//			battleAlly(delta_time, targetAllyIndex, enemyIndex);
-//			isBattleFinished = (character[targetAllyIndex].hp <= 0 || character[enemyIndex].hp <= 0); // 戦闘処理が完了したかどうかを判定する
-//
-//			if (isBattleFinished) {g_battled = true;}
-//		}
-//	}
-//}
-
 //一連の流れ
 void turnMove(float delta_time) {
 
 	const int TELOP_X_END = 700;
 	const int TELOP_Y_START = 100;
 	const int TELOP_Y_END = 200;
-	const int TELOP_SPEED = 700;
+	const int TELOP_SPEED = 850;
 	const int TELOP_FRAME_MAX = 1400;
 
 	//テロップアニメーションカウント
@@ -223,7 +172,6 @@ void turnMove(float delta_time) {
 		}
 		break;
 	}
-
 	case TURN_ENEMY: {
 
 		if (g_flagTurnEnemy) {
@@ -245,34 +193,20 @@ void turnMove(float delta_time) {
 				g_sePlay = true;
 			}
 		}
-		//敵全員が移動する
-		phaseEnemyMove(delta_time, currentEnemyNumber);
+		if (!g_flagTurnEnemy) {
+			//敵全員が移動する
+			phaseEnemyMove(delta_time, currentEnemyNumber);
 
-		//本当は敵からの攻撃処理も実装したかったですが、間に合わないため今回は見送り。（発表動画作成が間に合わなくなるため）
-		//コードは途中となっていますが、今後のために消さずにコメントで残しておきます。
-		//phaseEnemyAttack(delta_time);
+			g_enemyCheckFinish = true;
+			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
+			character[1].done = false;
+			character[2].done = false;
+			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+			g_turnMove = TURN_ALLAY;
+			g_phaseAlly = PHASE_SELECT_CHARACTER;
 
-		//敵ターンボタン描画
-		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
-
-		// すべての敵番号を認識するためにループを追加
-		for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
-
-			//if (getAdjacentCharacters(enemyIndex).empty()) {
-
-				//g_battled = false;
-				g_enemyCheckFinish = true;
-				//g_flagEnter = false;
-				//g_flagCursor = true;
-				character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
-				character[1].done = false;
-				character[2].done = false;
-				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-				g_turnMove = TURN_ALLAY;
-				g_phaseAlly = PHASE_SELECT_CHARACTER;
-			//}
+			break;
 		}
-		break;
 	}
 	}
 }
@@ -785,33 +719,6 @@ void leafBottonDrawAllyTurnMap(float delta_time) {
 	}
 }
 
-//敵ターンマップ画面のボタン表記
-void leafBottonDrawEnemyTurnMap(float delta_time) {
-
-	SetFontSize(20);
-
-	float static leafBottonTimeCount = 0;
-	bool static leafBottonDraw = true;
-
-	//毎フレーム足していく処理
-	leafBottonTimeCount += delta_time;
-
-	if (leafBottonTimeCount > 2.0f) {
-		leafBottonDraw = !leafBottonDraw;
-		leafBottonTimeCount = 0;
-	}
-	if (leafBottonDraw) {
-		DrawExtendGraph(980, 400, 1060, 480, g_bottonShift, true);
-		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "戦闘呼び\n");
-		DrawExtendGraph(1140, 400, 1220, 480, g_bottonSpace, true);
-		DrawStringEx(1220, 430, TEXT_COLOR_WHITE, "戦闘\n");
-	}
-	if (!leafBottonDraw) {
-		DrawExtendGraph(980, 400, 1060, 480, g_bottonTab, true);
-		DrawStringEx(1060, 430, TEXT_COLOR_WHITE, "敵ターン終了\n");
-	}
-}
-
 //戦闘前の情報予測描画(攻撃/防御)
 void predictionBattle(int attack, int defence) {
 
@@ -1024,3 +931,175 @@ void playSeTurnMove() {
 
 	g_sePlay = false;
 }
+
+
+//-------------------------------------------------------------------------
+//敵からの攻撃処理実装に向けて試したコード（ここから下は今作関係なし）
+//今後のための課題点
+//①複数の戦闘が同時に呼ばれてしまう
+//②一度戦闘がはじまると、どちらかのHpが０になるまでリピートされてしまう
+//改善するためには、やはりクラス変数が必要かと考えられる
+//今作の発表が終わり次第、クラス変数およびポインタやオブジェクト思考を用いてもう一度作り直す予定。その際に実装できるように。
+
+//敵からの攻撃処理を終えたかの判定
+//bool g_battled = false;
+
+//敵が隣接する味方キャラの情報を取得する関数
+//int selectTargetCharacter(int chara) {
+//
+//	std::vector<int> adjacentAlly = getAdjacentCharacters(chara);
+//
+//	if (!adjacentAlly.empty()) {
+//
+//		// ランダムに隣接する味方キャラクターを選択する
+//		int allyIndex = adjacentAlly[rand() % adjacentAlly.size()];
+//		return allyIndex;
+//	}
+//	// 隣接する味方キャラクターがいない場合は無効なインデックスを返す
+//	return -1;
+//}
+
+// 敵キャラクターの戦闘処理を順番に行う関数
+//void phaseEnemyAttack(float delta_time) {
+//
+//	bool isBattleFinished = true; // 初期値はtrueに設定しておく
+//
+//	for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
+//	
+//		//戦闘が終了していなければスキップ
+//		if (!isBattleFinished) {continue;}
+//
+//		int targetAllyIndex = selectTargetCharacter(enemyIndex);
+//
+//		if (targetAllyIndex != -1) {
+//			
+//			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+//				
+//				g_flagEnter = true;
+//				g_flagCursor = false;
+//				g_flagBattleAnime = true;
+//				g_flagBattleHp = true;
+//				g_CanAttackMove++;
+//				g_sePlay = true;
+//			}
+//
+//			// 敵キャラクターと味方キャラクターの戦闘処理を行う
+//			battleAlly(delta_time, targetAllyIndex, enemyIndex);
+//			isBattleFinished = (character[targetAllyIndex].hp <= 0 || character[enemyIndex].hp <= 0); // 戦闘処理が完了したかどうかを判定する
+//
+//			if (isBattleFinished) {g_battled = true;}
+//		}
+//	}
+//}
+
+//一連の流れ
+//void turnMove(float delta_time) {
+//
+//	const int TELOP_X_END = 700;
+//	const int TELOP_Y_START = 100;
+//	const int TELOP_Y_END = 200;
+//	const int TELOP_SPEED = 700;
+//	const int TELOP_FRAME_MAX = 1400;
+//
+//	//テロップアニメーションカウント
+//	float static telopTimeCount = 0;
+//
+//	switch (g_turnMove) {
+//
+//	case TURN_ALLAY: {
+//
+//		if (g_flagTurnAlly) {
+//
+//			//SE再生
+//			playSeTurnMove();
+//
+//			//毎フレーム足していく処理
+//			telopTimeCount += delta_time;
+//
+//			int telopFrame = telopTimeCount * TELOP_SPEED;
+//
+//			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][10], true);
+//
+//			cellHeal();
+//
+//			if (telopFrame >= TELOP_FRAME_MAX) {
+//
+//				telopFrame = 0;			//テロップの流れた距離リセット
+//				telopTimeCount = 0;		//テロップのカウントリセット
+//				g_flagTurnAlly = false; //味方ターンのテロップ流しは一回で完了のためfalse
+//				g_sePlay = true;
+//			}
+//		}
+//		//味方移動全般の関数
+//		phaseAllyMove(delta_time);
+//
+//		if (!g_flagEnter && g_flagCursor) {
+//
+//			//ボタン操作描画
+//			leafBottonDrawAllyTurnMap(delta_time);
+//		}
+//		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+//
+//			g_flagTurnEnemy = true;		//敵ターンのテロップを流すためにtrue
+//			character[0].done = true;	//味方全員の行動を行動済みに
+//			character[1].done = true;
+//			character[2].done = true;
+//			g_turnMove = TURN_ENEMY;
+//		}
+//		break;
+//	}
+//
+//	case TURN_ENEMY: {
+//
+//		if (g_flagTurnEnemy) {
+//
+//			playSeTurnMove();
+//
+//			//毎フレーム足していく処理
+//			telopTimeCount += delta_time;
+//
+//			int telopFrame = telopTimeCount * TELOP_SPEED;
+//
+//			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][9], true);
+//
+//			if (telopFrame >= TELOP_FRAME_MAX) {
+//
+//				telopFrame = 0;				//テロップの流れた距離リセット
+//				telopTimeCount = 0;			//テロップのカウントリセット
+//				g_flagTurnEnemy = false;	//敵ターンのテロップ流しは一回で完了のためfalse
+//				g_sePlay = true;
+//
+//			}
+//		}
+//
+//		//敵全員が移動する
+//		phaseEnemyMove(delta_time, currentEnemyNumber);
+//
+//		//本当は敵からの攻撃処理も実装したかったですが、間に合わないため今回は見送り。（発表動画作成が間に合わなくなるため）
+//		//コードは途中となっていますが、今後のために消さずにコメントで残しておきます。
+//		//phaseEnemyAttack(delta_time);
+//
+//		//敵ターンボタン描画
+//		//if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
+//
+//		// すべての敵番号を認識するためにループを追加
+//		for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
+//
+//			//if (getAdjacentCharacters(enemyIndex).empty()) {
+//
+//				//g_battled = false;
+//			g_enemyCheckFinish = true;
+//			//g_flagEnter = false;
+//			//g_flagCursor = true;
+//			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
+//			character[1].done = false;
+//			character[2].done = false;
+//			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+//			g_turnMove = TURN_ALLAY;
+//			g_phaseAlly = PHASE_SELECT_CHARACTER;
+//			//}
+//		}
+//		break;
+//	}
+//	}
+//}

@@ -50,11 +50,6 @@ int g_bottonSpace = 0;
 //シフトボタン
 int g_bottonShift = 0;
 
-//-----------------
-// 
-
-
-
 //-------------------------------------------------------------------------------------------
 //起動時に一回のみ実行されます
 void gameStart() {
@@ -169,8 +164,6 @@ void gameStart() {
 	g_bottonTab = LoadGraph("graphics/leafTab.png");
 	//スペースボタン
 	g_bottonSpace = LoadGraph("graphics/leafSpace.png");
-	//シフトボタン
-	g_bottonShift = LoadGraph("graphics/leafShift.png");
 
 	//女性立ち絵
 	g_girlNormal = LoadGraph("graphics/swordGirl.png");

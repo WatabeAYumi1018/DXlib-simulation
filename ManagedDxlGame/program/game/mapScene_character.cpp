@@ -31,22 +31,22 @@ int icon_boss = 0;
 //各キャラクターの情報
 Character character[] = {
 	//キャラ名		職業				HP　maxHp	攻撃 防御 速さ 命中 移動	チーム		X	 Y
-	{"ミモザ",		JOB_SWORDMASTER,	300, 300,	150,  80,  15,  100,  6,	TEAM_ALLY,	36, 4},
-	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  90,  20,  100,  5,	TEAM_ALLY,	34, 4},
-	{"アナベル",	JOB_MAGICIAN,		200, 200,	250,  70,  10,  100,  4,	TEAM_ALLY,	35, 6},
-	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 5},
-	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	33, 11},
-	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	27, 1},
-	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	15, 10},
-	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	12, 4},
-	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	9,	2},
-	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	25, 12},
-	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	24, 6},
+	{"ミモザ",		JOB_SWORDMASTER,	300, 300,	150,  70,  15,  100,  6,	TEAM_ALLY,	36, 4 },
+	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  80,  20,  100,  5,	TEAM_ALLY,	34, 4 },
+	{"アナベル",	JOB_MAGICIAN,		200, 200,	300,  60,  10,  100,  4,	TEAM_ALLY,	35, 6 },
+	{"剣士",		JOB_SWORDMASTER,	200, 200,	150,  50,  15,  100,  5,	TEAM_ENEMY,	31, 5 },
+	{"弓使い",		JOB_SNIPER,			150, 150,	100,  60,  20,  100,  4,	TEAM_ENEMY,	33, 11},
+	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	27, 1 },
+	{"剣士",		JOB_SWORDMASTER,	200, 200,	150,  50,  15,  100,  5,	TEAM_ENEMY,	15, 10},
+	{"弓使い",		JOB_SNIPER,			150, 150,	100,  60,  20,  100,  4,	TEAM_ENEMY,	12, 4 },
+	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	9,	2 },
+	{"剣士",		JOB_SWORDMASTER,	200, 200,	150,  50,  15,  100,  5,	TEAM_ENEMY,	25, 12},
+	{"弓使い",		JOB_SNIPER,			150, 150,	100,  60,  20,  100,  4,	TEAM_ENEMY,	24, 6 },
 	{"魔道士",		JOB_MAGICIAN,		100, 100,	100,  40,  10,  100,  4,	TEAM_ENEMY,	10, 10},
-	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	5,	6},
-	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	5,	10},
-	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	20, 8},
-	{"マルグリット",JOB_BOSS,			300,  300,	200,  70,  15,  100,  0,	TEAM_ENEMY,	4,	3}
+	{"剣士",		JOB_SWORDMASTER,	200, 200,	150,  50,  15,  100,  5,	TEAM_ENEMY,	5,	6 },
+	{"弓使い",		JOB_SNIPER,			150, 150,	100,  60,  20,  100,  4,	TEAM_ENEMY,	5,	10},
+	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	20, 8 },
+	{"マルグリット",JOB_BOSS,			300, 300,	210,  60,  20,  100,  0,	TEAM_ENEMY,	4,	3 }
 };
 
 //charaDate定義。いなければ-１

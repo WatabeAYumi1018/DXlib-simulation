@@ -70,11 +70,6 @@ extern int g_bottonSpace;
 //シフトボタン
 extern int g_bottonShift;
 
-//----------------------------
-
-//----------------------------
-
-
 
 void gameStart();
 void gameMain( float delta_time );

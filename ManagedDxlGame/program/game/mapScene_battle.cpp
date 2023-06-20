@@ -493,7 +493,7 @@ void battleHpMove(float delta_time, int attack, int defence) {
 	}
 }
 
-//ロスト処理
+//ゲームオーバーフラグ処理
 bool battleLost() {
 
 	if (character[0].hp <= 0 && character[1].hp <= 0 && character[2].hp <= 0) {return true;}
@@ -514,17 +514,6 @@ void allyBattleExit(int chara) {
 	}
 }
 
-//敵からの戦闘終了
-void enemyBattleExit(){
-
-	if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {
-
-		g_flagEnter = false;
-		g_flagCursor = true;
-		g_CanAttackMove = 0;
-	}
-}
-
 //スコア変動処理
 void scoreMove(int attack,int defence) {
 
@@ -537,7 +526,7 @@ void scoreMove(int attack,int defence) {
 	else if (character[attack].team == TEAM_ALLY && character[attack].hp <= 0) { g_score -= 50; }
 }
 
-//バトル終了処理（まとめ）
+//戦闘終了処理（総まとめ）
 void battleExit(int attack,int defence) {
 
 	scoreMove(attack, defence);
@@ -652,32 +641,6 @@ void leafBottonDrawAllyBattle(float delta_time) {
 		DrawExtendGraph(1050, 400+5, 1130, 480+5, g_bottonEnter, true);
 		DrawStringEx(1130, 430 + 5, TEXT_COLOR_WHITE, "戦闘おくり\n");
 	}
-}
-
-//敵戦闘中ボタン描画
-void leafBottonDrawEnemyBattle(float delta_time) {
-	
-	SetFontSize(20);
-
-	float static leafBottonTimeCount = 0;
-	bool static leafBottonDraw = true;
-
-	//毎フレーム足していく処理
-	leafBottonTimeCount += delta_time;
-
-	if (leafBottonTimeCount > 1.0f) {
-		leafBottonDraw = !leafBottonDraw;
-		leafBottonTimeCount = 0;
-	}
-	if (leafBottonDraw) {
-		DrawExtendGraph(1050, 400, 1130, 480, g_bottonSpace, true);
-		DrawStringEx(1130, 430, TEXT_COLOR_WHITE, "戦闘おくり\n");
-	}
-	else { 
-		DrawExtendGraph(1050, 400 + 5, 1130, 480 + 5, g_bottonSpace, true);
-		DrawStringEx(1130, 430 + 5, TEXT_COLOR_WHITE, "戦闘おくり\n");
-	}
-
 }
 
 //バトル中のSE

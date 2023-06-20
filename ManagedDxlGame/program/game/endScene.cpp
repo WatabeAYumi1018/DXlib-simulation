@@ -12,9 +12,6 @@ int g_gameOver = 0;
 //ゲームクリア画面
 int g_gameClear = 0;
 
-//クリアクラッカー動画
-int g_clearFlower = 0;
-
 //ゲームオーバー画面描画
 void gameOver(float delta_time) {
 
@@ -84,7 +81,7 @@ void gameClear(float delta_time) {
 		animEnd = true;
 	}
 	//高得点ハイスコア！
-	if (g_score >= 1000) {
+	if (g_score >= 800) {
 		
 		if (!animEnd) {
 			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][12], true);
@@ -97,7 +94,7 @@ void gameClear(float delta_time) {
 		movieDraw();
 	}
 	//上出来クリア！
-	else if (g_score <= 999 && g_score >= 500) {
+	else if (g_score <= 799 && g_score >= 500) {
 
 		if (!animEnd) {
 			DrawExtendGraph(0 + telopFrame, TELOP_Y_START, TELOP_X_END + telopFrame, TELOP_Y_END, g_map_turn[0][1], true);
@@ -154,7 +151,7 @@ void clearMessage() {
 	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_messageRun++; }
 
 	//高得点ハイスコア！
-	if (g_score >= 1000) {
+	if (g_score >= 800) {
 	
 		if (g_messageRun == 0) {
 
@@ -168,7 +165,7 @@ void clearMessage() {
 		}
 	}
 	//上出来クリア！
-	else if (g_score <= 999 && g_score >= 500) {
+	else if (g_score <= 799 && g_score >= 500) {
 
 		if (g_messageRun == 0) {
 

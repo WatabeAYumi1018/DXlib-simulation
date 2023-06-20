@@ -1,8 +1,5 @@
 #pragma once
 
-//敵からの攻撃処理を終えたかの判定（時間と技術不足により今回は見送り）
-//extern bool g_battled ;
-
 //サイズに関する定数
 const int MAP_HEIGHT = 15;		//マップ画面高さ
 const int MAP_WIDTH = 40;		//マップ画面幅
@@ -143,9 +140,6 @@ void mapPosition(float delta_time);
 
 //味方ターンマップ画面のボタン表記
 void leafBottonDrawAllyTurnMap(float delta_time);
-
-//敵ターンマップ画面のボタン表記
-void leafBottonDrawEnemyTurnMap(float delta_time);
 
 //戦闘前の情報予測描画(攻撃/防御)
 void prediction(int attack, int defence);

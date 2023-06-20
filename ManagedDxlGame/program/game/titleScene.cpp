@@ -20,8 +20,11 @@ int g_gameStart = 0;
 //ゲームスタート画面
 int g_gameStartAnim = 0;
 
-//タイトル動画ハンドル
+//タイトル時の動画
 int g_titleMovie = 0;
+
+//クリア時の動画
+int g_clearFlower=0;
 
 //スクリーン(フィルター処理した画像を保存する用)ハンドル
 int screen_handle = 0;	
@@ -35,25 +38,25 @@ int g_titleRight = 0;
 //タイトルメニューで選択
 void titleSelect() {
 
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_UP)) {
-			g_select_player_menu--;
-			if (g_select_player_menu < 0)g_select_player_menu = TITLE_MENU_CHARACTER;
-		}
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_DOWN)) {
-			g_select_player_menu++;
-			if (g_select_player_menu >= TITLE_MENU_MAX)g_select_player_menu = TITLE_MENU_FIRST;
-		}
-		g_sel_cursor_pos = TITLE_SELECT_MENU_POSITION[g_select_player_menu];
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_UP)) {
+		g_select_player_menu--;
+		if (g_select_player_menu < 0)g_select_player_menu = TITLE_MENU_CHARACTER;
+	}
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_DOWN)) {
+		g_select_player_menu++;
+		if (g_select_player_menu >= TITLE_MENU_MAX)g_select_player_menu = TITLE_MENU_FIRST;
+	}
+	g_sel_cursor_pos = TITLE_SELECT_MENU_POSITION[g_select_player_menu];
 
-		//エンターを押した場所によってシーンが変わる
-		if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
+	//エンターを押した場所によってシーンが変わる
+	if (tnl::Input::IsKeyDown(eKeys::KB_RETURN)) {
 
-			if (g_select_player_menu == TITLE_MENU_FIRST) { g_gameScene_id = GAME_STORY; }
-			if (g_select_player_menu == TITLE_MENU_CONTINUE) { g_gameScene_id = GAME_MAP; }
-			if (g_select_player_menu == TITLE_MENU_CHARACTER) { g_gameScene_id = GAME_TUTORIAL; }
-		}
-		//選択カーソル位置の描画
-		DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor, true);
+		if (g_select_player_menu == TITLE_MENU_FIRST) { g_gameScene_id = GAME_STORY; }
+		if (g_select_player_menu == TITLE_MENU_CONTINUE) { g_gameScene_id = GAME_MAP; }
+		if (g_select_player_menu == TITLE_MENU_CHARACTER) { g_gameScene_id = GAME_TUTORIAL; }
+	}
+	//選択カーソル位置の描画
+	DrawRotaGraphF(g_sel_cursor_pos.x, g_sel_cursor_pos.y, 0.25f, 0, g_select_cursor, true);
 }
 
 //タイトル画像
@@ -68,7 +71,7 @@ void titleBackDraw() {
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
-//タイトルでの動画流し
+//動画流し
 void movieDraw() {
 
 	//動画の画像サイズを取得

@@ -21,10 +21,10 @@ const tnl::Vector3 TITLE_SELECT_MENU_POSITION[TITLE_MENU_MAX] = {
 //ゲームスタート画面
 extern int g_gameStart;
 
-//タイトル動画ハンドル
+//タイトル時の動画
 extern int g_titleMovie;
 
-//クリアクラッカー動画
+//クリア時の動画
 extern int g_clearFlower;
 
 //スクリーン(フィルター処理した画像を保存する用)ハンドル

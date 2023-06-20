@@ -1,8 +1,5 @@
 #pragma once
 
-//クリアクラッカー動画
-extern int g_clearFlower;
-
 //ゲームオーバー画面
 extern int g_gameOver;
 

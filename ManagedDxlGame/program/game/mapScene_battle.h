@@ -61,19 +61,16 @@ int battleDamage(int attack, int defence);
 //戦闘によるダメージ変化の流れ
 void battleHpMove(float delta_time, int attack, int defence);
 
-//ロスト処理
+//ゲームオーバーフラグ処理
 bool battleLost();
 
 //戦闘処理終了
 void allyBattleExit(int chara);
 
-//敵からの戦闘終了
-void enemyBattleExit();
-
 //スコア変動処理
 void scoreMove(int attack, int defence);
 
-//バトル終了処理（まとめ）
+//戦闘終了処理（総まとめ）
 void battleExit(int attack, int defence);
 
 //味方バトル関数
@@ -81,9 +78,6 @@ void battleAlly(float delta_time, int attack, int defence);
 
 //味方戦闘中ボタン描画
 void leafBottonDrawAllyBattle(float delta_time);
-
-//敵戦闘中ボタン描画
-void leafBottonDrawEnemyBattle(float delta_time);
 
 //バトル中のSE
 void seBattle(int chara);
