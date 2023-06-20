@@ -67,33 +67,33 @@ void storyMessage() {
 
 	if (g_messageRun == 0) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなたが 有名な軍師さまですね\n");
-
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "あなた様が　かの偉大なる\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "有名な　軍師様ですね\n");
 	}
 	else if (g_messageRun == 1) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ようこそ 人里離れた\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "緑の海原 へ\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ようこそ　人里離れた\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "緑の海原　へ\n");
 	}
 	else if (g_messageRun == 2) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "この度は 直接ご指導いただけると\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "皆 心待ちにしていたのですよ\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "この度は　直接ご指導いただけると\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "皆　心待ちにしていたのですよ\n");
 	}
 	else if (g_messageRun == 3) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ご活躍は こちらでも耳にします\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "数多の英雄を導いた 伝説の軍師さま\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ご活躍は　こちらでも耳にします\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "数多の英雄を導いた　伝説の軍師様\n");
 	}
 	else if (g_messageRun == 4) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "かく言う私も 楽しみで\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "かく言う私も　楽しみで\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "昨夜は中々…\n");
 	}
 	else if (g_messageRun == 5) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "と 失礼いたしました\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "早速 訓練場へ案内いたしますね\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "と　失礼いたしました\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "早速　訓練場へ案内いたしますね\n");
 	}
 	else if (g_messageRun == 6) {
 

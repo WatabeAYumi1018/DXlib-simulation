@@ -111,11 +111,11 @@ enum {
 //一連の流れ
 void turnMove(float delta_time);
 
-//敵フェーズの動き
-void phaseEnemyMove(float delta_time, int currentEnemyNumber);
-
-//カーソルエンター処理について
+//味方ターンの処理
 void phaseAllyMove(float delta_time);
+
+//敵ターンの処理
+void phaseEnemyMove(float delta_time, int currentEnemyNumber);
 
 //score表示
 void scoreDraw();

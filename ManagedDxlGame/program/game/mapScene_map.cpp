@@ -211,7 +211,128 @@ void turnMove(float delta_time) {
 	}
 }
 
-//敵フェーズの動き
+//味方ターンの処理
+void phaseAllyMove(float delta_time) {
+
+	switch (g_phaseAlly) {
+
+	case PHASE_SELECT_CHARACTER: {
+		
+		resetFill();
+
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+			//選択したキャラクターを囲って東西南北に1マスずつ塗りつぶし
+			int chara = getCharacter(cursorX, cursorY);
+			if (chara < 0) { break; } //負の値だったらいない
+
+			//行動済みなら座標動かない
+			if (character[chara].done) { resetFill(); }
+
+			//キャラがいれば(それ以外は)塗りつぶし
+			else {
+
+				for (int dir = 0; dir < DIRECTION_MAX; dir++)
+				{
+					int x = character[chara].x + g_directions[dir][0];
+					int y = character[chara].y + g_directions[dir][1];
+					fillCanMove(chara, x, y, character[chara].move);//どんどん隣り合う場所を調査
+				}
+				//描画内にキャラがいたら、そこは描画しない
+				for (int i = 0; i < MAP_HEIGHT; i++) {
+					for (int j = 0; j < MAP_WIDTH; j++) {
+
+						int standChara = getCharacter(j, i);
+						
+						//fill範囲内にキャラクターがいた場合、かつそのキャラが自分自身でなければそこは描画されない
+						//描画されている範囲＝移動できる場所になっているため、自分自身も描画することでそこへ移動したという処理になる
+						if (standChara >= 0 && fill[i][j] && chara!= standChara) { fill[i][j] = false; }
+					}
+				}
+				drawFill();
+
+				//キャラを選択したら、移動フェーズへ
+				if (character[chara].team == TEAM_ALLY) {
+
+					g_selectedChara = chara; //味方キャラを代入					
+					g_phaseAlly = PHASE_SET_MOVE_POSITION;
+				}
+				break;
+			}
+		}
+	}
+	case PHASE_SET_MOVE_POSITION: {
+
+		drawFill();
+
+		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+			//移動先の選択、完了したら選択フェーズに戻る
+			if (fill[cursorY][cursorX]) {
+
+				//移動による座標の変化
+				character[g_selectedChara].x = cursorX;
+				character[g_selectedChara].y = cursorY;
+
+				bool checkBattleFlag = false;
+
+				for (int i = 0; i < CHARACTER_MAX; i++) {
+
+					if (checkCanAllyBattle(g_selectedChara, i)) {
+
+						g_standbyChara = i;
+						checkBattleFlag = true;
+						break;
+					}
+				}
+				if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK; }
+
+				else {
+					//攻撃可能キャラがいなければ、待機
+					character[g_selectedChara].done = true;
+					resetFill();
+					g_phaseAlly = PHASE_SELECT_CHARACTER;
+				}
+			}
+		}
+		
+		break;
+	}
+	case PHASE_SELECT_ATTACK: {
+	
+		std::vector<int> adjacentEnemies = getAdjacentCharacters(g_selectedChara);
+		
+		for (int enemy : adjacentEnemies) {
+		
+			if (character[enemy].x == cursorX && character[enemy].y == cursorY) {
+			
+				predictionDraw(g_selectedChara, enemy);
+				
+				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+
+					g_flagEnter = true;
+					g_flagCursor = false;
+					g_flagBattleAnime = true;
+					g_flagBattleHp = true;
+					g_CanAttackMove++;
+					g_sePlay = true;
+				}
+				battleAlly(delta_time, g_selectedChara, enemy);
+			}
+		}
+		break;
+	}
+	}
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+		//攻撃可能キャラがいなければ、待機
+		character[g_selectedChara].done = true;
+		resetFill();
+		g_phaseAlly = PHASE_SELECT_CHARACTER;
+	}
+}
+
+//敵ターンの処理
 void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 
 	//1人検証が終わるごとに増えていく
@@ -321,127 +442,6 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 	else {//未調査の次の敵キャラクター判定のため更新
 		g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
 		phaseEnemyMove(delta_time, enemyNumber);
-	}
-}
-
-//カーソルエンター処理について
-void phaseAllyMove(float delta_time) {
-
-	switch (g_phaseAlly) {
-
-	case PHASE_SELECT_CHARACTER: {
-		
-		resetFill();
-
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-			//選択したキャラクターを囲って東西南北に1マスずつ塗りつぶし
-			int chara = getCharacter(cursorX, cursorY);
-			if (chara < 0) { break; } //負の値だったらいない
-
-			//行動済みなら座標動かない
-			//if (character[chara].done) { resetFill(); }
-
-			//キャラがいれば(それ以外は)塗りつぶし
-			else {
-
-				for (int dir = 0; dir < DIRECTION_MAX; dir++)
-				{
-					int x = character[chara].x + g_directions[dir][0];
-					int y = character[chara].y + g_directions[dir][1];
-					fillCanMove(chara, x, y, character[chara].move);//どんどん隣り合う場所を調査
-				}
-				//描画内にキャラがいたら、そこは描画しない
-				for (int i = 0; i < MAP_HEIGHT; i++) {
-					for (int j = 0; j < MAP_WIDTH; j++) {
-
-						int standChara = getCharacter(j, i);
-						
-						//fill範囲内にキャラクターがいた場合、かつそのキャラが自分自身でなければそこは描画されない
-						//描画されている範囲＝移動できる場所になっているため、自分自身も描画することでそこへ移動したという処理になる
-						if (standChara >= 0 && fill[i][j] && chara!= standChara) { fill[i][j] = false; }
-					}
-				}
-				drawFill();
-
-				//キャラを選択したら、移動フェーズへ
-				if (character[chara].team == TEAM_ALLY) {
-
-					g_selectedChara = chara; //味方キャラを代入					
-					g_phaseAlly = PHASE_SET_MOVE_POSITION;
-				}
-				break;
-			}
-		}
-	}
-	case PHASE_SET_MOVE_POSITION: {
-
-		drawFill();
-
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-			//移動先の選択、完了したら選択フェーズに戻る
-			if (fill[cursorY][cursorX]) {
-
-				//移動による座標の変化
-				character[g_selectedChara].x = cursorX;
-				character[g_selectedChara].y = cursorY;
-
-				bool checkBattleFlag = false;
-
-				for (int i = 0; i < CHARACTER_MAX; i++) {
-
-					if (checkCanAllyBattle(g_selectedChara, i)) {
-
-						g_standbyChara = i;
-						checkBattleFlag = true;
-						break;
-					}
-				}
-				if (checkBattleFlag) { g_phaseAlly = PHASE_SELECT_ATTACK; }
-
-				else {
-					//攻撃可能キャラがいなければ、待機
-					character[g_selectedChara].done = true;
-					resetFill();
-					g_phaseAlly = PHASE_SELECT_CHARACTER;
-				}
-			}
-		}
-		
-		break;
-	}
-	case PHASE_SELECT_ATTACK: {
-	
-		std::vector<int> adjacentEnemies = getAdjacentCharacters(g_selectedChara);
-		
-		for (int enemy : adjacentEnemies) {
-		
-			if (character[enemy].x == cursorX && character[enemy].y == cursorY) {
-			
-				predictionDraw(g_selectedChara, enemy);
-				
-				if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-					g_flagEnter = true;
-					g_flagCursor = false;
-					g_flagBattleAnime = true;
-					g_flagBattleHp = true;
-					g_CanAttackMove++;
-					g_sePlay = true;
-				}
-				battleAlly(delta_time, g_selectedChara, enemy);
-			}
-		}
-		break;
-	}
-	}
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-		//攻撃可能キャラがいなければ、待機
-		character[g_selectedChara].done = true;
-		resetFill();
-		g_phaseAlly = PHASE_SELECT_CHARACTER;
 	}
 }
 
@@ -701,7 +701,7 @@ void leafBottonDrawAllyTurnMap(float delta_time) {
 	//毎フレーム足していく処理
 	leafBottonTimeCount += delta_time;
 
-	if (leafBottonTimeCount > 2.0f) {
+	if (leafBottonTimeCount > 5.0f) {
 		leafBottonDraw = !leafBottonDraw;
 		leafBottonTimeCount = 0;
 	}

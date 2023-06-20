@@ -175,7 +175,7 @@ void clearMessage() {
 		else if (g_messageRun == 1) {
 
 			DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "この名誉に　恥じぬよう\n");
-			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "私たちも　精進を重ねますわね！\n");
+			DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "これからも　精進を重ねますわね！\n");
 		}
 	}
 	else {
@@ -193,7 +193,7 @@ void clearMessage() {
 	}
 	if(g_messageRun == 2) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "私たちの訓練は　いかがでしたでしょうか\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "我が一族の訓練は　いかがでしたでしょうか\n");
 		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "何か得るものがありましたら　うれしいです\n");
 	}
 	else if (g_messageRun == 3) {
@@ -202,8 +202,8 @@ void clearMessage() {
 	}
 	else if (g_messageRun == 4) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "これからも精進できるよう\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "一族の皆と共に　頑張りますね\n");
+		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "これからも\n");
+		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "仲間と共に　頑張りますね\n");
 	}
 	else if (g_messageRun == 5) {
 

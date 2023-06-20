@@ -196,6 +196,7 @@ void gameStart() {
 	//回復スポット説明
 	g_tutorialMapHeal = LoadGraph("graphics/tutorialMapHeal.png");
 }
+
 //------------------------------------------------------------------------------------------------------------
 // 毎フレーム実行されます,60FPS
 void gameMain(float delta_time) {
