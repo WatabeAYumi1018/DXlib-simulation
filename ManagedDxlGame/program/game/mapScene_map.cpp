@@ -131,10 +131,16 @@ int selectTargetCharacter(int enemy) {
 	return -1;
 }
 
+bool g_battled = false;
+
 // 敵キャラクターの戦闘処理を順番に行う関数
 void phaseEnemyAttack(float delta_time) {
 
+	bool isBattleFinished = true;
+
 	for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
+
+		if (!isBattleFinished) {continue;}
 
 		int targetAllyIndex = selectTargetCharacter(enemyIndex);
 
@@ -148,10 +154,17 @@ void phaseEnemyAttack(float delta_time) {
 				g_flagBattleHp = true;
 				g_CanAttackMove++;
 				g_sePlay = true;
+
 			}
 			// 敵キャラクターと味方キャラクターの戦闘処理を行う
 			battleAlly(delta_time, targetAllyIndex, enemyIndex);
+			
+			isBattleFinished = false;
 		}
+	}
+	if (isBattleFinished) {
+		// 全ての戦闘処理が完了した場合の処理
+		g_battled = true;
 	}
 }
 
@@ -233,6 +246,7 @@ void turnMove(float delta_time) {
 				g_sePlay = true;
 			}
 		}
+		
 		//敵全員が移動する
 		phaseEnemyMove(delta_time, currentEnemyNumber);
 
@@ -241,8 +255,10 @@ void turnMove(float delta_time) {
 		//敵ターンボタン描画
 		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
 
-		if (tnl::Input::IsKeyDownTrigger(eKeys::KB_TAB)) {
+		if (g_battled) {
+			// || || getAdjacentCharacters(currentEnemyNumber).empty()
 
+			g_battled = false;
 			g_enemyCheckFinish = true;
 			g_flagEnter = false;
 			g_flagCursor = true;
@@ -358,6 +374,7 @@ void phaseEnemyMove(float delta_time, int currentEnemyNumber) {
 	// 次の敵キャラクターのインデックス設定
 	enemyNumber++;
 
+	//調査完了
 	if (enemyNumber >= ENEMY_COUNT) {
 
 		g_enemyCheckFinish = false;
@@ -386,7 +403,7 @@ void phaseAllyMove(float delta_time) {
 			if (chara < 0) { break; } //負の値だったらいない
 
 			//行動済みなら座標動かない
-			if (character[chara].done) { resetFill(); }
+			//if (character[chara].done) { resetFill(); }
 
 			//キャラがいれば(それ以外は)塗りつぶし
 			else {
