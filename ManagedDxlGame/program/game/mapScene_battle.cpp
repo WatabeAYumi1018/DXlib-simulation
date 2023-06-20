@@ -4,7 +4,6 @@
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
-
 //戦闘中の画面ハンドル
 int g_battleGround = 0;
 
@@ -630,102 +629,6 @@ void battleAlly(float delta_time,int attack,int defence) {
 	}
 }
 
-//敵フェーズの攻撃流れ
-void enemyAttack(float delta_time, int ally, int enemy) {
-
-	for (int i = 3; i < CHARACTER_MAX; i++) {
-
-		if (checkCanAllyBattle(ally, i)) { enemy = i; }
-	}
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-		g_flagEnter = true;
-		g_flagCursor = false;
-		g_flagBattleAnime = true;
-		g_flagBattleHp = true;
-		g_CanAttackMove++;
-		g_sePlay = true;
-	}
-	battleEnemy(delta_time, ally, enemy);
-}
-
-//敵からのバトル関数
-void battleEnemy(float delta_time, int attack, int defence) {
-
-	if (g_flagEnter && !g_flagCursor) {
-
-		//戦闘画面下グラフィック描画
-		battleGraph();
-
-		//戦闘画面下情報描画
-		battleInfo(attack, defence);
-
-		//下画面HP描画（変動する値の描画）
-		battleHpDraw(attack, defence);
-
-		//戦闘画面のキャラアニメーション
-		battleCharaGraph(delta_time, attack, defence);
-
-		//ボタン描画
-		leafBottonDrawEnemyBattle(delta_time);
-
-		if (g_CanAttackMove == 1) {
-
-			//attack側の攻撃エフェクト描画
-			battleEffectGraph(delta_time, attack);
-			seBattle(attack);
-		}
-		else if (g_CanAttackMove == 2) {//味方の攻撃
-
-			//ヒット率乱数によるダメージ判定
-			battleHitRandom(delta_time, attack, defence);
-
-			if (character[defence].hp <= 0) { battleExit(attack, defence); }
-		}
-		else if (g_CanAttackMove == 3) {
-
-			//defence側の攻撃エフェクト描画
-			battleEffectGraph(delta_time, defence);
-			seBattle(defence);
-		}
-		else if (g_CanAttackMove == 4) {
-
-			//ヒット率乱数によるダメージ判定
-			battleHitRandom(delta_time, defence, attack);
-
-			if (character[attack].hp <= 0) { battleExit(attack, defence); }
-		}
-		else if (g_CanAttackMove == 5) {
-
-			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
-
-				battleEffectGraph(delta_time, attack);
-				seBattle(attack);
-			}
-			else if (character[defence].speed - character[defence].speed >= SPEED_DIFFERENCE) {
-
-				battleEffectGraph(delta_time, defence);
-				seBattle(defence);
-			}
-			else {enemyBattleExit();}
-		}
-		else if (g_CanAttackMove == 6) {
-
-			if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
-
-				//ヒット率乱数によるダメージ判定
-				battleHitRandom(delta_time, attack, defence);
-			}
-			else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
-
-				//ヒット率乱数によるダメージ判定
-				battleHitRandom(delta_time, defence, attack);
-			}
-		}
-		else {battleExit(attack, defence);}
-	}
-}
-
 //味方戦闘中ボタン描画
 void leafBottonDrawAllyBattle(float delta_time) {
 
@@ -782,35 +685,23 @@ void seBattle(int chara) {
 
 	if (g_sePlay && character[chara].job == JOB_SWORDMASTER) {
 	
-			StopSoundMem(g_seEffectSword);
-
-			if (CheckSoundMem(g_seEffectSword) == 0) {
-			PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE);
-		}
+		StopSoundMem(g_seEffectSword);
+		if (CheckSoundMem(g_seEffectSword) == 0) {PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE);}
 	}
 	if (g_sePlay && character[chara].job == JOB_SNIPER) {
 
 		StopSoundMem(g_seEffectAllow);
-
-		if (CheckSoundMem(g_seEffectAllow) == 0) {
-			PlaySoundMem(g_seEffectAllow, DX_PLAYTYPE_BACK, TRUE);
-		}
+		if (CheckSoundMem(g_seEffectAllow) == 0) {PlaySoundMem(g_seEffectAllow, DX_PLAYTYPE_BACK, TRUE);}
 	}
 	if (g_sePlay && character[chara].job == JOB_MAGICIAN) {
-
-			StopSoundMem(g_seEffectMagic);
-
-			if (CheckSoundMem(g_seEffectMagic) == 0) {
-			PlaySoundMem(g_seEffectMagic, DX_PLAYTYPE_BACK, TRUE);
-		}
+		
+		StopSoundMem(g_seEffectMagic);
+		if (CheckSoundMem(g_seEffectMagic) == 0) {PlaySoundMem(g_seEffectMagic, DX_PLAYTYPE_BACK, TRUE);}
 	}
 	if (g_sePlay && character[chara].job == JOB_BOSS) {
 
-			StopSoundMem(g_seEffectBoss);
-
-			if (CheckSoundMem(g_seEffectBoss) == 0) {
-			PlaySoundMem(g_seEffectBoss, DX_PLAYTYPE_BACK, TRUE);
-		}
+		StopSoundMem(g_seEffectBoss);
+		if (CheckSoundMem(g_seEffectBoss) == 0) {PlaySoundMem(g_seEffectBoss, DX_PLAYTYPE_BACK, TRUE);}
 	}
 	g_sePlay = false;
 }

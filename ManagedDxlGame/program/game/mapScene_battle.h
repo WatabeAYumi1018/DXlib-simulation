@@ -79,12 +79,6 @@ void battleExit(int attack, int defence);
 //味方バトル関数
 void battleAlly(float delta_time, int attack, int defence);
 
-//敵フェーズの攻撃流れ
-void enemyAttack(float delta_time, int ally, int enemy);
-
-//敵からのバトル関数
-void battleEnemy(float delta_time, int attack, int defence);
-
 //味方戦闘中ボタン描画
 void leafBottonDrawAllyBattle(float delta_time);
 
