@@ -127,14 +127,14 @@ void characterMapInfo(int chara) {
 }
 
 //隣接しているキャラ全員の情報を格納していく
-std::vector<int> getAdjacentCharacters(int enemy) {
+std::vector<int> getAdjacentCharacters(int chara) {
 
 	std::vector<int> adjacentAlly;
 
 	//隣接してるかチェックし、該当していればpush
 	for (int i = 0; i < CHARACTER_MAX; i++) {
 
-		if (checkCanAllyBattle(enemy, i)) {adjacentAlly.push_back(i);}
+		if (checkCanAllyBattle(chara, i)) {adjacentAlly.push_back(i);}
 	}
 	return adjacentAlly;
 }

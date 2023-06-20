@@ -116,57 +116,56 @@ bool g_sePlay = true;
 //マップ全般に関わる関数
 //
 
+//敵からの攻撃処理を終えたかの判定
+//bool g_battled = false;
+
 //敵が隣接する味方キャラの情報を取得する関数
-int selectTargetCharacter(int enemy) {
-
-	std::vector<int> adjacentAlly = getAdjacentCharacters(enemy);
-
-	if (!adjacentAlly.empty()) {
-
-		// ランダムに隣接する味方キャラクターを選択する
-		int allyIndex = adjacentAlly[rand() % adjacentAlly.size()];
-		return allyIndex;
-	}
-	// 隣接する味方キャラクターがいない場合は無効なインデックスを返す
-	return -1;
-}
-
-bool g_battled = false;
+//int selectTargetCharacter(int chara) {
+//
+//	std::vector<int> adjacentAlly = getAdjacentCharacters(chara);
+//
+//	if (!adjacentAlly.empty()) {
+//
+//		// ランダムに隣接する味方キャラクターを選択する
+//		int allyIndex = adjacentAlly[rand() % adjacentAlly.size()];
+//		return allyIndex;
+//	}
+//	// 隣接する味方キャラクターがいない場合は無効なインデックスを返す
+//	return -1;
+//}
 
 // 敵キャラクターの戦闘処理を順番に行う関数
-void phaseEnemyAttack(float delta_time) {
-
-	bool isBattleFinished = true;
-
-	for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
-
-		if (!isBattleFinished) {continue;}
-
-		int targetAllyIndex = selectTargetCharacter(enemyIndex);
-
-		if (targetAllyIndex != -1) {
-
-			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
-
-				g_flagEnter = true;
-				g_flagCursor = false;
-				g_flagBattleAnime = true;
-				g_flagBattleHp = true;
-				g_CanAttackMove++;
-				g_sePlay = true;
-
-			}
-			// 敵キャラクターと味方キャラクターの戦闘処理を行う
-			battleAlly(delta_time, targetAllyIndex, enemyIndex);
-			
-			isBattleFinished = false;
-		}
-	}
-	if (isBattleFinished) {
-		// 全ての戦闘処理が完了した場合の処理
-		g_battled = true;
-	}
-}
+//void phaseEnemyAttack(float delta_time) {
+//
+//	bool isBattleFinished = true; // 初期値はtrueに設定しておく
+//
+//	for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
+//	
+//		//戦闘が終了していなければスキップ
+//		if (!isBattleFinished) {continue;}
+//
+//		int targetAllyIndex = selectTargetCharacter(enemyIndex);
+//
+//		if (targetAllyIndex != -1) {
+//			
+//			if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) {
+//				
+//				g_flagEnter = true;
+//				g_flagCursor = false;
+//				g_flagBattleAnime = true;
+//				g_flagBattleHp = true;
+//				g_CanAttackMove++;
+//				g_sePlay = true;
+//			}
+//
+//			// 敵キャラクターと味方キャラクターの戦闘処理を行う
+//			battleAlly(delta_time, targetAllyIndex, enemyIndex);
+//			isBattleFinished = (character[targetAllyIndex].hp <= 0 || character[enemyIndex].hp <= 0); // 戦闘処理が完了したかどうかを判定する
+//
+//			if (isBattleFinished) {g_battled = true;}
+//		}
+//	}
+//}
 
 //一連の流れ
 void turnMove(float delta_time) {
@@ -246,28 +245,32 @@ void turnMove(float delta_time) {
 				g_sePlay = true;
 			}
 		}
-		
 		//敵全員が移動する
 		phaseEnemyMove(delta_time, currentEnemyNumber);
 
-		phaseEnemyAttack(delta_time);
+		//本当は敵からの攻撃処理も実装したかったですが、間に合わないため今回は見送り。（発表動画作成が間に合わなくなるため）
+		//コードは途中となっていますが、今後のために消さずにコメントで残しておきます。
+		//phaseEnemyAttack(delta_time);
 
 		//敵ターンボタン描画
 		if (!g_flagEnter && g_flagCursor) {leafBottonDrawEnemyTurnMap(delta_time);}
 
-		if (g_battled) {
-			// || || getAdjacentCharacters(currentEnemyNumber).empty()
+		// すべての敵番号を認識するためにループを追加
+		for (int enemyIndex = 3; enemyIndex < CHARACTER_MAX; enemyIndex++) {
 
-			g_battled = false;
-			g_enemyCheckFinish = true;
-			g_flagEnter = false;
-			g_flagCursor = true;
-			character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
-			character[1].done = false;
-			character[2].done = false;
-			g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
-			g_turnMove = TURN_ALLAY;
-			g_phaseAlly=PHASE_SELECT_CHARACTER;
+			//if (getAdjacentCharacters(enemyIndex).empty()) {
+
+				//g_battled = false;
+				g_enemyCheckFinish = true;
+				//g_flagEnter = false;
+				//g_flagCursor = true;
+				character[0].done = false;			//味方ターン移行に際して、味方全員の行動が未行動にリセットされる
+				character[1].done = false;
+				character[2].done = false;
+				g_flagTurnAlly = true;				//味方ターンのテロップを流すためにtrue
+				g_turnMove = TURN_ALLAY;
+				g_phaseAlly = PHASE_SELECT_CHARACTER;
+			//}
 		}
 		break;
 	}
@@ -494,8 +497,6 @@ void phaseAllyMove(float delta_time) {
 					g_sePlay = true;
 				}
 				battleAlly(delta_time, g_selectedChara, enemy);
-
-				break;
 			}
 		}
 		break;

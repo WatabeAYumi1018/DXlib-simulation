@@ -543,7 +543,7 @@ void battleExit(int attack,int defence) {
 
 	scoreMove(attack, defence);
 	allyBattleExit(attack);
-	g_battled = true;
+	//g_battled = true;
 
 	if (battleLost()) { g_gameScene_id = GAME_OVER; }
 	if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
@@ -628,7 +628,6 @@ void battleAlly(float delta_time,int attack,int defence) {
 		}
 		else {battleExit(attack, defence);}
 	}
-
 }
 
 //“GƒtƒF[ƒY‚ÌUŒ‚—¬‚ê
@@ -783,19 +782,35 @@ void seBattle(int chara) {
 
 	if (g_sePlay && character[chara].job == JOB_SWORDMASTER) {
 	
-		if (CheckSoundMem(g_seEffectSword) == 0)  PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE); 
+			StopSoundMem(g_seEffectSword);
+
+			if (CheckSoundMem(g_seEffectSword) == 0) {
+			PlaySoundMem(g_seEffectSword, DX_PLAYTYPE_BACK, TRUE);
+		}
 	}
 	if (g_sePlay && character[chara].job == JOB_SNIPER) {
 
-		if (CheckSoundMem(g_seEffectAllow) == 0) PlaySoundMem(g_seEffectAllow, DX_PLAYTYPE_BACK, TRUE); 
+		StopSoundMem(g_seEffectAllow);
+
+		if (CheckSoundMem(g_seEffectAllow) == 0) {
+			PlaySoundMem(g_seEffectAllow, DX_PLAYTYPE_BACK, TRUE);
+		}
 	}
 	if (g_sePlay && character[chara].job == JOB_MAGICIAN) {
 
-		if (CheckSoundMem(g_seEffectMagic) == 0) PlaySoundMem(g_seEffectMagic, DX_PLAYTYPE_BACK, TRUE); 
+			StopSoundMem(g_seEffectMagic);
+
+			if (CheckSoundMem(g_seEffectMagic) == 0) {
+			PlaySoundMem(g_seEffectMagic, DX_PLAYTYPE_BACK, TRUE);
+		}
 	}
 	if (g_sePlay && character[chara].job == JOB_BOSS) {
 
-		if (CheckSoundMem(g_seEffectBoss) == 0) PlaySoundMem(g_seEffectBoss, DX_PLAYTYPE_BACK, TRUE);
+			StopSoundMem(g_seEffectBoss);
+
+			if (CheckSoundMem(g_seEffectBoss) == 0) {
+			PlaySoundMem(g_seEffectBoss, DX_PLAYTYPE_BACK, TRUE);
+		}
 	}
 	g_sePlay = false;
 }

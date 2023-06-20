@@ -1,6 +1,7 @@
 #pragma once
 
-extern bool g_battled ;
+//敵からの攻撃処理を終えたかの判定（時間と技術不足により今回は見送り）
+//extern bool g_battled ;
 
 //サイズに関する定数
 const int MAP_HEIGHT = 15;		//マップ画面高さ
