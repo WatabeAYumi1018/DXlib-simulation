@@ -131,9 +131,6 @@ void gameStart() {
 	//UŒ‚‰æ–Ê‚Ì”wŒi
 	g_battleGround = LoadGraph("graphics/battleback.jpg");
 
-	//UŒ‚ƒ~ƒX‚Ì‰æ‘œ
-	g_battleMiss = LoadGraph("graphics/miss.png");
-
 	//ƒQ[ƒ€ƒI[ƒo[”wŒi
 	g_gameOver = LoadGraph("graphics/GameOver.jpg");
 

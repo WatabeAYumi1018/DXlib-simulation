@@ -7,7 +7,6 @@
 
 //戦闘中の画面ハンドル
 int g_battleGround = 0;
-int g_battleParaBack = 0;
 
 //戦闘中のパラ表示
 int g_battle_hp[1][35];
@@ -15,22 +14,16 @@ int g_battle_attack[1][42];
 int g_battle_hit[1][25];
 
 //戦闘中の攻撃エフェクト
-int g_battle_effect_sword[1][14];
-int g_battle_effect_snip[1][14];
-int g_battle_effect_magic[1][14];
-int g_battle_effect_leader[1][14];
-
-//攻撃ミスの画像
-int g_battleMiss;
+int g_battle_effect_sword[1][10];
+int g_battle_effect_snip[1][10];
+int g_battle_effect_magic[1][10];
+int g_battle_effect_leader[1][10];
 
 //戦闘アニメーションの生存フラグ
 bool g_flagBattleAnime = true;
 
 //HP減算フラグ
 bool g_flagBattleHp = true;
-
-// バトルフラグ
-bool g_battleInProgress = false;
 
 //------------------------------------------------------
 
@@ -53,11 +46,13 @@ bool checkCanAllyBattle(int attack, int defence) {
 //戦闘下画面のグラフィック描画
 void battleGraph() {
 
+	//背景
 	const int BACK_GRAPH_START_X = 200;
 	const int BACK_GRAPH_START_Y = 0;
 	const int BACK_GRAPH_END_X = 1000;
 	const int BACK_GRAPH_END_Y = 480;
-	
+
+	//パラメーター説明グラフィック
 	const int BATTLE_HP_X = 590;
 	const int BATTLE_HP_Y = 500;
 	const int BATTLE_ATTACK_X = 500;
@@ -109,8 +104,7 @@ void battleInfo(int attack, int defence) {
 	//攻撃力描画
 	SetFontSize(60);
 	
-	//命中率描画
-	if (ThreeRelation(attack, defence) == 0) {		//有利の場合
+	if (ThreeRelation(attack, defence) == 0) {		//味方が有利の場合
 
 		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {//有利の場合＋味方追撃あり
 		
@@ -142,12 +136,13 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string((character[defence].attack - character[attack].defence)/2);
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
+		//命中率
 		DrawStringEx(ALLAY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "100");
 		DrawStringEx(ENEMY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "60");
 	}
-	else if (ThreeRelation(attack, defence) == 1) {	//不利の場合
+	else if (ThreeRelation(attack, defence) == 1) {	//味方が不利の場合
 
-		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {//味方追撃
 
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string(character[attack].attack - character[defence].defence);	//2*0.5=1.0でそのまま
@@ -157,7 +152,7 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string(2 * (character[defence].attack - character[attack].defence));
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
-		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
+		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {//敵追撃
 
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string((character[attack].attack - character[defence].defence)/2);
@@ -167,7 +162,7 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string(2 * 2 * (character[defence].attack - character[attack].defence));
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
-		else {
+		else {																			//追撃無し
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string((character[attack].attack - character[defence].defence)/2);
 			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
@@ -176,13 +171,14 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string(2 * (character[defence].attack - character[attack].defence));
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
+		//命中率
 		DrawStringEx(ALLAY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "60");
 		DrawStringEx(ENEMY_HIT_X, HIT_Y, TEXT_COLOR_WHITE, "100");
 	}
-	else if (ThreeRelation(attack, defence) == 2) {	//それ以外
+	else if (ThreeRelation(attack, defence) == 2) {	//有利不利なし
 
 		//味方の与えるダメージ
-		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {
+		if (character[attack].speed - character[defence].speed >= SPEED_DIFFERENCE) {	//味方追撃
 
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string(2 * (character[attack].attack - character[defence].defence));
@@ -192,7 +188,7 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string(character[defence].attack - character[attack].defence);
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
-		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
+		else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {//敵追撃
 
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string(character[attack].attack - character[defence].defence);
@@ -202,7 +198,7 @@ void battleInfo(int attack, int defence) {
 			std::string ENEMY_attack = std::to_string(2 * (character[defence].attack - character[attack].defence));
 			DrawStringEx(ENEMY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ENEMY_attack.c_str());
 		}
-		else {
+		else {																			//追撃無し
 			//味方の与えるダメージ
 			std::string ALLAY_attack = std::to_string(character[attack].attack - character[defence].defence);
 			DrawStringEx(ALLAY_ATTACK_X, ATTACK_Y, TEXT_COLOR_WHITE, ALLAY_attack.c_str());
@@ -255,13 +251,9 @@ void battleHpDraw(int attack, int defence) {
 	std::string attack_Hp = std::to_string(character[attack].hp);
 	DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, attack_Hp.c_str());
 	
-	if (character[attack].hp <= 0) { DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, "0"); }
-
 	//defence側のHP描画
 	std::string defence_Hp = std::to_string(character[defence].hp);
 	DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, defence_Hp.c_str());
-	
-	if (character[defence].hp <= 0) { DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, "0"); }
 }
 
 //戦闘画面のキャラアニメ
@@ -299,7 +291,6 @@ void battleCharaGraph(float delta_time, int attack, int defence) {
 			charaAlly_vector += vectorAlly_count;
 
 			animAlly_timeCount = 0;
-
 		}
 		DrawExtendGraph(CHARA_ALLAY_X_START, CHARA_Y_START, CHARA_ALLAY_X_END, CHARA_Y_END, character_chips[attack][charaAlly_vector], true);
 	}
@@ -409,14 +400,6 @@ void battleEffectGraph(float delta_time, int chara) {
 	}
 }
 
-//ロスト処理
-bool battleLost() {
-
-	if (character[0].hp <= 0 && character[1].hp <= 0 && character[2].hp <= 0) {return true;}
-
-	return false;
-}
-
 //三すくみの関係
 int ThreeRelation(int attack, int defence) {
 
@@ -434,7 +417,7 @@ int ThreeRelation(int attack, int defence) {
 
 		return 1;
 	}
-	//それ以外
+	//有利不利なし
 	return 2;
 }
 
@@ -449,7 +432,7 @@ int battleHit(int attack, int defence) {
 	//３すくみ不利の場合
 	else if (ThreeRelation(attack, defence)==1) {hit = character[attack].hit / 2;}
 
-	//それ以外（３すくみの影響なし）
+	//有利不利なし
 	else if (ThreeRelation(attack, defence) == 2) {hit= character[attack].hit * 4 / 5 ;}
 
 	return hit;
@@ -465,12 +448,10 @@ void battleHitRandom(float delta_time,int attack, int defence) {
 	int hit = battleHit(attack, defence);
 
 	//攻撃ミス
-	if (hit < hitRandom) {
-
-		//攻撃ミスのSE
-	}
+	if (hit < hitRandom) {}
 	//攻撃判定
-	else { battleHpMove(delta_time, attack, defence); }
+	else { 
+		battleHpMove(delta_time, attack, defence); }
 }
 
 //戦闘計算処理
@@ -479,20 +460,12 @@ int battleDamage(int attack, int defence) {
 	int damage = 0;
 
 	//３すくみ有利の場合
-	if (ThreeRelation(attack, defence)==0) {
-
-		damage = 2 * (character[attack].attack - character[defence].defence);
-	}
+	if (ThreeRelation(attack, defence)==0) {damage = 2 * (character[attack].attack - character[defence].defence);}
 	//３すくみ不利の場合
-	else if (ThreeRelation(attack, defence)==1) {
+	else if (ThreeRelation(attack, defence)==1) {damage =(character[attack].attack - character[defence].defence)/2;}
+	//有利不利なし
+	else if(ThreeRelation(attack, defence) == 2){damage = character[attack].attack - character[defence].defence;}
 
-		damage =(character[attack].attack - character[defence].defence)/2;	
-	}
-	//それ以外（３すくみの影響なし）
-	else if(ThreeRelation(attack, defence) == 2){
-	
-		damage = character[attack].attack - character[defence].defence;
-	}
 	return damage;
 }
 
@@ -521,6 +494,14 @@ void battleHpMove(float delta_time, int attack, int defence) {
 	}
 }
 
+//ロスト処理
+bool battleLost() {
+
+	if (character[0].hp <= 0 && character[1].hp <= 0 && character[2].hp <= 0) {return true;}
+
+	return false;
+}
+
 //戦闘処理終了
 void allyBattleExit(int chara) {
 
@@ -535,7 +516,7 @@ void allyBattleExit(int chara) {
 }
 
 //敵からの戦闘終了
-void enemyBattleExit(int attack,int defence){
+void enemyBattleExit(){
 
 	if (tnl::Input::IsKeyDown(eKeys::KB_SPACE)) {
 
@@ -552,9 +533,19 @@ void scoreMove(int attack,int defence) {
 		
 		if (ThreeRelation(attack, defence) == 0) { g_score += 30; }
 		else if (ThreeRelation(attack, defence) == 1) { g_score += 100; }
-		else if (ThreeRelation(attack, defence) == 2) { g_score += 70; }
+		else if (ThreeRelation(attack, defence) == 2) {	g_score += 70; }
 	}
 	else if (character[attack].team == TEAM_ALLY && character[attack].hp <= 0) { g_score -= 50; }
+}
+
+//バトル終了処理（まとめ）
+void battleExit(int attack,int defence) {
+
+	scoreMove(attack, defence);
+	allyBattleExit(attack);
+
+	if (battleLost()) { g_gameScene_id = GAME_OVER; }
+	if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 }
 
 //味方バトル関数
@@ -588,13 +579,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 			//ヒット率乱数によるダメージ判定
 			battleHitRandom(delta_time, attack, defence);
 
-			if (character[defence].hp <= 0) {
-
-				scoreMove(attack,defence);
-				allyBattleExit(attack);
-				if (battleLost()) { g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
-			}
+			if (character[defence].hp <= 0) {battleExit(attack, defence);}
 		}
 		else if (g_CanAttackMove == 3) {
 
@@ -607,14 +592,7 @@ void battleAlly(float delta_time,int attack,int defence) {
 			//ヒット率乱数によるダメージ判定
 			battleHitRandom(delta_time, defence, attack);
 
-			if (character[attack].hp <= 0) {
-
-				scoreMove(attack, defence);
-				allyBattleExit(attack);
-				if (battleLost()) {
-					g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
-			}
+			if (character[attack].hp <= 0) { battleExit(attack, defence); }
 		}
 		else if (g_CanAttackMove == 5) {
 
@@ -636,21 +614,38 @@ void battleAlly(float delta_time,int attack,int defence) {
 
 				//ヒット率乱数によるダメージ判定
 				battleHitRandom(delta_time, attack, defence);
+
+				if (character[defence].hp <= 0) { battleExit(attack, defence); }
 			}
 			else if (character[defence].speed - character[attack].speed >= SPEED_DIFFERENCE) {
 
 				//ヒット率乱数によるダメージ判定
 				battleHitRandom(delta_time, defence, attack);
+
+				if (character[attack].hp <= 0) { battleExit(attack, defence); }
 			}
 		}
-		else {
-
-			scoreMove(attack, defence);
-			allyBattleExit(attack);
-			if (battleLost()) { g_gameScene_id = GAME_OVER; }
-			if (character[15].hp <= 0) {g_gameScene_id = GAME_CLEAR;}
-		}
+		else {battleExit(attack, defence); }
 	}
+}
+
+//敵フェーズの攻撃流れ
+void enemyAttack(float delta_time, int ally, int enemy) {
+
+	for (int i = 3; i < CHARACTER_MAX; i++) {
+
+		if (checkCanAllyBattle(ally, i)) { enemy = i; }
+	}
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
+
+		g_flagEnter = true;
+		g_flagCursor = false;
+		g_flagBattleAnime = true;
+		g_flagBattleHp = true;
+		g_CanAttackMove++;
+		g_sePlay = true;
+	}
+	battleEnemy(delta_time, ally, enemy);
 }
 
 //敵からのバトル関数
@@ -684,13 +679,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 			//ヒット率乱数によるダメージ判定
 			battleHitRandom(delta_time, attack, defence);
 
-			if (character[defence].hp <= 0) {
-
-				scoreMove(attack, defence);
-				enemyBattleExit(attack, defence);
-				if (battleLost()) { g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) {g_gameScene_id = GAME_CLEAR; }			
-			}
+			if (character[defence].hp <= 0) { battleExit(attack, defence); }
 		}
 		else if (g_CanAttackMove == 3) {
 
@@ -703,13 +692,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 			//ヒット率乱数によるダメージ判定
 			battleHitRandom(delta_time, defence, attack);
 
-			if (character[attack].hp <= 0) {
-
-				scoreMove(attack, defence);
-				enemyBattleExit(attack, defence);
-				if (battleLost()) { g_gameScene_id = GAME_OVER; }
-				if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
-			}
+			if (character[attack].hp <= 0) { battleExit(attack, defence); }
 		}
 		else if (g_CanAttackMove == 5) {
 
@@ -723,7 +706,7 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				battleEffectGraph(delta_time, defence);
 				seBattle(defence);
 			}
-			else {enemyBattleExit(attack, defence);}
+			else {enemyBattleExit();}
 		}
 		else if (g_CanAttackMove == 6) {
 
@@ -738,33 +721,8 @@ void battleEnemy(float delta_time, int attack, int defence) {
 				battleHitRandom(delta_time, defence, attack);
 			}
 		}
-		else {
-
-			scoreMove(attack, defence);
-			enemyBattleExit(attack, defence);
-			if (battleLost()) { g_gameScene_id = GAME_OVER; }
-			if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
-		}
+		else {battleExit(attack, defence);}
 	}
-}
-
-//敵フェーズの攻撃流れ
-void enemyAttack(float delta_time, int ally, int enemy) {
-
-	for (int i = 3; i < CHARACTER_MAX; i++) {
-
-		if (checkCanAllyBattle(ally, i)) { enemy = i; }
-	}
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_SPACE)) {
-
-		g_flagEnter = true;
-		g_flagCursor = false;
-		g_flagBattleAnime = true;
-		g_flagBattleHp = true;
-		g_CanAttackMove++;
-		g_sePlay = true;
-	}
-	battleEnemy(delta_time, ally, enemy);
 }
 
 //味方戦闘中ボタン描画

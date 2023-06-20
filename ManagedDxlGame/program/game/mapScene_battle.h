@@ -8,7 +8,6 @@ const int SPEED_DIFFERENCE = 5;
 
 //戦闘中の画面
 extern int g_battleGround ;
-extern int g_battleParaBack ;
 
 //戦闘中のパラ表示
 extern int g_battle_hp[1][35];
@@ -16,13 +15,10 @@ extern int g_battle_attack[1][42];
 extern int g_battle_hit[1][25];
 
 //戦闘中の攻撃エフェクト
-extern int g_battle_effect_sword[1][14];
-extern int g_battle_effect_snip[1][14];
-extern int g_battle_effect_magic[1][14];
-extern int g_battle_effect_leader[1][14];
-
-//攻撃ミスの画像
-extern int g_battleMiss;
+extern int g_battle_effect_sword[1][10];
+extern int g_battle_effect_snip[1][10];
+extern int g_battle_effect_magic[1][10];
+extern int g_battle_effect_leader[1][10];
 
 //戦闘アニメーションの生存フラグ
 extern bool g_flagBattleAnime ;
@@ -30,8 +26,7 @@ extern bool g_flagBattleAnime ;
 //HP減算フラグ
 extern bool g_flagBattleHp ;
 
-// バトルフラグ
-extern bool g_battleInProgress;
+//------------------------------------------------------
 
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence);
@@ -51,9 +46,6 @@ void battleCharaGraph(float delta_time, int attack, int defence);
 //戦闘エフェクトアニメ
 void battleEffectGraph(float delta_time, int chara);
 
-//ロスト処理
-bool battleLost();
-
 //三すくみの関係
 int ThreeRelation(int attack, int defence);
 
@@ -69,23 +61,29 @@ int battleDamage(int attack, int defence);
 //戦闘によるダメージ変化の流れ
 void battleHpMove(float delta_time, int attack, int defence);
 
+//ロスト処理
+bool battleLost();
+
 //戦闘処理終了
 void allyBattleExit(int chara);
 
 //敵からの戦闘終了
-void enemyBattleExit(int attack, int defence);
+void enemyBattleExit();
 
 //スコア変動処理
 void scoreMove(int attack, int defence);
 
-//戦闘処理
-void battleAlly(float delta_time, int attack, int defence);
+//バトル終了処理（まとめ）
+void battleExit(int attack, int defence);
 
-//敵からの戦闘処理
-void battleEnemy(float delta_time, int attack, int defence);
+//味方バトル関数
+void battleAlly(float delta_time, int attack, int defence);
 
 //敵フェーズの攻撃流れ
 void enemyAttack(float delta_time, int ally, int enemy);
+
+//敵からのバトル関数
+void battleEnemy(float delta_time, int attack, int defence);
 
 //味方戦闘中ボタン描画
 void leafBottonDrawAllyBattle(float delta_time);

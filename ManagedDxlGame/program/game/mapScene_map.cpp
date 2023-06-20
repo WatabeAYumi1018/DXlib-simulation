@@ -380,7 +380,7 @@ void phaseAllyMove(float delta_time) {
 			if (chara < 0) { break; } //負の値だったらいない
 
 			//行動済みなら座標動かない
-			//if (character[chara].done) { resetFill(); }
+			if (character[chara].done) { resetFill(); }
 
 			//キャラがいれば(それ以外は)塗りつぶし
 			else {

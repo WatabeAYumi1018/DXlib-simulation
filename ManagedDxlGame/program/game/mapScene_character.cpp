@@ -32,7 +32,7 @@ int icon_boss = 0;
 Character character[] = {
 	//キャラ名		職業				HP　maxHp	攻撃 防御 速さ 命中 移動	チーム		X	 Y
 	{"ミモザ",		JOB_SWORDMASTER,	300, 300,	150,  80,  15,  100,  6,	TEAM_ALLY,	36, 4},
-	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  90,  20,  100,  5,	TEAM_ALLY,	35, 4},
+	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  90,  20,  100,  5,	TEAM_ALLY,	34, 4},
 	{"アナベル",	JOB_MAGICIAN,		200, 200,	250,  70,  10,  100,  4,	TEAM_ALLY,	35, 6},
 	{"剣士",		JOB_SWORDMASTER,	200, 200,	100,  50,  15,  100,  5,	TEAM_ENEMY,	31, 5},
 	{"弓使い",		JOB_SNIPER,			150, 150,	150,  60,  15,  100,  4,	TEAM_ENEMY,	33, 11},
@@ -71,8 +71,8 @@ void getCharaPosition() {
 	//キャラクター各々の座標を習得(自分の座標を常に自分で持つようにする(毎回更新))
 	for (int i = 0; i < CHARACTER_MAX; i++) {
 
-		int y = character[i].y;
 		int x = character[i].x;
+		int y = character[i].y;
 
 		if (character[i].hp > 0) {charaData[y][x] = i;}
 	}
@@ -119,33 +119,19 @@ void characterMapInfo(int chara) {
 		DrawStringEx(1100, 600, TEXT_COLOR_WHITE, "移動力：%s", move_str.c_str());//move
 
 		//アイコン表示
-		if (character[chara].job == JOB_SWORDMASTER) {
-			DrawExtendGraph(300, 630, 350, 680, icon_sword, true);//拡大縮小draw関数
-		}
-		else if (character[chara].job == JOB_SNIPER) {
-			DrawExtendGraph(300, 630, 350, 680, icon_snip, true);
-		}
-		else if (character[chara].job == JOB_MAGICIAN) {
-			DrawExtendGraph(300, 630, 350, 680, icon_magic, true);
-		}
-		else if (character[chara].job == JOB_BOSS) {
-			DrawExtendGraph(300, 630, 350, 680, icon_boss, true);
-		}
+		if (character[chara].job == JOB_SWORDMASTER) {DrawExtendGraph(300, 630, 350, 680, icon_sword, true);}
+		else if (character[chara].job == JOB_SNIPER) {DrawExtendGraph(300, 630, 350, 680, icon_snip, true);}
+		else if (character[chara].job == JOB_MAGICIAN) {DrawExtendGraph(300, 630, 350, 680, icon_magic, true);}
+		else if (character[chara].job == JOB_BOSS) {DrawExtendGraph(300, 630, 350, 680, icon_boss, true);}
 	}
 }
-
-//コンストラクタの定義
-//各メンバ変数の初期化は、:の後にメンバ変数の名前と、その初期値を指定する形式で行われる
-EnemyChara::EnemyChara(int x,int y,int team,int hp): x(x), y(y), team(team), hp(hp) {}
-
-// キャラクターリスト
-std::vector<EnemyChara> enemyChara;
 
 //隣接しているキャラ全員の情報を格納していく
 std::vector<int> getAdjacentCharacters(int ally) {
 
 	std::vector<int> canBattleCharacters;
 
+	//敵のindexは最小3～
 	for (int i = 3; i < CHARACTER_MAX; i++) {
 
 		if (checkCanAllyBattle(ally, i)) {canBattleCharacters.push_back(i);}

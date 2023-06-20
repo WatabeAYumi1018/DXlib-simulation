@@ -76,17 +76,5 @@ void characterMapInfo(int chara);
 //下画面描画時の制御
 void display();
 
-class EnemyChara {
-public:
-	int x;
-	int y;
-	int team;
-	int hp;
-
-	EnemyChara(int x, int y, int team, int hp);
-};
-
-extern std::vector<EnemyChara> enemyChara; // キャラクターリスト
-
 //隣接しているキャラ全員の情報を格納していく
 std::vector<int> getAdjacentCharacters(int ally);
