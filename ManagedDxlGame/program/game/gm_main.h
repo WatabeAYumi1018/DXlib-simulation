@@ -1,7 +1,14 @@
 #pragma once
 
+//ゲーム全体----------------------------------
+
 //ゲームシーン
 extern int g_gameScene_id;
+
+//文字の色
+const int TEXT_COLOR_WHITE = -1;
+
+//サウンド関連----------------------------------
 
 //サウンド　タイトル
 extern int g_bgmTitle;
@@ -23,8 +30,7 @@ extern int g_seEffectBoss ;
 //ターン移行　&&　バトル開始
 extern int g_seMoveBattle ;
 
-//文字の色
-const int TEXT_COLOR_WHITE = -1;
+//enum管理----------------------------------
 
 //ゲームシーン分け
 enum {
@@ -59,6 +65,8 @@ enum {
 	PHASE_AI_NEXT_ENEMY
 };
 
+//操作ボタン画像----------------------------------
+
 //エンターボタン
 extern int g_bottonEnter;
 //カーソルボタン
@@ -70,6 +78,7 @@ extern int g_bottonSpace;
 //シフトボタン
 extern int g_bottonShift;
 
+//メイン関数----------------------------------
 
 void gameStart();
 void gameMain( float delta_time );

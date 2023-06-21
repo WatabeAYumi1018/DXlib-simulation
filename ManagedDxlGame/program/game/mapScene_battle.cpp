@@ -4,7 +4,9 @@
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
-//戦闘中の画面ハンドル
+//画像ハンドル----------------------------------------------
+
+//戦闘中の画面
 int g_battleGround = 0;
 
 //戦闘中のパラ表示
@@ -18,13 +20,15 @@ int g_battle_effect_snip[1][10];
 int g_battle_effect_magic[1][10];
 int g_battle_effect_leader[1][10];
 
+//フラグ----------------------------------------------------
+
 //戦闘アニメーションの生存フラグ
 bool g_flagBattleAnime = true;
 
 //HP減算フラグ
 bool g_flagBattleHp = true;
 
-//------------------------------------------------------
+//関数------------------------------------------------------
 
 //攻撃可能かどうか判定
 bool checkCanAllyBattle(int attack, int defence) {
@@ -247,12 +251,18 @@ void battleHpDraw(int attack, int defence) {
 	SetFontSize(60);
 
 	//attack側のHP描画	
-	std::string attack_Hp = std::to_string(character[attack].hp);
-	DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, attack_Hp.c_str());
+	if (character[attack].hp <= 0) {DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, "0");}
+	else {
+		std::string attack_Hp = std::to_string(character[attack].hp);
+		DrawStringEx(HP_ALLAY_X, HP_Y, TEXT_COLOR_WHITE, attack_Hp.c_str());
+	}
 	
 	//defence側のHP描画
-	std::string defence_Hp = std::to_string(character[defence].hp);
-	DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, defence_Hp.c_str());
+	if (character[attack].hp <= 0) { DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, "0"); }
+	else {
+		std::string defence_Hp = std::to_string(character[defence].hp);
+		DrawStringEx(HP_ENEMY_X, HP_Y, TEXT_COLOR_WHITE, defence_Hp.c_str());
+	}
 }
 
 //戦闘画面のキャラアニメ
@@ -449,8 +459,7 @@ void battleHitRandom(float delta_time,int attack, int defence) {
 	//攻撃ミス
 	if (hit < hitRandom) {}
 	//攻撃判定
-	else { 
-		battleHpMove(delta_time, attack, defence); }
+	else { battleHpMove(delta_time, attack, defence); }
 }
 
 //戦闘計算処理
@@ -501,6 +510,18 @@ bool battleLost() {
 	return false;
 }
 
+//スコア変動処理
+void scoreMove(int attack,int defence) {
+
+	if (character[defence].team == TEAM_ENEMY && character[defence].hp <=0) {
+		
+		if (ThreeRelation(attack, defence) == 0) { g_score += 30; }
+		else if (ThreeRelation(attack, defence) == 1) { g_score += 100; }
+		else if (ThreeRelation(attack, defence) == 2) {	g_score += 70; }
+	}
+	else if (character[attack].team == TEAM_ALLY && character[attack].hp <= 0) { g_score -= 50; }
+}
+
 //戦闘処理終了
 void allyBattleExit(int chara) {
 
@@ -514,18 +535,6 @@ void allyBattleExit(int chara) {
 	}
 }
 
-//スコア変動処理
-void scoreMove(int attack,int defence) {
-
-	if (character[defence].team == TEAM_ENEMY && character[defence].hp <=0) {
-		
-		if (ThreeRelation(attack, defence) == 0) { g_score += 30; }
-		else if (ThreeRelation(attack, defence) == 1) { g_score += 100; }
-		else if (ThreeRelation(attack, defence) == 2) {	g_score += 70; }
-	}
-	else if (character[attack].team == TEAM_ALLY && character[attack].hp <= 0) { g_score -= 50; }
-}
-
 //戦闘終了処理（総まとめ）
 void battleExit(int attack,int defence) {
 
@@ -537,8 +546,8 @@ void battleExit(int attack,int defence) {
 	if (character[15].hp <= 0) { g_gameScene_id = GAME_CLEAR; }
 }
 
-//味方バトル関数
-void battleAlly(float delta_time,int attack,int defence) {
+//バトル関数
+void battle(float delta_time,int attack,int defence) {
 
 	if (g_flagEnter && !g_flagCursor) {
 
@@ -623,6 +632,16 @@ void leafBottonDrawAllyBattle(float delta_time) {
 
 	SetFontSize(20);
 
+	const int BOTTON_X_START = 1050;
+	const int BOTTON_Y_START = 400;
+	const int BOTTON_X_END = 1130;
+	const int BOTTON_Y_END = 480;
+
+	const int TEXT_X = 1130;
+	const int TEXT_Y = 430;
+
+	const int PLUS = 5;
+
 	float static leafBottonTimeCount = 0;
 	bool static leafBottonDraw = true;
 
@@ -634,12 +653,12 @@ void leafBottonDrawAllyBattle(float delta_time) {
 		leafBottonTimeCount = 0;
 	}
 	if (leafBottonDraw) {
-		DrawExtendGraph(1050, 400, 1130, 480, g_bottonEnter, true);
-		DrawStringEx(1130, 430, TEXT_COLOR_WHITE, "戦闘おくり\n");
+		DrawExtendGraph(BOTTON_X_START, BOTTON_Y_START, BOTTON_X_END, BOTTON_Y_END, g_bottonEnter, true);
+		DrawStringEx(TEXT_X, TEXT_Y, TEXT_COLOR_WHITE, "戦闘おくり\n");
 	}
 	else {
-		DrawExtendGraph(1050, 400+5, 1130, 480+5, g_bottonEnter, true);
-		DrawStringEx(1130, 430 + 5, TEXT_COLOR_WHITE, "戦闘おくり\n");
+		DrawExtendGraph(BOTTON_X_START, BOTTON_Y_START +5, BOTTON_X_END, BOTTON_Y_END + PLUS, g_bottonEnter, true);
+		DrawStringEx(TEXT_X, TEXT_Y + PLUS, TEXT_COLOR_WHITE, "戦闘おくり\n");
 	}
 }
 

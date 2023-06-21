@@ -1,5 +1,7 @@
 #pragma once
 
+//概念定義-----------------------------------------------
+
 //キャラクターのデータ二次元配列（マップチップとキャラチップを分けて考える）
 extern int charaData[MAP_HEIGHT][MAP_WIDTH];
 
@@ -19,30 +21,17 @@ enum {
 	JOB_MAX
 };
 
+//ジョブの詳細データ
+extern JOB jobData[];
+
 //ジョブの名前、移動数定義
 struct JOB {
 	std::string job_name;
 	int moveCells[CELL_MAX]; //移動に使うマス数(CELLの種類によって移動量が変わる)
 };
 
-//ジョブの詳細データ
-extern JOB jobData[];
-
-//キャラ総数
-const int CHARACTER_MAX = 16;
-const int CHARACTER_ALLAY_MAX = 3;
-
-//選択されたキャラクター
-extern int g_selectedChara ;
-
-//待機中敵キャラクター
-extern int g_standbyChara ;
-
-//アイコン画像ハンドル
-extern int icon_sword;
-extern int icon_magic;
-extern int icon_snip ;
-extern int icon_boss ;
+//各キャラクターの情報
+extern Character character[];
 
 //キャラクターの各名前、パラメータ
 struct Character {
@@ -61,8 +50,29 @@ struct Character {
 	bool done; //行動済み概念
 };
 
-//各キャラクターの情報
-extern Character character[];
+//定数-----------------------------------------------
+
+//キャラ総数
+const int CHARACTER_MAX = 16;
+const int CHARACTER_ALLAY_MAX = 3;
+
+//変数-----------------------------------------------
+
+//選択されたキャラクター
+extern int g_selectedChara ;
+
+//待機中敵キャラクター
+extern int g_standbyChara ;
+
+//画像ハンドル--------------------------------------
+
+//アイコン画像ハンドル
+extern int icon_sword;
+extern int icon_magic;
+extern int icon_snip ;
+extern int icon_boss ;
+
+//関数-----------------------------------------------
 
 //charaData[][]定義
 int getCharacter(int x, int y);

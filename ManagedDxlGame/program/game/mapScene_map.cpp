@@ -5,8 +5,8 @@
 #include "titleScene.h"
 #include "mapScene_battle.h"
 
-//----------------------------------------------------------------------------
-//マップ全般の変数
+
+//マップ全般の定義----------------------------------------------------------
 //
 
 //グラスマップ全体を配列として格納
@@ -43,8 +43,10 @@ bool fill[MAP_HEIGHT][MAP_WIDTH];
 int cursorX = 0;
 int cursorY = 0;
 
-//----------------------------------------------------------------------------
-//マップ描画全般の画像描画に関するハンドル
+//スコア変数を定義
+int g_score = 0;
+
+//マップ描画関連の画像ハンドル-----------------------------------------------
 //
 
 //チップ画像
@@ -70,6 +72,8 @@ int g_relation_back = 0;
 //マップ画面でのターン文字
 int g_map_turn[1][15];
 
+//フェーズ関連の変数--------------------------------------------
+
 //味方フェーズ変数
 int g_phaseAlly = PHASE_SELECT_CHARACTER;
 
@@ -78,6 +82,11 @@ int g_phaseEnemy = PHASE_AI_SEARCH_CHARACTER;
 
 //ターン変数
 int g_turnMove = TURN_ALLAY;
+
+//フラグ変数--------------------------------------------
+
+//バトル進行中か否かの判定フラグ
+int g_CanAttackMove = 0;
 
 //カーソルフラグ
 bool g_flagCursor = true;
@@ -88,29 +97,25 @@ bool g_flagEnter = false;
 //スペース押しフラグ
 bool g_flagEnemy = false;
 
-//バトル進行中か否かの判定フラグ
-int g_CanAttackMove = 0;
-
-//現在敵何人目か（初期値はインデックスの３）
-int currentEnemyNumber = 3;
-
-// 最小距離の味方取得
-int nearDistanceAlly = 0;
-
 //味方ターン切り替え
 bool g_flagTurnAlly = true;
 
 //敵ターン切り替え
 bool g_flagTurnEnemy = false;
 
-//スコア変数
-int g_score =0;
-
 //敵一斉移動フラグ
 bool g_enemyCheckFinish = true;
 
 //SE再生フラグ
 bool g_sePlay = true;
+
+//その他--------------------------------------------
+
+//現在敵何人目か（初期値はインデックスの３）
+int currentEnemyNumber = 3;
+
+// 最小距離の味方取得
+int nearDistanceAlly = 0;
 
 //----------------------------------------------------------------------------
 //マップ全般に関わる関数
@@ -317,7 +322,7 @@ void phaseAllyMove(float delta_time) {
 					g_CanAttackMove++;
 					g_sePlay = true;
 				}
-				battleAlly(delta_time, g_selectedChara, enemy);
+				battle(delta_time, g_selectedChara, enemy);
 			}
 		}
 		break;

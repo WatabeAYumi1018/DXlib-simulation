@@ -4,6 +4,8 @@
 #include "mapScene_character.h"
 #include "mapScene_battle.h"
 
+//概念--------------------------------------------------
+
 //キャラクターのデータ二次元配列（マップチップとキャラチップを分けて考える）
 int charaData[MAP_HEIGHT][MAP_WIDTH];
 
@@ -16,24 +18,12 @@ JOB jobData[] = {
 	{"長",		{1, 1, 1, 2,  -1,		-1,		-1,		-1,		 -1,		 -1,		-1,		-1}	}
 };
 
-//選択されたキャラクター
-int g_selectedChara = 0;
-
-//待機中敵キャラクター
-int g_standbyChara = 0;
-
-//アイコン画像ハンドル
-int icon_sword = 0;
-int icon_magic = 0;
-int icon_snip = 0;
-int icon_boss = 0;
-
 //各キャラクターの情報
 Character character[] = {
 	//キャラ名		職業				HP　maxHp	攻撃 防御 速さ 命中 移動	チーム		X	 Y
-	{"ミモザ",		JOB_SWORDMASTER,	300, 300,	150,  70,  15,  100,  6,	TEAM_ALLY,	36, 4 },
-	{"アネモネ",	JOB_SNIPER,			250, 250,	100,  80,  20,  100,  5,	TEAM_ALLY,	34, 4 },
-	{"アナベル",	JOB_MAGICIAN,		200, 200,	300,  60,  10,  100,  4,	TEAM_ALLY,	35, 6 },
+	{"ミモザ",		JOB_SWORDMASTER,	10, 300,	150,  70,  15,  100,  6,	TEAM_ALLY,	36, 4 },
+	{"アネモネ",	JOB_SNIPER,			10, 250,	100,  80,  20,  100,  5,	TEAM_ALLY,	34, 4 },
+	{"アナベル",	JOB_MAGICIAN,		10, 200,	300,  60,  10,  100,  4,	TEAM_ALLY,	35, 6 },
 	{"剣士",		JOB_SWORDMASTER,	200, 200,	150,  50,  15,  100,  5,	TEAM_ENEMY,	31, 6 },
 	{"弓使い",		JOB_SNIPER,			150, 150,	100,  60,  20,  100,  4,	TEAM_ENEMY,	33, 11},
 	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	27, 1 },
@@ -46,8 +36,26 @@ Character character[] = {
 	{"剣士",		JOB_SWORDMASTER,	200, 200,	150,  50,  15,  100,  5,	TEAM_ENEMY,	5,	6 },
 	{"弓使い",		JOB_SNIPER,			150, 150,	100,  60,  20,  100,  4,	TEAM_ENEMY,	5,	10},
 	{"魔道士",		JOB_MAGICIAN,		100, 100,	200,  40,  10,  100,  4,	TEAM_ENEMY,	20, 8 },
-	{"マルグリット",JOB_BOSS,			300, 300,	210,  60,  20,  100,  0,	TEAM_ENEMY,	4,	3 }
+	{"マルグリット",JOB_BOSS,			10, 300,	210,  60,  20,  100,  0,	TEAM_ENEMY,	4,	3 }
 };
+
+//変数--------------------------------------------------
+
+//選択されたキャラクター
+int g_selectedChara = 0;
+
+//待機中敵キャラクター
+int g_standbyChara = 0;
+
+//画像ハンドル------------------------------------------
+
+//アイコン画像ハンドル
+int icon_sword = 0;
+int icon_magic = 0;
+int icon_snip = 0;
+int icon_boss = 0;
+
+//関数--------------------------------------------------
 
 //charaDate定義。いなければ-１
 int getCharacter(int x, int y) {
@@ -90,6 +98,21 @@ void display() {
 //カーソルとキャラが一致したら、その情報を表示するようにする
 void characterMapInfo(int chara) {
 
+	//移動情報
+	const int DONE_X = 250;
+	const int DONE_Y = 540;
+	//パラメーター情報
+	const int PARAMETER_X_UP = 900;
+	const int PARAMETER_X_DOWN = 1100;
+	const int PARAMETER_Y_UP = 550;
+	const int PARAMETER_Y_CENTER = 600;
+	const int PARAMETER_Y_DOWN = 650;
+	//職業アイコン
+	const int ICON_X_START = 300;
+	const int ICON_Y_START = 630;
+	const int ICON_X_END = 350;
+	const int ICON_Y_END = 680;
+
 	if (g_flagCursor) {
 
 		//文字描画のため、hp（int型）をconst char*型へ変換(その他各パラメータも)
@@ -109,20 +132,33 @@ void characterMapInfo(int chara) {
 		DrawStringEx(650, 580, TEXT_COLOR_WHITE, " / %s", maxHp_str.c_str());//maxHp
 
 		SetFontSize(20);
-		if (character[chara].team == TEAM_ALLY && character[chara].done == true) { DrawStringEx(250, 540, TEXT_COLOR_WHITE, "行動終了"); }
-		else if (character[chara].team == TEAM_ALLY && character[chara].done == false) { DrawStringEx(250, 540, TEXT_COLOR_WHITE, "未行動"); }
 
-		DrawStringEx(900, 550, TEXT_COLOR_WHITE, "攻撃力：%s", attack_str.c_str());//attack
-		DrawStringEx(900, 600, TEXT_COLOR_WHITE, "防御力：%s", defence_str.c_str());//defence
-		DrawStringEx(900, 650, TEXT_COLOR_WHITE, "素早さ：%s", speed_str.c_str());//speed
-		DrawStringEx(1100, 550, TEXT_COLOR_WHITE, "命中率：%s", hit_str.c_str());//hit
-		DrawStringEx(1100, 600, TEXT_COLOR_WHITE, "移動力：%s", move_str.c_str());//move
+		if (character[chara].team == TEAM_ALLY && character[chara].done == true) { 
+			DrawStringEx(DONE_X, DONE_Y, TEXT_COLOR_WHITE, "行動終了"); 
+		}
+		else if (character[chara].team == TEAM_ALLY && character[chara].done == false) { 
+			DrawStringEx(DONE_X, DONE_Y, TEXT_COLOR_WHITE, "未行動"); 
+		}
+
+		DrawStringEx(PARAMETER_X_UP, PARAMETER_Y_UP, TEXT_COLOR_WHITE, "攻撃力：%s", attack_str.c_str());//attack
+		DrawStringEx(PARAMETER_X_UP, PARAMETER_Y_CENTER, TEXT_COLOR_WHITE, "防御力：%s", defence_str.c_str());//defence
+		DrawStringEx(PARAMETER_X_UP, PARAMETER_Y_DOWN, TEXT_COLOR_WHITE, "素早さ：%s", speed_str.c_str());//speed
+		DrawStringEx(PARAMETER_X_DOWN, PARAMETER_Y_UP, TEXT_COLOR_WHITE, "命中率：%s", hit_str.c_str());//hit
+		DrawStringEx(PARAMETER_X_DOWN, PARAMETER_Y_CENTER, TEXT_COLOR_WHITE, "移動力：%s", move_str.c_str());//move
 
 		//アイコン表示
-		if (character[chara].job == JOB_SWORDMASTER) {DrawExtendGraph(300, 630, 350, 680, icon_sword, true);}
-		else if (character[chara].job == JOB_SNIPER) {DrawExtendGraph(300, 630, 350, 680, icon_snip, true);}
-		else if (character[chara].job == JOB_MAGICIAN) {DrawExtendGraph(300, 630, 350, 680, icon_magic, true);}
-		else if (character[chara].job == JOB_BOSS) {DrawExtendGraph(300, 630, 350, 680, icon_boss, true);}
+		if (character[chara].job == JOB_SWORDMASTER) {
+			DrawExtendGraph(ICON_X_START, ICON_Y_START, ICON_X_END, ICON_Y_END, icon_sword, true);
+		}
+		else if (character[chara].job == JOB_SNIPER) {
+			DrawExtendGraph(ICON_X_START, ICON_Y_START, ICON_X_END, ICON_Y_END, icon_snip, true);
+		}
+		else if (character[chara].job == JOB_MAGICIAN) {
+			DrawExtendGraph(ICON_X_START, ICON_Y_START, ICON_X_END, ICON_Y_END, icon_magic, true);
+		}
+		else if (character[chara].job == JOB_BOSS) {
+			DrawExtendGraph(ICON_X_START, ICON_Y_START, ICON_X_END, ICON_Y_END, icon_boss, true);
+		}
 	}
 }
 
