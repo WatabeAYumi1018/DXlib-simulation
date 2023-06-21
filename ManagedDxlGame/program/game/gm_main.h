@@ -23,6 +23,9 @@ extern int g_seEffectBoss ;
 //ターン移行　&&　バトル開始
 extern int g_seMoveBattle ;
 
+//文字の色
+const int TEXT_COLOR_WHITE = -1;
+
 //ゲームシーン分け
 enum {
 	GAME_START,
@@ -32,9 +35,6 @@ enum {
 	GAME_OVER,
 	GAME_CLEAR
 };
-
-//文字の色
-const int TEXT_COLOR_WHITE = -1;
 
 //敵味方のターン分け
 enum {

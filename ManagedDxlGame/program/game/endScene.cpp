@@ -135,10 +135,7 @@ void scoreResult() {
 void clearMessage() {
 
 	//­——§‚¿ŠGÎŠç
-	if (g_messageRun == 0 || g_messageRun == 1 || g_messageRun == 5) {
-	
-		DrawExtendGraph(100, 100, 500, 500, g_girlSmile, TRUE);
-	}
+	if (g_messageRun == 0 || g_messageRun == 1 || g_messageRun == 5) {DrawExtendGraph(100, 100, 500, 500, g_girlSmile, TRUE);}
 	
 	//­——§‚¿ŠG•’Ê
 	else{DrawExtendGraph(100, 100, 500, 500, g_girlNormal, TRUE);}

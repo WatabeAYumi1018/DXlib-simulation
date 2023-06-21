@@ -75,10 +75,12 @@ void gameStart() {
 	g_seEffectBoss = LoadSoundMem("sound/effectBoss.mp3");
 	g_seMoveBattle = LoadSoundMem("sound/battleStart.mp3");
 
-	//画像の出力--------------------------------------------
+	//文字の出力--------------------------------------------
 
 	//文字フォント
 	tnl::AddFontTTF("font/PixelMplus12-Regular.ttf");
+
+	//画像の出力--------------------------------------------
 
 	//ゲームスタート画面
 	g_gameStart = LoadGraph("graphics/GameStartBack.jpg");
@@ -99,7 +101,7 @@ void gameStart() {
 	//ストーリーシーン背景
 	g_storyBack = LoadGraph("graphics/GameStoryBack.png");
 
-	//ストーリーシーン会話ウィンドウ
+	//会話ウィンドウ
 	g_storyWindow = LoadGraph("graphics/storyWindow.png");
 
 	//マップデータ
@@ -156,6 +158,8 @@ void gameStart() {
 	//マップ画面でのターン文字
 	LoadDivGraph("graphics/mapTurn.png", 15, 1, 15, 600, 60, g_map_turn[0]);
 
+	//操作ボタン関係-----------------------------
+
 	//エンターボタン
 	g_bottonEnter = LoadGraph("graphics/leafEnter.png");
 	//カーソルボタン
@@ -165,16 +169,19 @@ void gameStart() {
 	//スペースボタン
 	g_bottonSpace = LoadGraph("graphics/leafSpace.png");
 
+	//立ち絵関係-----------------------------
+
 	//女性立ち絵
-	g_girlNormal = LoadGraph("graphics/swordGirl.png");
+	g_girlNormal = LoadGraph("graphics/girlNormal.png");
 	g_girlSmile = LoadGraph("graphics/girlSmile.png");
-	g_girlTroubled = LoadGraph("graphics/girl_troubled.png");
+	g_girlTroubled = LoadGraph("graphics/girlTroubled.png");
 
 	//長立ち絵
-	g_bossNormal = LoadGraph("graphics/boss_tutorial.png");
+	g_bossNormal = LoadGraph("graphics/bossTutorialNormal.png");
+	g_bossSmile = LoadGraph("graphics/bossTutorialSmile.png");
 
 	//チュートリアル関係-----------------------------
-	//
+	
 	//マップ全体図
 	g_tutorialMap = LoadGraph("graphics/tutorialMap.png");
 	//ゲーム目的
@@ -187,12 +194,12 @@ void gameStart() {
 	g_tutorialAllyTurnSelect = LoadGraph("graphics/tutorialAllyTurnSelect.png");
 	//味方ターン移動
 	g_tutorialAllyTurnMove = LoadGraph("graphics/tutorialAllyTurnMove.png");
-	//味方ターン敵選択
-	g_tutorialAllyTurnSelectEnemy = LoadGraph("graphics/tutorialAllyTurnSelectEnemy.png");
+	//味方ターン攻撃予測
+	g_tutorialPredictionBattle = LoadGraph("graphics/tutorialPredictionBattle.png");
 	//敵ターン
 	g_tutorialEnemyTurn = LoadGraph("graphics/tutorialEnemyTurn.png");
 	//敵ターン終了
-	g_tutorialMapEnemyTurnEnd = LoadGraph("graphics/tutorialMapEnemyTurnEnd.png");
+	g_tutorialMapEnemyTurnMove = LoadGraph("graphics/tutorialEnemyTurnMove.png");
 	//回復スポット説明
 	g_tutorialMapHeal = LoadGraph("graphics/tutorialMapHeal.png");
 }

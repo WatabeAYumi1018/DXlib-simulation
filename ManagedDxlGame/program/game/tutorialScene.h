@@ -15,20 +15,18 @@ extern int g_tutorialAllyTurnInfoSpeed ;
 extern int g_tutorialAllyTurnSelect;
 //味方ターン移動
 extern int g_tutorialAllyTurnMove ;
-//味方ターン敵選択
-extern int g_tutorialAllyTurnSelectEnemy;
-//敵ターン
+//味方ターン攻撃予測
+extern int g_tutorialPredictionBattle;
+//敵ターン切り替え
 extern int g_tutorialEnemyTurn;
-//敵ターン終了
-extern int g_tutorialMapEnemyTurnEnd ;
+//敵ターン動き
+extern int g_tutorialMapEnemyTurnMove ;
 //回復スポットの説明
 extern int g_tutorialMapHeal;
 
 //長立ち絵
 extern int g_bossNormal;
-
-//チュートリアルでのメッセージおくり
-extern int g_tutorialRun;
+extern int g_bossSmile;
 
 //チュートリアル画像描画
 void tutorialDraw();

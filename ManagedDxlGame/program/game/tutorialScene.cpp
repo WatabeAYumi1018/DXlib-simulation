@@ -19,20 +19,18 @@ int g_tutorialAllyTurnInfoSpeed = 0;
 int g_tutorialAllyTurnSelect = 0;
 //味方ターン移動
 int g_tutorialAllyTurnMove = 0;
-//味方ターン敵選択
-int g_tutorialAllyTurnSelectEnemy = 0;
-//敵ターン
+//味方ターン攻撃予測
+int g_tutorialPredictionBattle = 0;
+//敵ターン切り替え
 int g_tutorialEnemyTurn = 0;
-//敵ターン終了
-int g_tutorialMapEnemyTurnEnd = 0;
+//敵ターン動き
+int g_tutorialMapEnemyTurnMove = 0;
 //回復スポットの説明
 int g_tutorialMapHeal = 0;
 
 //長立ち絵
 int g_bossNormal=0;
-
-//チュートリアルでのメッセージおくり
-int g_tutorialRun = 0;
+int g_bossSmile = 0;
 
 //チュートリアル画像描画
 void tutorialDraw() {
@@ -40,131 +38,156 @@ void tutorialDraw() {
 	//背景画像描画
 	DrawExtendGraph(0, 0, DXE_WINDOW_WIDTH, DXE_WINDOW_WIDTH, g_battleGround, TRUE);
 
+	//ゲーム画面描画位置
 	const int x_Start = 0;
 	const int x_End = 800;
 	const int y_Start = 0;
 	const int y_End = 500;
 
-	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_tutorialRun++; }
+	//立ち絵描画位置
+	const int boss_x_Start = 1200;
+	const int boss_y_Start = 100;
+	const int boss_x_End = 800;
+	const int boss_y_End = 500;
 
-	if (g_tutorialRun == 2 || g_tutorialRun == 13 || g_tutorialRun == 14) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMap, false);}
+	//会話窓
+	const int window_x_Start = 60;
+	const int window_y_Start = 500;
+	const int window_x_End = 1200;
+	const int window_y_End = 700;
 
-	else if (g_tutorialRun == 3 || g_tutorialRun == 4) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapStream, false);}
-	
-	else if (g_tutorialRun == 5) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnCursor, false);}
-	
-	else if (g_tutorialRun == 6) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnSelect, false);}
-	
-	else if (g_tutorialRun == 7) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnMove, false);}
-	
-	else if (g_tutorialRun == 8 || g_tutorialRun == 9 || g_tutorialRun == 10) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnInfoSpeed, false);}
-	
-	else if (g_tutorialRun == 11) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialEnemyTurn, false);}
 
-	else if (g_tutorialRun == 12) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapEnemyTurnEnd, false);}
+	if (tnl::Input::IsKeyDownTrigger(eKeys::KB_RETURN)) { g_messageRun++; }
 
-	else if (g_tutorialRun == 16) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapHeal, false);}
+	if (g_messageRun == 2 || g_messageRun == 13 || g_messageRun == 14 || g_messageRun == 15) {
+		DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMap, false);
+	}
 
-	//長立ち絵
-	DrawExtendGraph(1200, 100, 800, 500, g_bossNormal, TRUE);
+	else if (g_messageRun == 3 || g_messageRun == 4) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapStream, false);}
+	
+	else if (g_messageRun == 5) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnCursor, false);}
+	
+	else if (g_messageRun == 6) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnSelect, false);}
+	
+	else if (g_messageRun == 7) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnMove, false);}
+	
+	else if (g_messageRun == 8) { DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialPredictionBattle, false);}
+		
+	else if(g_messageRun == 9 || g_messageRun == 10) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialAllyTurnInfoSpeed, false);}
+	
+	else if (g_messageRun == 11) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialEnemyTurn, false);}
+
+	else if (g_messageRun == 12) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapEnemyTurnMove, false);}
+
+	else if (g_messageRun == 16) {DrawExtendGraph(x_Start, y_Start, x_End, y_End, g_tutorialMapHeal, false);}
+
+	//長立ち絵	
+	if (g_messageRun == 0 || g_messageRun == 4 || g_messageRun == 7 || g_messageRun == 11 || g_messageRun == 15) {
+		DrawExtendGraph(boss_x_Start, boss_y_Start, boss_x_End, boss_y_End, g_bossSmile, TRUE);
+	}
+	else {DrawExtendGraph(boss_x_Start, boss_y_Start, boss_x_End, boss_y_End, g_bossNormal, TRUE);}
+	
 	//ストーリー会話ウィンドウ
-	DrawExtendGraph(60, 500, 1200, 700, g_storyWindow, TRUE);
+	DrawExtendGraph(window_x_Start, window_y_Start, window_x_End, window_y_End, g_storyWindow, TRUE);
 }
 
 //チュートリアル会話メッセージ
 void tutorialMessage() {
 
+	const int messageX =150;
+	const int messageYUp = 550;
+	const int messageYDown = 620;
+
 	SetFontSize(40);
 
-	if (g_tutorialRun == 0) {
+	if (g_messageRun == 0) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "長のマルグリットだ\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "軍師殿との手合わせ　光栄に思う\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "長のマルグリットだ\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "軍師殿との手合わせ　光栄に思う\n");
 	}
-	else if (g_tutorialRun == 1) {
+	else if (g_messageRun == 1) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "到着早々悪いが　時間が惜しい\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "訓練について　説明させてもらう\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "到着早々悪いが　時間が惜しい\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "訓練について　説明させてもらう\n");
 	}
-	else if (g_tutorialRun == 2) {
+	else if (g_messageRun == 2) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "まずは　全体の概要だが\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "まあ　見ての通りだ\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "まずは　全体の概要だが\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "まあ　見ての通りだ\n");
 	}
-	else if (g_tutorialRun == 3) {
+	else if (g_messageRun == 3) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "軍師殿に鍛えて欲しいのは　この三人\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "我が一族の　戦闘隊長だ\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "軍師殿に鍛えて欲しいのは　この三人\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "我が一族の　戦闘隊長だ\n");
 	}
-	else if (g_tutorialRun == 4) {
+	else if (g_messageRun == 4) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "三人を導き　私を倒せ\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "軍師殿の采配があれば　造作も無かろう\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "三人を導き　私を倒せ\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "軍師殿の采配があれば　造作も無かろう\n");
 	}
-	//ここからズレ
-	else if (g_tutorialRun == 5) {
+	else if (g_messageRun == 5) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "ご存じだろうが　流れを説明しよう\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "まずは誰で攻めるか　都度選定せよ\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "ご存じだろうが　流れを説明しよう\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "まずは誰で攻めるか　都度選定せよ\n");
 	}
-	else if (g_tutorialRun == 6) {
+	else if (g_messageRun == 6) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "各々の運動量については　データ化し\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "割り出してある　参考にしてくれ\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "各々の運動量については　データ化し\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "割り出してある　参考にしてくれ\n");
 	}
 
-	else if (g_tutorialRun == 7) {
+	else if (g_messageRun == 7) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "敵に素早く近づき　一撃を与える\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "戦いの基本だな\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "敵に素早く近づき　一撃を与える\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "戦いの基本だな\n");
 	}
-	else if (g_tutorialRun == 8) {
+	else if (g_messageRun == 8) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "さて　注目すべき点のひとつに\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "素早さがある\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "戦地では選択ひとつが　命取りになる\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "事前に戦況を把握するのも　重要な要素だ\n");
 	}
-	else if (g_tutorialRun == 9) {
+	else if (g_messageRun == 9) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "我が一族は　特に\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "素早さに　重きをおいている\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "さて　我が一族は特に\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "素早さに　重きをおいている\n");
 	}
-	else if (g_tutorialRun == 10) {
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "俊敏であれば　隙を突きやすいからな\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "５以上もあれば　追撃も可能だろう\n");
+	else if (g_messageRun == 10) {
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "俊敏であれば　隙を突きやすいからな\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "５以上もあれば　追撃も可能だろう\n");
 	}
-	else if (g_tutorialRun ==11) {
+	else if (g_messageRun ==11) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "さて　全員の行動が完了したら\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "次は　こちらの番だ\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "全員の行動が完了したら\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "次は　こちらの番だ\n");
 	}
-	else if (g_tutorialRun == 12) {
+	else if (g_messageRun == 12) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "こちらからも　敵意は向けるが\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "応じるかどうかは　軍師殿の采配に任せる\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "一定の距離内に　入ってきたら\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "近くまで　移動させてもらう\n");
 	}
-	else if (g_tutorialRun == 13) {
+	else if (g_messageRun == 13) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "さて　最後はスコアについてだが\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "当然高いほど　報酬は弾ませてもらおう\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "最後は　スコアについてだ\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "当然高いほど　報酬は弾ませてもらおう\n");
 	}
-	else if (g_tutorialRun == 14) {
+	else if (g_messageRun == 14) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "そうだな　例えば不利な武器で倒せば\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "より高得点を　得られるだろう\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "そうだな　例えば不利な武器で倒せば\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "より高得点を　得られるだろう\n");
 	}
-	else if (g_tutorialRun == 15) {
+	else if (g_messageRun == 15) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "堅実に攻めるか　高評価を目指すかは\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "軍師殿の自由だ　全力で迎え撃とう\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "堅実に攻めるか　高評価を目指すかは\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "軍師殿の自由だ　全力で迎え撃とう\n");
 	}
-	else if (g_tutorialRun == 16) {
+	else if (g_messageRun == 16) {
 
-		DrawStringEx(150, 550, -TEXT_COLOR_WHITE, "最後に　訓練場には救護班が点在している\n");
-		DrawStringEx(150, 620, -TEXT_COLOR_WHITE, "上手く活用し　本懐を遂げてみせよ\n");
+		DrawStringEx(messageX, messageYUp, -TEXT_COLOR_WHITE, "最後に　訓練場には救護班が点在している\n");
+		DrawStringEx(messageX, messageYDown, -TEXT_COLOR_WHITE, "上手く活用し　本懐を遂げてみせよ\n");
 	}
-	else if (g_tutorialRun == 17) {
+	else if (g_messageRun == 17) {
 
-		g_tutorialRun = 0;
+		g_messageRun = 0;
 		g_gameScene_id = GAME_MAP;
 	}
 }
